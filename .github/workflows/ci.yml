@@ -1,0 +1,56 @@
+name: Habitat Monorepo CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  backend-checks:
+    name: Backend Lint & Unit/Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Compile TypeScript
+        working-directory: ./backend
+        run: npm run build
+
+      - name: Run Test Suite
+        working-directory: ./backend
+        run: npm test
+
+  domain-engine-checks:
+    name: Pure Dart Discipline Engine Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install Dependencies
+        working-directory: ./packages/discipline_engine
+        run: dart pub get
+
+      - name: Run Domain Engine Unit Tests
+        working-directory: ./packages/discipline_engine
+        run: dart test

@@ -1,0 +1,325 @@
+// Authoritative Relational Prisma Schema for Habitat / Discipline Platform
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum TaskCategory {
+  PHYSICAL
+  HEALTH
+  MORNING
+  PERSONAL
+  DISCIPLINE
+  ENVIRONMENT
+  STUDY
+  WORK
+  CUSTOM
+}
+
+enum ProofType {
+  PHOTO
+  VIDEO
+  MANUAL
+  FUTURE_SENSOR
+  FUTURE_AI
+  HARDWARE_ANCHOR
+}
+
+enum DisciplineMode {
+  GENTLE
+  DISCIPLINE
+  HARDCORE
+}
+
+enum MissionStatus {
+  SCHEDULED
+  ACTIVE
+  SUBMITTED
+  VERIFYING
+  COMPLETED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+enum AttemptStatus {
+  IGNORED
+  SNOOZED
+  RESOLVED
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ERROR
+}
+
+enum VerificationMethod {
+  USER_CONFIRMATION
+  SYSTEM_RULE
+  AI_VISION
+  AI_VIDEO
+  SENSOR
+  MULTI_MODAL
+}
+
+enum Platform {
+  ANDROID
+  IOS
+  WEB
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  passwordHash    String           @map("password_hash")
+  displayName     String           @map("display_name")
+  timezone        String           @default("UTC")
+  status          UserStatus       @default(ACTIVE)
+  disciplineScore Int              @default(100) @map("discipline_score")
+  autonomyLevel   Int              @default(1) @map("autonomy_level")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  preferences     UserPreferences?
+  tasks           Task[]
+  alarms          Alarm[]
+  missions        Mission[]
+  xpEvents        XpEvent[]
+  streak          Streak?
+  devices         Device[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model UserPreferences {
+  userId               String   @id @map("user_id")
+  theme                String   @default("system")
+  notificationsEnabled Boolean  @default(true) @map("notifications_enabled")
+  soundEnabled         Boolean  @default(true) @map("sound_enabled")
+  vibrationEnabled     Boolean  @default(true) @map("vibration_enabled")
+  motivationalFeedback Boolean  @default(true) @map("motivational_feedback")
+  reducedMotion        Boolean  @default(false) @map("reduced_motion")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+model Task {
+  id                   String       @id @default(uuid())
+  userId               String?      @map("user_id")
+  slug                 String       @unique
+  name                 String
+  description          String
+  category             TaskCategory @default(MORNING)
+  proofType            ProofType    @default(PHOTO) @map("proof_type")
+  difficulty           Int          @default(2) // 1 to 5
+  xpReward             Int          @default(50) @map("xp_reward")
+  duration             Int          @default(60) // estimated duration in seconds
+  iconName             String?      @default("hotel") @map("icon_name")
+  instructions         String
+  validationRules      String       @map("validation_rules")
+  isActive             Boolean      @default(true) @map("is_active")
+  isStarter            Boolean      @default(false) @map("is_starter")
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  user                 User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alarms               Alarm[]
+  missions             Mission[]
+
+  @@index([userId, isActive])
+  @@map("tasks")
+}
+
+model Alarm {
+  id                   String         @id @default(uuid())
+  userId               String         @map("user_id")
+  taskId               String         @map("task_id")
+  timeOfDay            String         @map("time_of_day")
+  timezone             String         @default("UTC")
+  repeatDays           String         @map("repeat_days") // JSON array [1,2,3,4,5]
+  disciplineMode       DisciplineMode @default(DISCIPLINE) @map("discipline_mode")
+  gracePeriodMinutes   Int            @default(2) @map("grace_period_minutes")
+  retryIntervalMinutes Int            @default(5) @map("retry_interval_minutes")
+  maxRetries           Int            @default(3) @map("max_retries")
+  isEnabled            Boolean        @default(true) @map("is_enabled")
+  createdAt            DateTime       @default(now()) @map("created_at")
+  updatedAt            DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task                 Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  missions             Mission[]
+
+  @@index([userId, isEnabled])
+  @@map("alarms")
+}
+
+model Mission {
+  id                String         @id @default(uuid())
+  userId            String         @map("user_id")
+  alarmId           String?        @map("alarm_id")
+  taskId            String         @map("task_id")
+  scheduledAt       DateTime       @map("scheduled_at")
+  startedAt         DateTime?      @map("started_at")
+  completedAt       DateTime?      @map("completed_at")
+  expiresAt         DateTime?      @map("expires_at")
+  status            MissionStatus  @default(SCHEDULED)
+  attemptCount      Int            @default(0) @map("attempt_count")
+  resistanceSeconds Int?           @map("resistance_seconds")
+  disciplineMode    DisciplineMode @default(DISCIPLINE) @map("discipline_mode")
+  xpAwarded         Int            @default(0) @map("xp_awarded")
+  idempotencyKey    String?        @unique @map("idempotency_key")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alarm             Alarm?         @relation(fields: [alarmId], references: [id], onDelete: SetNull)
+  task              Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  attempts          MissionAttempt[]
+  proofs            Proof[]
+  xpEvents          XpEvent[]
+
+  @@index([userId, scheduledAt])
+  @@index([userId, status])
+  @@map("missions")
+}
+
+model MissionAttempt {
+  id               String        @id @default(uuid())
+  missionId        String        @map("mission_id")
+  attemptIndex     Int           @map("attempt_index")
+  triggeredAt      DateTime      @map("triggered_at")
+  resolvedAt       DateTime?     @map("resolved_at")
+  status           AttemptStatus @default(IGNORED)
+  sirenVolumeLevel Int           @default(70) @map("siren_volume_level")
+
+  // Relations
+  mission          Mission       @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  proofs           Proof[]
+
+  @@index([missionId])
+  @@map("mission_attempts")
+}
+
+model Proof {
+  id                 String             @id @default(uuid())
+  missionId          String             @map("mission_id")
+  attemptId          String?            @map("attempt_id")
+  type               ProofType          @default(PHOTO)
+  storageKey         String             @map("storage_key")
+  mimeType           String             @map("mime_type")
+  fileSize           Int                @default(0) @map("file_size")
+  duration           Int?
+  checksum           String?
+  deviceTelemetry    String             @map("device_telemetry") // JSON: { lux, motion }
+  capturedAt         DateTime           @map("captured_at")
+  uploadedAt         DateTime           @default(now()) @map("uploaded_at")
+  verificationStatus VerificationStatus @default(PENDING) @map("verification_status")
+
+  // Relations
+  mission            Mission            @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  attempt            MissionAttempt?    @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+  verifications      Verification[]
+
+  @@index([missionId])
+  @@map("proofs")
+}
+
+model Verification {
+  id          String             @id @default(uuid())
+  proofId     String             @map("proof_id")
+  status      VerificationStatus @default(PENDING)
+  method      VerificationMethod @default(SYSTEM_RULE)
+  confidence  Float              @default(1.0)
+  rejectionReason String?        @map("rejection_reason")
+  metadata    String?
+  verifiedAt  DateTime           @default(now()) @map("verified_at")
+
+  proof       Proof              @relation(fields: [proofId], references: [id], onDelete: Cascade)
+
+  @@map("verifications")
+}
+
+model XpEvent {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  missionId String?  @map("mission_id")
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission   Mission? @relation(fields: [missionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("xp_events")
+}
+
+model Streak {
+  userId            String    @id @map("user_id")
+  current           Int       @default(0)
+  longest           Int       @default(0)
+  graceTokens       Int       @default(1) @map("grace_tokens")
+  lastCompletedDate DateTime? @map("last_completed_date")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("streaks")
+}
+
+model Device {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  platform         Platform @default(ANDROID)
+  deviceIdentifier String   @map("device_identifier")
+  pushToken        String?  @map("push_token")
+  appVersion       String   @default("0.1.0") @map("app_version")
+  timezone         String   @default("UTC")
+  lastSeenAt       DateTime @default(now()) @map("last_seen_at")
+  status           String   @default("ACTIVE")
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("devices")
+}
+
+model Notification {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  type         String
+  title        String
+  body         String
+  payload      String?
+  scheduledAt  DateTime @map("scheduled_at")
+  sentAt       DateTime? @map("sent_at")
+  readAt       DateTime? @map("read_at")
+  status       String   @default("PENDING")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("notifications")
+}

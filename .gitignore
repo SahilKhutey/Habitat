@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+
+# Production & Generated Build Artifacts (NEVER COMMIT TO GIT)
+build/
+dist/
+artifacts/
+*.apk
+*.aab
+*.ipa
+*.app
+*.dSYM.zip
+*.dSYM
+*.xcarchive
+*.zip
+*.tar.gz
+
+# Environment Secrets
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Databases & Local Media
+data/
+uploads/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Flutter / Dart Specific
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/.flutter-plugin-dependencies
+apps/mobile/android/local.properties
+apps/mobile/ios/Flutter/Generated.xcconfig
+apps/mobile/ios/Flutter/flutter_export_environment.sh
+
+# IDEs & System
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
