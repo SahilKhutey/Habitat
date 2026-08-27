@@ -187,7 +187,7 @@ export class VerificationTruthService {
     // 2. Complete Mission Atomically
     const completed = MissionsService.completeMission(params.missionId);
 
-    // 3. Record Verification Report
+    // 3. Record Verification Report & Verification Entity
     db.prepare(`
       INSERT INTO verification_reports (
         id, mission_id, proof_id, strategy_used, is_valid, confidence_score, rejection_reason, extracted_metrics, created_at
@@ -199,6 +199,24 @@ export class VerificationTruthService {
       params.strategy,
       params.confidence,
       JSON.stringify(params.metrics || {}),
+      now
+    );
+
+    db.prepare(`
+      INSERT INTO verifications (
+        id, proof_id, mission_id, attempt_id, user_id, status, decision, confidence,
+        verifier, verifier_version, reasons, checks, started_at, completed_at, created_at
+      ) VALUES (?, ?, ?, NULL, ?, 'COMPLETED', 'ACCEPT', ?, ?, 'v1.0', '[]', ?, ?, ?, ?)
+    `).run(
+      reportId,
+      params.proofId || 'none',
+      params.missionId,
+      completed?.userId || 'default-user',
+      params.confidence,
+      params.strategy,
+      JSON.stringify(params.metrics?.checks || []),
+      now,
+      now,
       now
     );
 
@@ -237,6 +255,7 @@ export class VerificationTruthService {
     const db = DatabaseService.getDb();
     const now = new Date().toISOString();
     const reportId = uuidv4();
+    const mission = MissionsService.getById(params.missionId);
 
     // 1. Update Proof to REJECTED
     if (params.proofId) {
@@ -250,7 +269,7 @@ export class VerificationTruthService {
     // 2. Set Mission Status to ACTIVE for Retry Cycle
     db.prepare("UPDATE missions SET status = 'ACTIVE', updated_at = ? WHERE id = ?").run(now, params.missionId);
 
-    // 3. Record Verification Report
+    // 3. Record Verification Report & Verification Entity
     db.prepare(`
       INSERT INTO verification_reports (
         id, mission_id, proof_id, strategy_used, is_valid, confidence_score, rejection_reason, extracted_metrics, created_at
@@ -262,6 +281,23 @@ export class VerificationTruthService {
       params.strategy,
       params.reason,
       JSON.stringify(params.metrics || {}),
+      now
+    );
+
+    db.prepare(`
+      INSERT INTO verifications (
+        id, proof_id, mission_id, attempt_id, user_id, status, decision, confidence,
+        verifier, verifier_version, reasons, checks, started_at, completed_at, created_at
+      ) VALUES (?, ?, ?, NULL, ?, 'COMPLETED', 'REJECT', 0.20, ?, 'v1.0', ?, '[]', ?, ?, ?)
+    `).run(
+      reportId,
+      params.proofId || 'none',
+      params.missionId,
+      mission?.userId || 'default-user',
+      params.strategy,
+      JSON.stringify([params.reason]),
+      now,
+      now,
       now
     );
 

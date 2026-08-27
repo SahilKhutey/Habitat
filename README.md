@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-185%2F185%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-196%2F196%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -63,8 +63,9 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 
 ### 5. Verification & Truth Engine (`backend/src/modules/verification/`)
 * **Anti-Cheat Heuristics**: Sensor timestamp freshness ($\le 180\text{s}$), ambient lux threshold ($\ge 25\text{ lux}$), optical entropy ($\ge 0.15$), and gallery injection blocking.
-* **Computer Vision Object Detection**: Dynamic label matching for starter templates (`bed`, `glass/water`, `toothbrush`, `sunlight/sky`, `book/pages`).
-* **Pose Estimation Repetition Counter**: Validates video motion cycles and repetition counts with full range of motion.
+* **Computer Vision Object Detection**: Modular verifiers for `OutdoorPhotoVerifier`, `BrushingPhotoVerifier`, and starter templates.
+* **Pose Estimation & Action Sequence State Machine**: Discrete `PushupStateMachine` (`TOP` $\to$ `DESCEND` $\to$ `BOTTOM` $\to$ `ASCEND` $\to$ `TOP`) with false-repetition protection.
+* **Tri-State Decision Engine**: Calibrated `ACCEPT` ($\ge 0.80$), `REVIEW` ($0.50 \to 0.80$), and `REJECT` ($\le 0.50$) thresholds.
 
 ### 6. Discipline Economics & Gamification (`backend/src/modules/gamification/`)
 * Append-only immutable XP Ledger (`xp_transactions`) with reason provenance (`MISSION_COMPLETED`, `FIRST_ATTEMPT_SPEED_BONUS`, `STREAK_MILESTONE_7D`).
@@ -100,7 +101,7 @@ discipline-app/
 │   │   │   ├── mesh/           # Multi-Device Synchronization Hub
 │   │   │   └── audio/          # Psychoacoustic Synthesizers
 │   │   └── db/                 # SQLite / PostgreSQL Connection & Seeds
-│   └── tests/                  # 30 Vitest Test Suites (185 Tests)
+│   └── tests/                  # 32 Vitest Test Suites (196 Tests)
 ├── packages/
 │   ├── domain/             # Pure Dart Domain Entities
 │   └── design_system/      # Atomic UI Tokens & Components
@@ -111,7 +112,7 @@ discipline-app/
 
 ---
 
-## Automated Test Suite: 185/185 Passing (100% Green)
+## Automated Test Suite: 196/196 Passing (100% Green)
 
 ```bash
 cd backend
@@ -119,9 +120,9 @@ npm test
 ```
 
 ```
- Test Files  30 passed (30)
-      Tests  185 passed (185)
-   Duration  2.69s
+ Test Files  32 passed (32)
+      Tests  196 passed (196)
+   Duration  2.99s
 ```
 
 | Subsystem | Tests | Status |
@@ -134,7 +135,9 @@ npm test
 | **Phase 7: Mission Lifecycle & Gamification** | 17 tests | $\checkmark$ PASS |
 | **Phase 8: Offline Sync & Multi-Device Mesh** | 6 tests | $\checkmark$ PASS |
 | **Phase 8: Camera & Direct S3 Upload Session Pipeline** | 7 tests | $\checkmark$ PASS |
-| **Phase 9: Verification & Truth Engine (Anti-Cheat, CV & Pose)** | 8 tests | $\checkmark$ PASS |
+| **Phase 9: Verification & Truth Engine (Master Tests)** | 8 tests | $\checkmark$ PASS |
+| **Phase 9: Push-Up Movement State Machine** | 4 tests | $\checkmark$ PASS |
+| **Phase 9: Task Verifiers & Tri-State Decision Engine** | 7 tests | $\checkmark$ PASS |
 | **Full Vertical Slice E2E Flow** | 20 tests | $\checkmark$ PASS |
 | **Extended Advanced Tier Systems** | 65 tests | $\checkmark$ PASS |
 

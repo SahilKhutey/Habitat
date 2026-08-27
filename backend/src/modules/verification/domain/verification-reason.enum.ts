@@ -1,0 +1,39 @@
+// Verification Reason Codes and Individual Checks
+
+export enum VerificationReason {
+  PERSON_NOT_DETECTED = 'PERSON_NOT_DETECTED',
+  FACE_NOT_VISIBLE = 'FACE_NOT_VISIBLE',
+  OBJECT_NOT_DETECTED = 'OBJECT_NOT_DETECTED',
+  OUTDOOR_SCENE_NOT_CONFIRMED = 'OUTDOOR_SCENE_NOT_CONFIRMED',
+  BODY_NOT_VISIBLE = 'BODY_NOT_VISIBLE',
+  VIDEO_TOO_SHORT = 'VIDEO_TOO_SHORT',
+  VIDEO_TOO_LONG = 'VIDEO_TOO_LONG',
+  INSUFFICIENT_MOTION = 'INSUFFICIENT_MOTION',
+  INSUFFICIENT_REPETITIONS = 'INSUFFICIENT_REPETITIONS',
+  INSUFFICIENT_RANGE_OF_MOTION = 'INSUFFICIENT_RANGE_OF_MOTION',
+  INVALID_ACTION_SEQUENCE = 'INVALID_ACTION_SEQUENCE',
+  INSUFFICIENT_CONFIDENCE = 'INSUFFICIENT_CONFIDENCE',
+  IMAGE_TOO_BLURRY = 'IMAGE_TOO_BLURRY',
+  TOO_DARK = 'TOO_DARK',
+  MULTIPLE_PEOPLE = 'MULTIPLE_PEOPLE',
+  PROOF_INVALID = 'PROOF_INVALID',
+  LENS_COVERED = 'LENS_COVERED',
+  PROOF_EXPIRED = 'PROOF_EXPIRED',
+  GALLERY_PROHIBITED = 'GALLERY_PROHIBITED'
+}
+
+export interface VerificationCheck {
+  name: string;
+  passed: boolean;
+  confidence: number;
+  details?: Record<string, any>;
+}
+
+export interface VerificationResultPayload {
+  decision: 'ACCEPT' | 'REJECT' | 'REVIEW';
+  confidence: number;
+  checks: VerificationCheck[];
+  reasons: VerificationReason[];
+  verifierVersion: string;
+  createdAt: Date;
+}
