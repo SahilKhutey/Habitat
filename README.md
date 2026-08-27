@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-226%2F226%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-236%2F236%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -77,16 +77,16 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 ### 7. Personal Discipline Planning & Routine Engine (`backend/src/modules/routines/`)
 * **Task Blueprint vs Schedule vs Routine**: Decoupled architecture with immutable `RoutineVersion` snapshots preserving past mission history.
 * **Recurrence & Conflict Engines**: Rolling 7–14 day horizon with idempotency keys (`${ruleId}:${dateStr}:${taskId}`) and overlap severity classifications (`LOW`, `MEDIUM`, `HIGH`).
-### 8. Intelligent Discipline Adaptation & Personalization Engine (`backend/src/modules/behavior/`, `backend/src/modules/adaptation/`, `backend/src/modules/recommendations/`)
-* **Multi-Signal Behavior Scoring**: Integrates completion rate, consistency, timeliness, proof reliability, and schedule stability into an orthogonal 0–100 score.
-* **Timing Optimization**: Hourly completion distributions identify strongest windows with a $\ge 5$ observation threshold to prevent overfitting.
-* **Routine Load & Overload Scoring**: Quantitative calculation ($0\text{--}100$) detects overburdened schedules and proactively suggests simplification.
-* **Recovery Protocol**: Temporary 3-day momentum recovery converting non-essential tasks to optional without penalizing streaks.
-* **Explainable Recommendations & Consent**: Ranks top 3 proposals with clear "Why?" explanations, user-controlled version creation, and 7-day cooldown on declined proposals.
+### 9. Health, Exercise & Wellness Discipline Layer (`backend/src/modules/health/`)
+* **Bounded Wellness Architecture**: Exercise, hydration, and sleep operate as a decoupled domain without destabilizing the core alarm/task state machines.
+* **Discipline-to-Wellness Bridge**: Verified physical missions automatically register `ExerciseSession` and `HydrationEntry` records without double logging.
+* **Apple Health & Health Connect Normalization**: Ingests provider payloads with unit normalization (meters, seconds, ml) and `(source, external_id)` idempotency.
+* **Discipline + Wellness Correlation Engine**: Computes behavioral associations with a strict $\ge 14$-day sample threshold.
+* **Granular Privacy & Data Deletion**: Users can independently delete exercise, sleep, or hydration datasets without deleting discipline accounts or XP history.
 
 ---
 
-## Automated Test Suite: 226/226 Passing (100% Green)
+## Automated Test Suite: 236/236 Passing (100% Green)
 
 ```bash
 cd backend
@@ -94,9 +94,9 @@ npm test
 ```
 
 ```
- Test Files  35 passed (35)
-      Tests  226 passed (226)
-   Duration  3.30s
+ Test Files  36 passed (36)
+      Tests  236 passed (236)
+   Duration  3.59s
 ```
 
 | Subsystem | Tests | Status |
@@ -115,6 +115,7 @@ npm test
 | **Phase 10: Gamification, Discipline Progress & Engagement Engine** | 10 tests | $\checkmark$ PASS |
 | **Phase 11: Personal Discipline Planning & Routine Engine** | 10 tests | $\checkmark$ PASS |
 | **Phase 12: Intelligent Adaptation & Personalization Engine** | 10 tests | $\checkmark$ PASS |
+| **Phase 13: Health, Exercise & Wellness Discipline Layer** | 10 tests | $\checkmark$ PASS |
 | **Full Vertical Slice E2E Flow** | 20 tests | $\checkmark$ PASS |
 | **Extended Advanced Tier Systems** | 65 tests | $\checkmark$ PASS |
 

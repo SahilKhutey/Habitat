@@ -332,13 +332,20 @@ export class DatabaseService {
       CREATE TABLE IF NOT EXISTS sleep_sessions (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL,
-        start_time TEXT NOT NULL,
-        end_time TEXT NOT NULL,
-        duration_minutes INTEGER NOT NULL,
-        deep_sleep_minutes INTEGER NOT NULL,
-        rem_sleep_minutes INTEGER NOT NULL,
+        start_time TEXT,
+        end_time TEXT,
+        started_at TEXT,
+        ended_at TEXT,
+        duration_minutes INTEGER DEFAULT 0,
+        duration_sec INTEGER DEFAULT 0,
+        deep_sleep_minutes INTEGER DEFAULT 0,
+        rem_sleep_minutes INTEGER DEFAULT 0,
         hrv_score INTEGER,
-        recovery_score INTEGER NOT NULL,
+        recovery_score INTEGER DEFAULT 80,
+        source TEXT DEFAULT 'MANUAL',
+        quality INTEGER,
+        notes TEXT,
+        external_id TEXT,
         created_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
@@ -625,6 +632,87 @@ export class DatabaseService {
         expires_at TEXT,
         resolved_at TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS exercise_templates (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT,
+        unit TEXT NOT NULL DEFAULT 'REPETITIONS',
+        difficulty TEXT DEFAULT 'BALANCED',
+        active INTEGER DEFAULT 1,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS exercise_sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        exercise_id TEXT NOT NULL,
+        started_at TEXT NOT NULL,
+        ended_at TEXT,
+        duration_sec INTEGER DEFAULT 0,
+        quantity REAL DEFAULT 0,
+        unit TEXT DEFAULT 'REPETITIONS',
+        sets INTEGER DEFAULT 1,
+        notes TEXT,
+        source TEXT DEFAULT 'APP',
+        external_id TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS hydration_entries (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        amount_ml INTEGER NOT NULL,
+        timestamp TEXT NOT NULL,
+        source TEXT DEFAULT 'APP',
+        external_id TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS wellness_goals (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        target REAL NOT NULL,
+        unit TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        status TEXT NOT NULL DEFAULT 'ACTIVE',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS wellness_metrics (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        value REAL NOT NULL,
+        unit TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        source TEXT NOT NULL,
+        external_id TEXT,
+        metadata TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS health_provider_connections (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        provider TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'DISCONNECTED',
+        permissions TEXT,
+        last_sync_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, provider)
       );
 
       CREATE INDEX IF NOT EXISTS idx_behavior_events ON behavior_events(user_id, timestamp);
