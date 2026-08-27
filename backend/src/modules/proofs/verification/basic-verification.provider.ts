@@ -85,35 +85,25 @@ export class BasicVerificationProvider {
       };
     }
 
-    // 3. Video Duration Checks
-    if (ctx.mimeType.includes('video')) {
-      const minDuration = ctx.rules.minDurationSeconds || 5;
-      const maxDuration = ctx.rules.maxDurationSeconds || 60;
-      const duration = ctx.durationSeconds || 0;
-
-      if (duration < minDuration) {
-        return {
-          status: 'REJECTED',
-          reasonCode: 'VIDEO_TOO_SHORT',
-          reasonMessage: `Video duration is ${duration}s. Minimum required is ${minDuration}s.`,
-          confidence: 1.0,
-          checks: { ...checks, durationValid: false }
-        };
-      }
-
-      if (duration > maxDuration) {
-        return {
-          status: 'REJECTED',
-          reasonCode: 'VIDEO_TOO_LONG',
-          reasonMessage: `Video duration is ${duration}s. Maximum allowed is ${maxDuration}s.`,
-          confidence: 1.0,
-          checks: { ...checks, durationValid: false }
-        };
+    // 3. Stale Capture Check (> 3 minutes)
+    if (ctx.capturedAt) {
+      const captureEpoch = new Date(ctx.capturedAt).getTime();
+      if (!isNaN(captureEpoch)) {
+        const ageMinutes = (Date.now() - captureEpoch) / (1000 * 60);
+        if (ageMinutes > 3.0) {
+          return {
+            status: 'REJECTED',
+            reasonCode: 'PROOF_EXPIRED',
+            reasonMessage: 'Proof capture is stale (> 3 minutes old). Live action required.',
+            confidence: 1.0,
+            checks: { ...checks, fileValid: false }
+          };
+        }
       }
     }
 
     // 4. Illumination Check (if applicable)
-    if (ctx.rules.minLuminanceLux && ctx.telemetry?.ambientLux !== undefined) {
+    if (ctx.rules.minLuminanceLux !== undefined && ctx.telemetry?.ambientLux !== undefined) {
       if (ctx.telemetry.ambientLux < ctx.rules.minLuminanceLux) {
         return {
           status: 'REJECTED',
@@ -126,7 +116,7 @@ export class BasicVerificationProvider {
     }
 
     // 5. Repetition Check (if applicable)
-    if (ctx.rules.minRepetitions && ctx.telemetry?.motionCycles !== undefined) {
+    if (ctx.rules.minRepetitions !== undefined && ctx.telemetry?.motionCycles !== undefined) {
       if (ctx.telemetry.motionCycles < ctx.rules.minRepetitions) {
         return {
           status: 'REJECTED',
@@ -134,6 +124,32 @@ export class BasicVerificationProvider {
           reasonMessage: `Insufficient repetitions detected (${ctx.telemetry.motionCycles}/${ctx.rules.minRepetitions} reps completed). Maintain full range of motion.`,
           confidence: 1.0,
           checks: { ...checks, repetitionsValid: false }
+        };
+      }
+    }
+
+    // 6. Video Duration Checks
+    if (ctx.durationSeconds !== undefined && ctx.mimeType.includes('video')) {
+      const minDuration = ctx.rules.minDurationSeconds || 5;
+      const maxDuration = ctx.rules.maxDurationSeconds || 60;
+
+      if (ctx.durationSeconds < minDuration) {
+        return {
+          status: 'REJECTED',
+          reasonCode: 'VIDEO_TOO_SHORT',
+          reasonMessage: `Video duration is ${ctx.durationSeconds}s. Minimum required is ${minDuration}s.`,
+          confidence: 1.0,
+          checks: { ...checks, durationValid: false }
+        };
+      }
+
+      if (ctx.durationSeconds > maxDuration) {
+        return {
+          status: 'REJECTED',
+          reasonCode: 'VIDEO_TOO_LONG',
+          reasonMessage: `Video duration is ${ctx.durationSeconds}s. Maximum allowed is ${maxDuration}s.`,
+          confidence: 1.0,
+          checks: { ...checks, durationValid: false }
         };
       }
     }

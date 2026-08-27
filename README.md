@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-170%2F170%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-177%2F177%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -59,8 +59,7 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 ### 4. Mission Execution & Proof Engine (`backend/src/modules/mission/`, `backend/src/modules/proofs/`)
 * Strict `MissionStateMachine`: $\text{SCHEDULED} \to \text{ACTIVE} \to \text{IN\_PROGRESS} \to \text{VERIFYING} \to \text{COMPLETED} \lor \text{RETRY}$.
 * `ProofStateMachine`: $\text{CAPTURING} \to \text{CAPTURED} \to \text{UPLOAD\_PENDING} \to \text{UPLOADING} \to \text{UPLOADED} \to \text{VALIDATING} \to \text{ACCEPTED} \lor \text{REJECTED}$.
-* `BasicVerificationProvider` enforcing format validity, minimum file size, video duration constraints ($\ge 10\text{s}$), and scene illumination.
-* Direct S3 upload sessions via presigned URLs.
+* Direct S3 upload sessions via presigned URLs and `ProofRules` limits enforcement.
 
 ### 5. Discipline Economics & Gamification (`backend/src/modules/gamification/`)
 * Append-only immutable XP Ledger (`xp_transactions`) with reason provenance (`MISSION_COMPLETED`, `FIRST_ATTEMPT_SPEED_BONUS`, `STREAK_MILESTONE_7D`).
@@ -89,13 +88,13 @@ discipline-app/
 │   │   │   ├── tasks/          # Task & Template Engine
 │   │   │   ├── alarms/         # Recurrence & Scheduling
 │   │   │   ├── mission/        # Mission Lifecycle & State Machine
-│   │   │   ├── proofs/         # Proof Capture & Verification
+│   │   │   ├── proofs/         # Proof Capture & S3 Direct Uploads
 │   │   │   ├── gamification/   # Immutable XP Ledger & Badges
 │   │   │   ├── sync/           # Offline Queue & Conflict Resolver
 │   │   │   ├── mesh/           # Multi-Device Synchronization Hub
 │   │   │   └── audio/          # Psychoacoustic Synthesizers
 │   │   └── db/                 # SQLite / PostgreSQL Connection & Seeds
-│   └── tests/                  # 28 Vitest Test Suites (170 Tests)
+│   └── tests/                  # 29 Vitest Test Suites (177 Tests)
 ├── packages/
 │   ├── domain/             # Pure Dart Domain Entities
 │   └── design_system/      # Atomic UI Tokens & Components
@@ -106,7 +105,7 @@ discipline-app/
 
 ---
 
-## Automated Test Suite: 170/170 Passing (100% Green)
+## Automated Test Suite: 177/177 Passing (100% Green)
 
 ```bash
 cd backend
@@ -114,9 +113,9 @@ npm test
 ```
 
 ```
- Test Files  28 passed (28)
-      Tests  170 passed (170)
-   Duration  2.75s
+ Test Files  29 passed (29)
+      Tests  177 passed (177)
+   Duration  2.82s
 ```
 
 | Subsystem | Tests | Status |
@@ -128,6 +127,7 @@ npm test
 | **Phase 6: Multi-Modal Proofs & State Machine** | 16 tests | $\checkmark$ PASS |
 | **Phase 7: Mission Lifecycle & Gamification** | 17 tests | $\checkmark$ PASS |
 | **Phase 8: Offline Sync & Multi-Device Mesh** | 6 tests | $\checkmark$ PASS |
+| **Phase 8: Camera & Direct S3 Upload Session Pipeline** | 7 tests | $\checkmark$ PASS |
 | **Full Vertical Slice E2E Flow** | 20 tests | $\checkmark$ PASS |
 | **Extended Advanced Tier Systems** | 65 tests | $\checkmark$ PASS |
 

@@ -2,6 +2,7 @@
 import { Router, Request, Response } from 'express';
 import { DatabaseService } from '../../db/connection';
 import { v4 as uuidv4 } from 'uuid';
+import { ProofsService } from '../proofs/proofs.controller';
 import { GamificationService } from '../gamification/gamification.controller';
 
 export class MissionsService {
@@ -278,6 +279,26 @@ missionsController.post('/:id/start', (req: Request, res: Response) => {
   try {
     const mission = MissionsService.startMission(String(req.params.id));
     res.json({ success: true, data: mission });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/missions/:id/submit
+missionsController.post('/:id/submit', (req: Request, res: Response) => {
+  try {
+    const { proofId, attemptId, userId } = req.body;
+    if (proofId) {
+      const result = ProofsService.submitProofToMission({
+        missionId: String(req.params.id),
+        proofId,
+        attemptId,
+        userId
+      });
+      res.json({ success: true, data: result });
+    } else {
+      res.json({ success: true, data: { missionId: String(req.params.id), status: 'VERIFYING' } });
+    }
   } catch (e: any) {
     res.status(400).json({ success: false, error: e.message });
   }
