@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-177%2F177%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-185%2F185%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -41,7 +41,7 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 
 ---
 
-## Core Engineering Engines (Phases 1–8)
+## Core Engineering Engines (Phases 1–9)
 
 ### 1. Design System & UX Foundation (`packages/design_system/`)
 * Tactical luxury aesthetic with High-Contrast OLED Dark (`#0D0E11`) & Crisp Paper Light (`#F8F9FA`) themes.
@@ -61,13 +61,18 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 * `ProofStateMachine`: $\text{CAPTURING} \to \text{CAPTURED} \to \text{UPLOAD\_PENDING} \to \text{UPLOADING} \to \text{UPLOADED} \to \text{VALIDATING} \to \text{ACCEPTED} \lor \text{REJECTED}$.
 * Direct S3 upload sessions via presigned URLs and `ProofRules` limits enforcement.
 
-### 5. Discipline Economics & Gamification (`backend/src/modules/gamification/`)
+### 5. Verification & Truth Engine (`backend/src/modules/verification/`)
+* **Anti-Cheat Heuristics**: Sensor timestamp freshness ($\le 180\text{s}$), ambient lux threshold ($\ge 25\text{ lux}$), optical entropy ($\ge 0.15$), and gallery injection blocking.
+* **Computer Vision Object Detection**: Dynamic label matching for starter templates (`bed`, `glass/water`, `toothbrush`, `sunlight/sky`, `book/pages`).
+* **Pose Estimation Repetition Counter**: Validates video motion cycles and repetition counts with full range of motion.
+
+### 6. Discipline Economics & Gamification (`backend/src/modules/gamification/`)
 * Append-only immutable XP Ledger (`xp_transactions`) with reason provenance (`MISSION_COMPLETED`, `FIRST_ATTEMPT_SPEED_BONUS`, `STREAK_MILESTONE_7D`).
 * Quadratic level curve: $\text{Level Threshold} = 50 \cdot L(L-1)$.
 * **Grace Vault Defense**: Automatically consumes defensive shields on missed days to protect streaks (earning 1 token every 14 days, max 3).
 * 0–100 Daily Discipline Score formulation: $100 \times (0.5 \cdot \text{OnTime} + 0.3 \cdot \text{FirstAttempt} + 0.2 \cdot \text{SpeedBonus})$.
 
-### 6. Offline Sync & Multi-Device Coordination (`backend/src/modules/sync/`, `backend/src/modules/mesh/`)
+### 7. Offline Sync & Multi-Device Coordination (`backend/src/modules/sync/`, `backend/src/modules/mesh/`)
 * `POST /api/v1/sync/batch` ingesting offline event queues with clock drift sanitization window ($\le 24\text{h}$).
 * Last-Write-Wins (LWW) conflict resolver and idempotency replay protection.
 * Multi-device mesh disarm broadcasting: Completing a mission on your phone automatically silences your bedside tablet and web dashboard.
@@ -89,12 +94,13 @@ discipline-app/
 │   │   │   ├── alarms/         # Recurrence & Scheduling
 │   │   │   ├── mission/        # Mission Lifecycle & State Machine
 │   │   │   ├── proofs/         # Proof Capture & S3 Direct Uploads
+│   │   │   ├── verification/   # Verification & Truth Engine (CV & Pose)
 │   │   │   ├── gamification/   # Immutable XP Ledger & Badges
 │   │   │   ├── sync/           # Offline Queue & Conflict Resolver
 │   │   │   ├── mesh/           # Multi-Device Synchronization Hub
 │   │   │   └── audio/          # Psychoacoustic Synthesizers
 │   │   └── db/                 # SQLite / PostgreSQL Connection & Seeds
-│   └── tests/                  # 29 Vitest Test Suites (177 Tests)
+│   └── tests/                  # 30 Vitest Test Suites (185 Tests)
 ├── packages/
 │   ├── domain/             # Pure Dart Domain Entities
 │   └── design_system/      # Atomic UI Tokens & Components
@@ -105,7 +111,7 @@ discipline-app/
 
 ---
 
-## Automated Test Suite: 177/177 Passing (100% Green)
+## Automated Test Suite: 185/185 Passing (100% Green)
 
 ```bash
 cd backend
@@ -113,9 +119,9 @@ npm test
 ```
 
 ```
- Test Files  29 passed (29)
-      Tests  177 passed (177)
-   Duration  2.82s
+ Test Files  30 passed (30)
+      Tests  185 passed (185)
+   Duration  2.69s
 ```
 
 | Subsystem | Tests | Status |
@@ -128,6 +134,7 @@ npm test
 | **Phase 7: Mission Lifecycle & Gamification** | 17 tests | $\checkmark$ PASS |
 | **Phase 8: Offline Sync & Multi-Device Mesh** | 6 tests | $\checkmark$ PASS |
 | **Phase 8: Camera & Direct S3 Upload Session Pipeline** | 7 tests | $\checkmark$ PASS |
+| **Phase 9: Verification & Truth Engine (Anti-Cheat, CV & Pose)** | 8 tests | $\checkmark$ PASS |
 | **Full Vertical Slice E2E Flow** | 20 tests | $\checkmark$ PASS |
 | **Extended Advanced Tier Systems** | 65 tests | $\checkmark$ PASS |
 

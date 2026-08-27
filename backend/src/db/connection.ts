@@ -416,6 +416,19 @@ export class DatabaseService {
         FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE
       );
 
+      CREATE TABLE IF NOT EXISTS verification_reports (
+        id TEXT PRIMARY KEY,
+        mission_id TEXT NOT NULL,
+        proof_id TEXT,
+        strategy_used TEXT NOT NULL,
+        is_valid INTEGER NOT NULL,
+        confidence_score REAL NOT NULL,
+        rejection_reason TEXT,
+        extracted_metrics TEXT NOT NULL DEFAULT '{}',
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE
+      );
+
       CREATE TABLE IF NOT EXISTS xp_transactions (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL,

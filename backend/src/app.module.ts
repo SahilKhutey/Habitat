@@ -19,6 +19,7 @@ import { anchorsController } from './modules/anchors/anchors.controller';
 import { audioController } from './modules/audio/audio.controller';
 import { lockdownController } from './modules/lockdown/lockdown.controller';
 import { meshController } from './modules/mesh/mesh.controller';
+import { verificationController } from './modules/verification/verification.controller';
 
 export const appRouter = Router();
 
@@ -30,7 +31,9 @@ appRouter.use('/alarms', alarmsController);
 appRouter.use('/alarm-schedules', schedulingController);
 appRouter.use('/missions', missionsController);
 appRouter.use('/missions', proofsController);
+appRouter.use('/missions', verificationController);
 appRouter.use('/proofs', proofsController);
+appRouter.use('/verification', verificationController);
 appRouter.use('/gamification', gamificationController);
 appRouter.use('/sync', syncController);
 appRouter.use('/routines', routinesController);
