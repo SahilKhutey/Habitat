@@ -454,6 +454,9 @@ export class DatabaseService {
         mission_id TEXT,
         amount INTEGER NOT NULL,
         reason TEXT NOT NULL,
+        source_type TEXT DEFAULT 'MISSION_COMPLETION',
+        source_id TEXT,
+        idempotency_key TEXT,
         created_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
@@ -464,8 +467,54 @@ export class DatabaseService {
         longest_streak INTEGER DEFAULT 0,
         grace_tokens INTEGER DEFAULT 1,
         last_completed_date TEXT,
+        recovery_used INTEGER DEFAULT 0,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS user_gamification (
+        user_id TEXT PRIMARY KEY,
+        total_xp INTEGER DEFAULT 0,
+        level INTEGER DEFAULT 1,
+        discipline_score REAL DEFAULT 0.0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS achievements (
+        id TEXT PRIMARY KEY,
+        code TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        requirement TEXT NOT NULL,
+        xp_reward INTEGER DEFAULT 0,
+        active INTEGER DEFAULT 1
+      );
+
+      CREATE TABLE IF NOT EXISTS user_achievements (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        achievement_id TEXT NOT NULL,
+        unlocked_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON DELETE CASCADE,
+        UNIQUE(user_id, achievement_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS daily_discipline_stats (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        date TEXT NOT NULL,
+        tasks_assigned INTEGER DEFAULT 0,
+        tasks_completed INTEGER DEFAULT 0,
+        tasks_failed INTEGER DEFAULT 0,
+        xp_earned INTEGER DEFAULT 0,
+        discipline_score REAL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, date)
       );
 
       CREATE INDEX IF NOT EXISTS idx_task_templates ON task_templates(is_active, sort_order);

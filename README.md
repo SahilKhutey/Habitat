@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-196%2F196%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-206%2F206%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -41,7 +41,7 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 
 ---
 
-## Core Engineering Engines (Phases 1–9)
+## Core Engineering Engines (Phases 1–10)
 
 ### 1. Design System & UX Foundation (`packages/design_system/`)
 * Tactical luxury aesthetic with High-Contrast OLED Dark (`#0D0E11`) & Crisp Paper Light (`#F8F9FA`) themes.
@@ -67,11 +67,13 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 * **Pose Estimation & Action Sequence State Machine**: Discrete `PushupStateMachine` (`TOP` $\to$ `DESCEND` $\to$ `BOTTOM` $\to$ `ASCEND` $\to$ `TOP`) with false-repetition protection.
 * **Tri-State Decision Engine**: Calibrated `ACCEPT` ($\ge 0.80$), `REVIEW` ($0.50 \to 0.80$), and `REJECT` ($\le 0.50$) thresholds.
 
-### 6. Discipline Economics & Gamification (`backend/src/modules/gamification/`)
-* Append-only immutable XP Ledger (`xp_transactions`) with reason provenance (`MISSION_COMPLETED`, `FIRST_ATTEMPT_SPEED_BONUS`, `STREAK_MILESTONE_7D`).
-* Quadratic level curve: $\text{Level Threshold} = 50 \cdot L(L-1)$.
-* **Grace Vault Defense**: Automatically consumes defensive shields on missed days to protect streaks (earning 1 token every 14 days, max 3).
-* 0–100 Daily Discipline Score formulation: $100 \times (0.5 \cdot \text{OnTime} + 0.3 \cdot \text{FirstAttempt} + 0.2 \cdot \text{SpeedBonus})$.
+### 6. Gamification, Discipline Progress & Engagement Engine (`backend/src/modules/gamification/`)
+* **Immutable XP Ledger (`xp_transactions`)**: Strictly append-only accounting with unique idempotency keys (`MISSION_COMPLETED:{id}`) preventing double XP exploits.
+* **Quadratic Level Curve**: $\text{Level Threshold} = 50 \cdot L(L-1)$ with discrete `LEVEL_UP` event dispatching.
+* **Timezone-Aware Streak Engine**: Local date boundary evaluations and Grace Vault defense tokens (earning 1 token per 14 streak days, max 3).
+* **Slow-Moving Discipline Score**: Formulated as $0.40 \cdot \text{Completion} + 0.25 \cdot \text{Consistency} + 0.20 \cdot \text{Difficulty} + 0.15 \cdot \text{Streak}$ over rolling 7/30/90-day windows.
+* **Declarative Achievement Engine**: Canonical achievements (`FIRST_STEP`, `FIRST_7_DAY_STREAK`, `FIRST_30_DAY_STREAK`, `TASK_100`, `EARLY_RISER`).
+* **Precomputed Summaries**: Instantaneous daily, weekly, and monthly statistical aggregations.
 
 ### 7. Offline Sync & Multi-Device Coordination (`backend/src/modules/sync/`, `backend/src/modules/mesh/`)
 * `POST /api/v1/sync/batch` ingesting offline event queues with clock drift sanitization window ($\le 24\text{h}$).
@@ -96,23 +98,23 @@ discipline-app/
 │   │   │   ├── mission/        # Mission Lifecycle & State Machine
 │   │   │   ├── proofs/         # Proof Capture & S3 Direct Uploads
 │   │   │   ├── verification/   # Verification & Truth Engine (CV & Pose)
-│   │   │   ├── gamification/   # Immutable XP Ledger & Badges
+│   │   │   ├── gamification/   # Immutable XP Ledger, Streaks, Levels, Scores
 │   │   │   ├── sync/           # Offline Queue & Conflict Resolver
 │   │   │   ├── mesh/           # Multi-Device Synchronization Hub
 │   │   │   └── audio/          # Psychoacoustic Synthesizers
 │   │   └── db/                 # SQLite / PostgreSQL Connection & Seeds
-│   └── tests/                  # 32 Vitest Test Suites (196 Tests)
+│   └── tests/                  # 33 Vitest Test Suites (206 Tests)
 ├── packages/
 │   ├── domain/             # Pure Dart Domain Entities
 │   └── design_system/      # Atomic UI Tokens & Components
-├── docs/                   # ADRs, API Reference, Specifications
+├── docs/                   # Architecture, API Specifications, Domain Rules
 ├── infrastructure/         # Docker Compose (Postgres, Redis, MinIO)
 └── scripts/                # Development & Build Automation Scripts
 ```
 
 ---
 
-## Automated Test Suite: 196/196 Passing (100% Green)
+## Automated Test Suite: 206/206 Passing (100% Green)
 
 ```bash
 cd backend
@@ -120,9 +122,9 @@ npm test
 ```
 
 ```
- Test Files  32 passed (32)
-      Tests  196 passed (196)
-   Duration  2.99s
+ Test Files  33 passed (33)
+      Tests  206 passed (206)
+   Duration  2.84s
 ```
 
 | Subsystem | Tests | Status |
@@ -138,6 +140,7 @@ npm test
 | **Phase 9: Verification & Truth Engine (Master Tests)** | 8 tests | $\checkmark$ PASS |
 | **Phase 9: Push-Up Movement State Machine** | 4 tests | $\checkmark$ PASS |
 | **Phase 9: Task Verifiers & Tri-State Decision Engine** | 7 tests | $\checkmark$ PASS |
+| **Phase 10: Gamification, Discipline Progress & Engagement Engine** | 10 tests | $\checkmark$ PASS |
 | **Full Vertical Slice E2E Flow** | 20 tests | $\checkmark$ PASS |
 | **Extended Advanced Tier Systems** | 65 tests | $\checkmark$ PASS |
 
