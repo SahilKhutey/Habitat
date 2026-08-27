@@ -579,6 +579,57 @@ export class DatabaseService {
         UNIQUE(user_id, date)
       );
 
+      CREATE TABLE IF NOT EXISTS behavior_events (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        mission_id TEXT,
+        task_id TEXT,
+        routine_id TEXT,
+        timestamp TEXT NOT NULL,
+        metadata TEXT,
+        idempotency_key TEXT UNIQUE,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS task_performances (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        task_template_id TEXT NOT NULL,
+        period_start TEXT NOT NULL,
+        period_end TEXT NOT NULL,
+        attempts INTEGER DEFAULT 0,
+        completions INTEGER DEFAULT 0,
+        misses INTEGER DEFAULT 0,
+        average_delay_sec INTEGER DEFAULT 0,
+        average_duration_sec INTEGER DEFAULT 0,
+        success_rate REAL DEFAULT 0.0,
+        difficulty_score REAL DEFAULT 0.0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS recommendations (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        priority TEXT NOT NULL DEFAULT 'MEDIUM',
+        confidence REAL NOT NULL DEFAULT 0.8,
+        title TEXT NOT NULL,
+        explanation TEXT NOT NULL,
+        payload TEXT,
+        status TEXT NOT NULL DEFAULT 'PENDING',
+        created_at TEXT NOT NULL,
+        expires_at TEXT,
+        resolved_at TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_behavior_events ON behavior_events(user_id, timestamp);
+      CREATE INDEX IF NOT EXISTS idx_behavior_type ON behavior_events(user_id, type);
+      CREATE INDEX IF NOT EXISTS idx_recommendations_user ON recommendations(user_id, status);
       CREATE INDEX IF NOT EXISTS idx_task_templates ON task_templates(is_active, sort_order);
       CREATE INDEX IF NOT EXISTS idx_tasks_user_status ON tasks(user_id, status);
       CREATE INDEX IF NOT EXISTS idx_tasks_category ON tasks(category, difficulty);
