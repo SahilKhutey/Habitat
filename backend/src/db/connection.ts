@@ -194,22 +194,33 @@ export class DatabaseService {
       CREATE TABLE IF NOT EXISTS routines (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        trigger_time TEXT NOT NULL,
-        repeat_days TEXT NOT NULL,
+        name TEXT DEFAULT '',
+        title TEXT,
+        description TEXT,
+        type TEXT NOT NULL DEFAULT 'MORNING',
+        status TEXT NOT NULL DEFAULT 'ACTIVE',
+        version INTEGER NOT NULL DEFAULT 1,
+        trigger_time TEXT,
+        repeat_days TEXT,
         is_enabled INTEGER DEFAULT 1,
+        pause_until TEXT,
+        minimum_required_tasks INTEGER DEFAULT 1,
         created_at TEXT NOT NULL,
+        updated_at TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS routine_tasks (
         id TEXT PRIMARY KEY,
         routine_id TEXT NOT NULL,
-        task_id TEXT NOT NULL,
-        step_order INTEGER NOT NULL,
-        FOREIGN KEY (routine_id) REFERENCES routines(id) ON DELETE CASCADE,
-        FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+        task_id TEXT,
+        task_template_id TEXT,
+        sequence INTEGER NOT NULL DEFAULT 1,
+        step_order INTEGER DEFAULT 1,
+        offset_minutes INTEGER DEFAULT 0,
+        required INTEGER DEFAULT 1,
+        created_at TEXT,
+        FOREIGN KEY (routine_id) REFERENCES routines(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS squads (
@@ -360,6 +371,9 @@ export class DatabaseService {
         next_retry_at TEXT,
         resistance_seconds INTEGER,
         discipline_mode TEXT NOT NULL DEFAULT 'DISCIPLINE',
+        routine_id TEXT,
+        source TEXT DEFAULT 'MANUAL',
+        routine_version INTEGER,
         idempotency_key TEXT UNIQUE,
         created_at TEXT NOT NULL,
         updated_at TEXT,
@@ -513,6 +527,54 @@ export class DatabaseService {
         discipline_score REAL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, date)
+      );
+
+      CREATE TABLE IF NOT EXISTS routine_versions (
+        id TEXT PRIMARY KEY,
+        routine_id TEXT NOT NULL,
+        version INTEGER NOT NULL,
+        configuration TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (routine_id) REFERENCES routines(id) ON DELETE CASCADE,
+        UNIQUE(routine_id, version)
+      );
+
+      CREATE TABLE IF NOT EXISTS schedule_rules (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        routine_id TEXT,
+        task_template_id TEXT,
+        schedule_type TEXT NOT NULL,
+        time_of_day TEXT,
+        schedule_window_start TEXT,
+        schedule_window_end TEXT,
+        days_of_week TEXT,
+        start_date TEXT,
+        end_date TEXT,
+        timezone TEXT NOT NULL DEFAULT 'UTC',
+        enabled INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS task_dependencies (
+        id TEXT PRIMARY KEY,
+        routine_id TEXT,
+        prerequisite_id TEXT NOT NULL,
+        dependent_id TEXT NOT NULL,
+        dependency_type TEXT NOT NULL DEFAULT 'HARD',
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS rest_days (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        date TEXT NOT NULL,
+        reason TEXT,
+        created_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         UNIQUE(user_id, date)
       );

@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-206%2F206%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-216%2F216%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -41,7 +41,7 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 
 ---
 
-## Core Engineering Engines (Phases 1–10)
+## Core Engineering Engines (Phases 1–11)
 
 ### 1. Design System & UX Foundation (`packages/design_system/`)
 * Tactical luxury aesthetic with High-Contrast OLED Dark (`#0D0E11`) & Crisp Paper Light (`#F8F9FA`) themes.
@@ -73,48 +73,17 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
 * **Timezone-Aware Streak Engine**: Local date boundary evaluations and Grace Vault defense tokens (earning 1 token per 14 streak days, max 3).
 * **Slow-Moving Discipline Score**: Formulated as $0.40 \cdot \text{Completion} + 0.25 \cdot \text{Consistency} + 0.20 \cdot \text{Difficulty} + 0.15 \cdot \text{Streak}$ over rolling 7/30/90-day windows.
 * **Declarative Achievement Engine**: Canonical achievements (`FIRST_STEP`, `FIRST_7_DAY_STREAK`, `FIRST_30_DAY_STREAK`, `TASK_100`, `EARLY_RISER`).
-* **Precomputed Summaries**: Instantaneous daily, weekly, and monthly statistical aggregations.
 
-### 7. Offline Sync & Multi-Device Coordination (`backend/src/modules/sync/`, `backend/src/modules/mesh/`)
-* `POST /api/v1/sync/batch` ingesting offline event queues with clock drift sanitization window ($\le 24\text{h}$).
-* Last-Write-Wins (LWW) conflict resolver and idempotency replay protection.
-* Multi-device mesh disarm broadcasting: Completing a mission on your phone automatically silences your bedside tablet and web dashboard.
-
----
-
-## Directory Topology
-
-```
-discipline-app/
-├── apps/
-│   ├── mobile/             # Flutter (iOS, Android)
-│   └── web/                # Flutter Web / React Dashboard
-├── backend/
-│   ├── src/
-│   │   ├── modules/
-│   │   │   ├── auth/           # Authentication & Tokens
-│   │   │   ├── tasks/          # Task & Template Engine
-│   │   │   ├── alarms/         # Recurrence & Scheduling
-│   │   │   ├── mission/        # Mission Lifecycle & State Machine
-│   │   │   ├── proofs/         # Proof Capture & S3 Direct Uploads
-│   │   │   ├── verification/   # Verification & Truth Engine (CV & Pose)
-│   │   │   ├── gamification/   # Immutable XP Ledger, Streaks, Levels, Scores
-│   │   │   ├── sync/           # Offline Queue & Conflict Resolver
-│   │   │   ├── mesh/           # Multi-Device Synchronization Hub
-│   │   │   └── audio/          # Psychoacoustic Synthesizers
-│   │   └── db/                 # SQLite / PostgreSQL Connection & Seeds
-│   └── tests/                  # 33 Vitest Test Suites (206 Tests)
-├── packages/
-│   ├── domain/             # Pure Dart Domain Entities
-│   └── design_system/      # Atomic UI Tokens & Components
-├── docs/                   # Architecture, API Specifications, Domain Rules
-├── infrastructure/         # Docker Compose (Postgres, Redis, MinIO)
-└── scripts/                # Development & Build Automation Scripts
-```
+### 7. Personal Discipline Planning & Routine Engine (`backend/src/modules/routines/`)
+* **Task Blueprint vs Schedule vs Routine**: Decoupled architecture with immutable `RoutineVersion` snapshots preserving past mission history.
+* **Recurrence & Conflict Engines**: Rolling 7–14 day horizon with idempotency keys (`${ruleId}:${dateStr}:${taskId}`) and overlap severity classifications (`LOW`, `MEDIUM`, `HIGH`).
+* **Dependency & Cycle Engine**: Supports `HARD` and `SOFT` prerequisites with topological DFS circular cycle rejection (`DEPENDENCY_CYCLE`).
+* **Rest Day & Pause Protocol**: Honest rest days and routine pausing without data erasure or false failure penalties.
+* **Unified Planner API**: `GET /api/v1/planner` consolidating routines, missions, conflicts, and rest status in $<300\text{ms}$.
 
 ---
 
-## Automated Test Suite: 206/206 Passing (100% Green)
+## Automated Test Suite: 216/216 Passing (100% Green)
 
 ```bash
 cd backend
@@ -122,9 +91,9 @@ npm test
 ```
 
 ```
- Test Files  33 passed (33)
-      Tests  206 passed (206)
-   Duration  2.84s
+ Test Files  34 passed (34)
+      Tests  216 passed (216)
+   Duration  2.94s
 ```
 
 | Subsystem | Tests | Status |
@@ -141,6 +110,7 @@ npm test
 | **Phase 9: Push-Up Movement State Machine** | 4 tests | $\checkmark$ PASS |
 | **Phase 9: Task Verifiers & Tri-State Decision Engine** | 7 tests | $\checkmark$ PASS |
 | **Phase 10: Gamification, Discipline Progress & Engagement Engine** | 10 tests | $\checkmark$ PASS |
+| **Phase 11: Personal Discipline Planning & Routine Engine** | 10 tests | $\checkmark$ PASS |
 | **Full Vertical Slice E2E Flow** | 20 tests | $\checkmark$ PASS |
 | **Extended Advanced Tier Systems** | 65 tests | $\checkmark$ PASS |
 
