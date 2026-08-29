@@ -5,6 +5,7 @@
   <img src="https://img.shields.io/badge/Tests-366%2F366%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Spoof%20Accepts-0%20(Release%20Approved)-brightgreen?style=for-the-badge&logo=shield&logoColor=white" alt="Spoof Accepts" />
   <img src="https://img.shields.io/badge/Backend-TypeScript%20%2B%20Express-blue?style=for-the-badge&logo=express&logoColor=white" alt="Backend" />
+  <img src="https://img.shields.io/badge/Database-PostgreSQL%20(Prod)%20%7C%20SQLite%20(Dev)-blue?style=for-the-badge&logo=postgresql&logoColor=white" alt="Database" />
   <img src="https://img.shields.io/badge/Storage-S3%20%2B%20Local%20Abstraction-orange?style=for-the-badge&logo=amazons3&logoColor=white" alt="Storage" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
@@ -26,25 +27,116 @@ For the definitive system mapping and source of truth, see [`docs/ARCHITECTURE.m
 ## System Architecture
 
 ```
-                    ┌────────────────────────┐
-                    │      FLUTTER APP       │
-                    │  (iOS / Android / Web) │
-                    └───────────┬────────────┘
-                                │ REST (/api/v1) / WebSocket
+                       Flutter / Web Client
+                                │
                                 ▼
-                    ┌────────────────────────┐
-                    │   TYPESCRIPT BACKEND   │
-                    │   (Express Monolith)   │
-                    └───────────┬────────────┘
-         ┌──────────────────────┼──────────────────────┐
-         ▼                      ▼                      ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ LOCAL SQLITE DB │    │   MINIO / S3    │    │  AUDIO SYNTH    │
-│ (Active Ledger) │    │(Cloud Ready S3) │    │ (Psychoacoustic)│
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+                         Express Backend
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        ▼                       ▼                       ▼
+   Verification              Storage            Database Factory
+  ┌───────────────┐     ┌───────────────┐     ┌───────────────────┐
+  │MoveNet / Vision│    │ Local / MinIO │     │ SQLite (Dev/Test) │
+  │LivenessEngine │     │ AWS S3 Object │     │ PostgreSQL (Prod) │
+  │DecisionEngine │     │ Presigned URL │     │ Prisma ORM Client │
+  └───────────────┘     └───────────────┘     └───────────────────┘
 ```
 
-### Verification Pipeline Architecture
+### Triad Subsystem Composition
+
+```
+Flutter / Web Client
+        │
+        ▼
+Express Backend
+        │
+        ├── Verification Layer (VISION_PROVIDER)
+        │      ├── MoveNet Lightning (17 Keypoints @ 192x192)
+        │      ├── Decoupled Object Detection (Google Cloud Vision / Local)
+        │      ├── Multi-Signal Liveness Analyzer
+        │      └── Biomechanical Decision Engine (ACCEPT / REVIEW / REJECT)
+        │
+        ├── Storage Layer (STORAGE_PROVIDER)
+        │      ├── Local Filesystem Provider (dev/offline)
+        │      └── AWS S3 / MinIO Provider (presigned multi-part uploads)
+        │
+        └── Database Layer (DB_PROVIDER)
+               ├── SQLite Repository Suite (node:sqlite, WAL mode, dev/test)
+               └── Prisma PostgreSQL Suite (Prisma Client, PostgreSQL 16+, staging/prod)
+```
+
+---
+
+## Database Architecture & Deployment Configuration
+
+Habitat uses an environment-driven `DatabaseFactory` at the infrastructure boundary. Controllers and services interact strictly with domain repository interfaces (`IUserRepository`, `ITaskRepository`, `IAlarmRepository`, `IMissionRepository`, `IProofRepository`), rendering the underlying persistence engine completely invisible to business logic.
+
+```
+                         DatabaseFactory
+                               │
+                   ┌───────────┴───────────┐
+                   │                       │
+           NODE_ENV=test              DB_PROVIDER
+                   │                ┌──────┴──────┐
+                   ▼                ▼             ▼
+              In-Memory           sqlite       postgres
+                SQLite              │             │
+               (CI/Unit)            ▼             ▼
+                                  SQLite      PostgreSQL
+                                 (node:sqlite) (Prisma Client)
+```
+
+### Environment Configuration Matrix
+
+| Environment | `NODE_ENV` | `DB_PROVIDER` | Database Engine | Driver / Toolchain | Purpose & Characteristics |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Development** | `development` | `sqlite` | Local SQLite | `node:sqlite` (WAL Mode) | Zero-friction local development without database server dependencies. |
+| **Automated Test** | `test` | *Forced `sqlite`* | In-Memory SQLite | `node:sqlite` | Instantaneous, isolated CI test runs without requiring external containers. |
+| **Staging** | `staging` | `postgres` | PostgreSQL 16+ | `@prisma/client` | High-fidelity production staging and migration verification. |
+| **Production** | `production` | `postgres` | PostgreSQL 16+ | `@prisma/client` | High-concurrency relational ledger with connection pooling. |
+
+### Environment Variables
+
+```bash
+# Database Provider Selection ('sqlite' | 'postgres')
+DB_PROVIDER=sqlite
+
+# PostgreSQL Connection String (Required when DB_PROVIDER=postgres)
+DATABASE_URL="postgresql://habitat_admin:discipline_pass_2026@localhost:5432/habitat_db?schema=public"
+
+# Storage Provider ('local' | 's3')
+STORAGE_PROVIDER=local
+
+# Verification Vision Provider ('mock' | 'tfjs')
+VISION_PROVIDER=mock
+```
+
+> [!WARNING]
+> **Credential Security**: Never commit production `DATABASE_URL` credentials to Git. Staging and production credentials must be injected via secret managers or container orchestration environment variables.
+
+### Database Migration & Seed Commands
+
+```bash
+# Validate Prisma schema across all 59 domain models
+npx prisma validate --schema=prisma/schema.prisma
+
+# Generate Prisma Client
+npx prisma generate --schema=prisma/schema.prisma
+
+# Apply migrations to local/staging PostgreSQL database
+npx prisma migrate dev --schema=prisma/schema.prisma
+
+# Deploy migrations in production CI/CD pipelines
+npx prisma migrate deploy --schema=prisma/schema.prisma
+
+# Execute idempotent Prisma database seed
+npm run db:seed
+# or: npx prisma db seed
+```
+
+---
+
+## Verification Pipeline Architecture
 
 ```
                             Habitat Verification
@@ -77,10 +169,6 @@ For the definitive system mapping and source of truth, see [`docs/ARCHITECTURE.m
                          ACCEPT    REVIEW   REJECT
 ```
 
-#### Provider Runtime Configuration
-- **Development & CI**: `VISION_PROVIDER=mock` $\to$ Deterministic mock inference for fast, offline automated test suites.
-- **Staging & Production**: `VISION_PROVIDER=tfjs` $\to$ Server-side MoveNet Lightning single-pose neural estimation ($192\times 192\times 3$).
-
 ---
 
 ## Core Engineering Engines
@@ -90,7 +178,7 @@ For the definitive system mapping and source of truth, see [`docs/ARCHITECTURE.m
 * 8-point spatial rhythm (`4px` to `48px`), accessible typography hierarchy, atomic components (`AppButton`, `AppCard`, `AppInput`, `AppDialog`).
 
 ### 2. Task & Template Engine (`backend/src/modules/tasks/`)
-* 10 Canonical starter discipline task templates (`tpl-make-bed`, `tpl-pushups-10`, `tpl-brush-teeth`, `tpl-hydrate-glass`, `tpl-morning-sunlight`, `tpl-cold-shower`, `tpl-journal-plan`, `tpl-read-10-pages`, `tpl-outdoor-walk`, `tpl-wardrobe-prep`).
+* 10 Canonical starter discipline task templates (`tpl-make-bed`, `tpl-pushups-10`, `tpl-brush-teeth`, `tpl-hydrate-glass`, `tpl-morning-sunlight`, `tpl-clean-desk`, `tpl-walk-2min`, `tpl-read-2pages`, `tpl-body-stretch-30s`, `tpl-prep-tomorrow-clothes`).
 * Server-calculated XP multipliers ($1.0\text{x}$ to $2.5\text{x}$) and task lifecycle states (`ACTIVE` $\rightleftharpoons$ `PAUSED` $\to$ `ARCHIVED`).
 
 ### 3. Scheduling & Alarm Engine (`backend/src/modules/alarms/`)
@@ -187,7 +275,7 @@ cd backend && npm install
 # Build TypeScript
 npm run build
 
-# Run Vitest test suite (262 tests)
+# Run Vitest test suite (366 tests)
 npm test
 
 # Start Express development server
@@ -214,4 +302,3 @@ This software, its source code, architecture, algorithms, and psychoacoustic aud
 
 * **Repository**: [https://github.com/SahilKhutey/Habitat.git](https://github.com/SahilKhutey/Habitat.git)
 * **Author**: Sahil Khutey
-
