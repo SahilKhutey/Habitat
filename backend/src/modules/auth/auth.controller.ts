@@ -109,8 +109,8 @@ export class AuthService {
 
   public static refresh(refreshToken: string) {
     const payload = AuthSecurity.verifyJwt(refreshToken);
-    if (payload.type !== 'refresh') {
-      throw new Error('Expected refresh token.');
+    if (!payload || payload.type !== 'refresh') {
+      throw new Error('Expected valid refresh token.');
     }
 
     const db = DatabaseService.getDb();

@@ -25,10 +25,10 @@ export function authGuard(req: AuthenticatedRequest, res: Response, next: NextFu
   const token = authHeader.substring(7).trim();
   try {
     const payload = AuthSecurity.verifyJwt(token);
-    if (payload.type !== 'access') {
+    if (!payload || payload.type !== 'access') {
       res.status(401).json({
         success: false,
-        error: { code: 'INVALID_TOKEN_TYPE', message: 'Expected access token.' }
+        error: { code: 'INVALID_TOKEN_TYPE', message: 'Expected valid access token.' }
       });
       return;
     }

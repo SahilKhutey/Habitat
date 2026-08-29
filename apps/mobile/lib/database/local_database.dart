@@ -265,15 +265,15 @@ class LocalDatabase {
       _proofs.where((p) => p.taskId == taskId).toList();
 
   // XP & Gamification
-  void awardXP({required String taskId, required int amount, String eventType = 'TASK_COMPLETED'}) {
-    // Idempotency: only one completion XP event per task per date
-    final today = DateTime.now().toIso8601String().substring(0, 10);
-    final exists = _xpEvents.any((e) => e.taskId == taskId && e.createdAt.toIso8601String().startsWith(today));
+  void awardXP({required String taskId, String? attemptId, required int amount, String eventType = 'TASK_COMPLETED'}) {
+    // Precise idempotency: keyed by attemptId or unique event key
+    final key = attemptId != null ? '$taskId:$attemptId' : taskId;
+    final exists = _xpEvents.any((e) => e.taskId == key);
     if (!exists) {
       _xpEvents.add(LocalXPEvent(
         id: const Uuid().v4(),
         eventType: eventType,
-        taskId: taskId,
+        taskId: key,
         amount: amount,
         createdAt: DateTime.now(),
       ));

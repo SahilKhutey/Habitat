@@ -189,7 +189,7 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Today's Action Timeline
+            // Today's Action Timeline (Dynamically Loaded from Local DB)
             const Text(
               'TODAY',
               style: TextStyle(
@@ -202,10 +202,29 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
             ),
             const SizedBox(height: 12),
 
-            _buildActionRow('08:00', 'Morning Exercise', '10 Push-ups', 'Ready', Icons.directions_run, true),
-            _buildActionRow('09:30', 'Brush & Capture', 'Photo verification', 'Upcoming', Icons.camera_alt_outlined, false),
-            _buildActionRow('18:00', 'Step Outside Walk', 'Fresh air 5 min', 'Upcoming', Icons.park_outlined, false),
-            _buildActionRow('21:30', 'Read 10 Pages', 'Mind reflection', 'Upcoming', Icons.menu_book, false),
+            if (tasks.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: HabitatTheme.surfacePrimary,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: HabitatTheme.surfaceBorder),
+                ),
+                child: const Text('No scheduled actions for today.', style: TextStyle(color: HabitatTheme.textSecondary)),
+              )
+            else
+              ...tasks.take(4).map((task) {
+                final isFirst = tasks.first.id == task.id;
+                return _buildActionRow(
+                  isFirst ? '08:00' : 'Scheduled',
+                  task.title,
+                  '${task.category} • ${task.taskType} proof required',
+                  isFirst ? 'Ready' : 'Upcoming',
+                  task.taskType == 'VIDEO' ? Icons.videocam : Icons.camera_alt,
+                  isFirst,
+                  task,
+                );
+              }),
 
             const SizedBox(height: 32),
 
@@ -244,7 +263,7 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
     );
   }
 
-  Widget _buildActionRow(String time, String title, String subtitle, String status, IconData icon, bool isActive) {
+  Widget _buildActionRow(String time, String title, String subtitle, String status, IconData icon, bool isActive, [LocalTask? task]) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -291,7 +310,7 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
           ),
           if (isActive)
             ElevatedButton(
-              onPressed: _openActiveAlarmScreen,
+              onPressed: () => task != null ? _startTask(task) : _openActiveAlarmScreen(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: HabitatTheme.growthGreen,
                 foregroundColor: HabitatTheme.forest,

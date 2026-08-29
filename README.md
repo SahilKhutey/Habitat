@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
   <img src="https://img.shields.io/badge/Tests-279%2F279%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
-  <img src="https://img.shields.io/badge/Backend-NestJS%20%7C%20TypeScript-blue?style=for-the-badge&logo=nestjs&logoColor=white" alt="Backend" />
+  <img src="https://img.shields.io/badge/Backend-TypeScript%20Modular%20Engine-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Mobile-Flutter%203.x%20%7C%20Dart-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
   <img src="https://img.shields.io/badge/License-Commercial%20Proprietary-amber?style=for-the-badge" alt="License" />
 </p>
@@ -25,11 +25,11 @@ $$\boxed{\textbf{Alarm Fired} \longrightarrow \textbf{Mission Active} \longright
                     │      FLUTTER APP       │
                     │  (iOS / Android / Web) │
                     └───────────┬────────────┘
-                                │ REST / WebSocket / S3 Presigned
+                                │ REST / WebSocket / Local SQLite
                                 ▼
                     ┌────────────────────────┐
-                    │     NESTJS BACKEND     │
-                    │  (TypeScript Modular)  │
+                    │   TYPESCRIPT BACKEND   │
+                    │   (Modular Monolith)   │
                     └───────────┬────────────┘
          ┌──────────────────────┼──────────────────────┐
          ▼                      ▼                      ▼
