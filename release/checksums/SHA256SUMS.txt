@@ -1,5 +1,4 @@
-# Habitat v1.0.0 Release Artifact Checksums (SHA256)
-# Format: <sha256>  <filename>
-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  release/android/Discipline-v1.0.0.apk
-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  release/android/Discipline-v1.0.0.aab
-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  release/ios/Discipline-v1.0.0.ipa
+# Habitat v1.0.0 Release Checksums (SHA256)
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  release/android/Habitat-v1.0.0.apk
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  release/android/Habitat-v1.0.0.aab
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  release/ios/Habitat-v1.0.0.ipa
