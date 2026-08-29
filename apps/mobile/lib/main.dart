@@ -1,9 +1,7 @@
-// Habitat Flutter Application Entry Point
+// Habitat Flutter Application Entry Point & Navigation Experience
 import 'package:flutter/material.dart';
 import 'core/theme/habitat_theme.dart';
 import 'features/missions/presentation/active_mission_screen.dart';
-import 'features/tasks/presentation/task_catalog_screen.dart';
-import 'features/alarms/presentation/alarm_list_screen.dart';
 import 'database/local_database.dart';
 
 void main() {
@@ -56,34 +54,24 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
           onTap: (idx) => setState(() => _selectedIndex = idx),
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.check_circle_outline),
-              activeIcon: Icon(Icons.check_circle),
+              icon: Icon(Icons.wb_sunny_outlined),
+              activeIcon: Icon(Icons.wb_sunny),
+              label: 'Today',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.checklist_rtl),
+              activeIcon: Icon(Icons.checklist_rtl),
               label: 'Tasks',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none),
-              activeIcon: Icon(Icons.notifications),
-              label: 'Reminders',
+              icon: Icon(Icons.spa_outlined),
+              activeIcon: Icon(Icons.spa),
+              label: 'Journey',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.camera_alt_outlined),
-              activeIcon: Icon(Icons.camera_alt),
-              label: 'Proof',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.local_fire_department_outlined),
-              activeIcon: Icon(Icons.local_fire_department),
-              label: 'Streaks',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.trending_up),
-              activeIcon: Icon(Icons.trending_up),
-              label: 'Growth',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'You',
+              icon: Icon(Icons.grid_view_rounded),
+              activeIcon: Icon(Icons.grid_view_rounded),
+              label: 'More',
             ),
           ],
         ),
@@ -94,26 +82,23 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
   Widget _buildCurrentTab() {
     switch (_selectedIndex) {
       case 0:
-        return _buildTodayDeck();
+        return _buildTodayScreen();
       case 1:
-        return const AlarmListScreen();
+        return _buildTasksScreen();
       case 2:
-        return const TaskCatalogScreen();
+        return _buildJourneyScreen();
       case 3:
-        return _buildStreaksDeck();
-      case 4:
-        return _buildGrowthDashboard();
-      case 5:
-        return _buildProfileDeck();
+        return _buildMoreScreen();
       default:
-        return _buildTodayDeck();
+        return _buildTodayScreen();
     }
   }
 
-  Widget _buildTodayDeck() {
+  // 1. TODAY SCREEN (Heart of Habitat)
+  Widget _buildTodayScreen() {
     final streak = LocalDatabase.instance.getStreak();
     final totalXp = LocalDatabase.instance.getTotalXP();
-    final tasks = LocalDatabase.instance.getAllTasks();
+    final user = LocalDatabase.instance.getOrCreateProfile();
 
     return Scaffold(
       backgroundColor: HabitatTheme.background,
@@ -124,7 +109,7 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: HabitatTheme.forestGreen,
+                color: HabitatTheme.habitatGreen,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: HabitatTheme.growthGreen, width: 1),
               ),
@@ -134,7 +119,7 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w900,
                   fontSize: 16,
-                  color: HabitatTheme.offWhite,
+                  color: HabitatTheme.habitatCream,
                 ),
               ),
             ),
@@ -153,9 +138,9 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.flash_on, color: HabitatTheme.growthGreen),
-            onPressed: _triggerDemoAlarm,
-            tooltip: 'Demo Action Trigger',
+            icon: const Icon(Icons.notifications_active_outlined, color: HabitatTheme.growthGreen),
+            onPressed: _openActiveAlarmScreen,
+            tooltip: 'Active Reminder Screen',
           ),
         ],
       ),
@@ -164,46 +149,49 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tagline Header
-            const Center(
-              child: Text(
-                'Build the life you want to live.',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: HabitatTheme.sageGreen,
-                  letterSpacing: 0.2,
-                ),
+            // Personal Greeting & Calm Positioning
+            Text(
+              'Good morning, ${user.displayName}',
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
+            const Text(
+              "Build today's habitat. One action at a time.",
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 13,
+                color: HabitatTheme.youngLeaf,
+              ),
+            ),
+            const SizedBox(height: 20),
 
-            // Streak & Progress HUD
+            // Streak & Growth Points Card
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: HabitatTheme.surfaceBorder),
-                boxShadow: [
-                  BoxStyle(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
-                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildHudItem('CONSISTENCY', '${streak.currentStreak} DAYS', Icons.local_fire_department, HabitatTheme.growthGreen),
-                  Container(width: 1, height: 40, color: HabitatTheme.surfaceBorder),
-                  _buildHudItem('GROWTH POINTS', '$totalXp XP', Icons.trending_up, HabitatTheme.sageGreen),
+                  Container(width: 1, height: 44, color: HabitatTheme.surfaceBorder),
+                  _buildHudItem('GROWTH POINTS', '$totalXp XP', Icons.trending_up, HabitatTheme.youngLeaf),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
-            // Action Queue Header
+            // Today's Action Timeline
             const Text(
-              "TODAY'S ACTIONS",
+              'TODAY',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 13,
@@ -214,43 +202,19 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Task List or Encouraging Empty State
-            if (tasks.isEmpty)
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: HabitatTheme.surfacePrimary,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: HabitatTheme.surfaceBorder),
-                ),
-                child: const Column(
-                  children: [
-                    Icon(Icons.spa_outlined, color: HabitatTheme.sageGreen, size: 36),
-                    SizedBox(height: 10),
-                    Text(
-                      'Your habitat starts with one action.',
-                      style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Create your first daily practice to begin your journey.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: HabitatTheme.textSecondary),
-                    ),
-                  ],
-                ),
-              )
-            else
-              ...tasks.map((task) => _buildTaskCard(task)),
+            _buildActionRow('08:00', 'Morning Exercise', '10 Push-ups', 'Ready', Icons.directions_run, true),
+            _buildActionRow('09:30', 'Brush & Capture', 'Photo verification', 'Upcoming', Icons.camera_alt_outlined, false),
+            _buildActionRow('18:00', 'Step Outside Walk', 'Fresh air 5 min', 'Upcoming', Icons.park_outlined, false),
+            _buildActionRow('21:30', 'Read 10 Pages', 'Mind reflection', 'Upcoming', Icons.menu_book, false),
 
             const SizedBox(height: 32),
 
-            // Official Brand Bottom Motto
+            // Bottom Brand Motto
             Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: HabitatTheme.deepForest,
+                  color: HabitatTheme.forest,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: HabitatTheme.surfaceBorder, width: 0.8),
                 ),
@@ -266,7 +230,7 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.2,
-                        color: HabitatTheme.sageGreen,
+                        color: HabitatTheme.youngLeaf,
                       ),
                     ),
                   ],
@@ -276,6 +240,274 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
             const SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionRow(String time, String title, String subtitle, String status, IconData icon, bool isActive) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: HabitatTheme.surfacePrimary,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: isActive ? HabitatTheme.growthGreen.withOpacity(0.5) : HabitatTheme.surfaceBorder),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isActive ? HabitatTheme.habitatGreen : HabitatTheme.surfaceSecondary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: isActive ? HabitatTheme.growthGreen : HabitatTheme.textSecondary, size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$time • $title',
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 12,
+                    color: HabitatTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isActive)
+            ElevatedButton(
+              onPressed: _openActiveAlarmScreen,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: HabitatTheme.growthGreen,
+                foregroundColor: HabitatTheme.forest,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                minimumSize: const Size(0, 32),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Start', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w700, fontSize: 12)),
+            )
+          else
+            Text(
+              status,
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: HabitatTheme.youngLeaf, fontWeight: FontWeight.w600),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // 2. TASKS & STARTER ACTIONS SCREEN
+  Widget _buildTasksScreen() {
+    final starterActions = [
+      {'num': '01', 'title': 'Step Outside', 'desc': 'Take a photo outside in sunlight.', 'type': 'PHOTO'},
+      {'num': '02', 'title': 'Morning Movement', 'desc': 'Complete your chosen 10-15 pushups.', 'type': 'VIDEO'},
+      {'num': '03', 'title': 'Brush & Capture', 'desc': 'Take a photo while brushing teeth.', 'type': 'PHOTO'},
+      {'num': '04', 'title': 'Make Your Bed', 'desc': 'Capture your completed bed.', 'type': 'PHOTO'},
+      {'num': '05', 'title': 'Drink Water', 'desc': 'Complete your morning 500ml water action.', 'type': 'PHOTO'},
+      {'num': '06', 'title': 'Fresh Air', 'desc': 'Step outside for 5 minutes of stillness.', 'type': 'PHOTO'},
+      {'num': '07', 'title': 'Tidy One Space', 'desc': 'Clean and organize one small work area.', 'type': 'PHOTO'},
+      {'num': '08', 'title': 'Read 10 Pages', 'desc': 'Read for 10 minutes from a book.', 'type': 'PHOTO'},
+      {'num': '09', 'title': 'Daily Walk', 'desc': 'Complete your daily physical walk.', 'type': 'PHOTO'},
+      {'num': '10', 'title': 'Personal Action', 'desc': 'Create your own custom practice.', 'type': 'CUSTOM'},
+    ];
+
+    return Scaffold(
+      backgroundColor: HabitatTheme.background,
+      appBar: AppBar(title: const Text('STARTER ACTIONS')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(20),
+        itemCount: starterActions.length,
+        itemBuilder: (context, index) {
+          final item = starterActions[index];
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: HabitatTheme.surfacePrimary,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: HabitatTheme.surfaceBorder),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  item['num']!,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                    color: HabitatTheme.youngLeaf,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title']!,
+                        style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item['desc']!,
+                        style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: HabitatTheme.textSecondary),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  item['type'] == 'VIDEO' ? Icons.videocam_outlined : Icons.camera_alt_outlined,
+                  color: HabitatTheme.growthGreen,
+                  size: 20,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // 3. JOURNEY & HABITAT GROWTH SCREEN
+  Widget _buildJourneyScreen() {
+    final streak = LocalDatabase.instance.getStreak();
+    final xp = LocalDatabase.instance.getTotalXP();
+
+    return Scaffold(
+      backgroundColor: HabitatTheme.background,
+      appBar: AppBar(title: const Text('JOURNEY & GROWTH')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: HabitatTheme.surfacePrimary,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: HabitatTheme.surfaceBorder),
+              ),
+              child: Column(
+                children: [
+                  const Icon(Icons.eco, size: 64, color: HabitatTheme.growthGreen),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'YOUR HABITAT STAGE: SPROUT',
+                    style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1.2, color: HabitatTheme.youngLeaf),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${streak.currentStreak} Days Consistent',
+                    style: const TextStyle(fontFamily: 'Poppins', fontSize: 26, fontWeight: FontWeight.w900, color: Colors.white),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Keep showing up to evolve into a full Forest.',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: HabitatTheme.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: HabitatTheme.surfacePrimary,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: HabitatTheme.surfaceBorder),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildHudItem('TOTAL XP', '$xp Growth Points', Icons.trending_up, HabitatTheme.growthGreen),
+                  _buildHudItem('WEEKLY GOAL', '7 / 7 Actions', Icons.verified_outlined, HabitatTheme.youngLeaf),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 4. MORE DOMAINS (Health, Journal & Settings)
+  Widget _buildMoreScreen() {
+    final user = LocalDatabase.instance.getOrCreateProfile();
+    return Scaffold(
+      backgroundColor: HabitatTheme.background,
+      appBar: AppBar(title: const Text('MORE DOMAINS')),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // Profile Banner
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: HabitatTheme.surfacePrimary,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: HabitatTheme.surfaceBorder),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 26,
+                  backgroundColor: HabitatTheme.habitatGreen,
+                  child: Icon(Icons.person, color: HabitatTheme.growthGreen, size: 28),
+                ),
+                const SizedBox(width: 14),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(user.displayName, style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+                    const Text('Habitat Explorer', style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: HabitatTheme.youngLeaf)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Domains List
+          _buildMoreTile(Icons.water_drop_outlined, 'Health & Hydration', 'Water, movement & sleep metrics'),
+          _buildMoreTile(Icons.edit_note, 'Daily Reflection Journal', 'How was today? Mood & energy'),
+          _buildMoreTile(Icons.file_download_outlined, 'Export My Data', 'Local JSON backup & diagnostics'),
+          _buildMoreTile(Icons.feedback_outlined, 'Send Feedback', 'Suggestions, bug reports & ratings'),
+          _buildMoreTile(Icons.info_outline, 'About Habitat', 'v1.0.0 • Build the life you want to live.'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMoreTile(IconData icon, String title, String subtitle) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: HabitatTheme.surfacePrimary,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: HabitatTheme.surfaceBorder),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: HabitatTheme.growthGreen),
+        title: Text(title, style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+        subtitle: Text(subtitle, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: HabitatTheme.textSecondary)),
+        trailing: const Icon(Icons.chevron_right, color: HabitatTheme.textMuted),
+        onTap: () {},
       ),
     );
   }
@@ -292,184 +524,21 @@ class _HabitatHomeScreenState extends State<HabitatHomeScreen> {
           ],
         ),
         const SizedBox(height: 6),
-        Text(value, style: const TextStyle(fontFamily: 'Poppins', fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white)),
+        Text(value, style: const TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
       ],
     );
   }
 
-  Widget _buildTaskCard(LocalTask task) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: HabitatTheme.surfacePrimary,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: HabitatTheme.surfaceBorder),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: HabitatTheme.forestGreen,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              task.taskType == 'VIDEO' ? Icons.videocam : Icons.camera_alt,
-              color: HabitatTheme.growthGreen,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  task.title,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  task.category,
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 11,
-                    color: HabitatTheme.sageGreen,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => _startTask(task),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: HabitatTheme.growthGreen,
-              foregroundColor: HabitatTheme.deepForest,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              minimumSize: const Size(0, 36),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Text('Action', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 12)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStreaksDeck() {
-    final streak = LocalDatabase.instance.getStreak();
-    return Scaffold(
-      backgroundColor: HabitatTheme.background,
-      appBar: AppBar(title: const Text('STREAKS & CONSISTENCY')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.local_fire_department, size: 72, color: HabitatTheme.growthGreen),
-            const SizedBox(height: 16),
-            Text('${streak.currentStreak} Days', style: const TextStyle(fontFamily: 'Poppins', fontSize: 36, fontWeight: FontWeight.w900, color: Colors.white)),
-            const SizedBox(height: 8),
-            const Text('Longest Streak: ${0} Days', style: TextStyle(fontFamily: 'Inter', color: HabitatTheme.sageGreen)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGrowthDashboard() {
-    final xp = LocalDatabase.instance.getTotalXP();
-    return Scaffold(
-      backgroundColor: HabitatTheme.background,
-      appBar: AppBar(title: const Text('GROWTH DASHBOARD')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.trending_up, size: 72, color: HabitatTheme.sageGreen),
-            const SizedBox(height: 16),
-            Text('$xp Growth Points', style: const TextStyle(fontFamily: 'Poppins', fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white)),
-            const SizedBox(height: 8),
-            const Text('Your habitat evolves with every completed practice.', style: TextStyle(fontFamily: 'Inter', color: HabitatTheme.textSecondary)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileDeck() {
-    final user = LocalDatabase.instance.getOrCreateProfile();
-    return Scaffold(
-      backgroundColor: HabitatTheme.background,
-      appBar: AppBar(title: const Text('YOU & SETTINGS')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: HabitatTheme.forestGreen,
-                  child: Icon(Icons.person, size: 36, color: HabitatTheme.growthGreen),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(user.displayName, style: const TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                    const Text('Habitat Explorer', style: TextStyle(fontFamily: 'Inter', color: HabitatTheme.sageGreen, fontSize: 12)),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            const Text('ABOUT HABITAT', style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.bold, color: HabitatTheme.textMuted)),
-            const SizedBox(height: 12),
-            const Text('Habitat v1.0.0\nBuild the life you want to live.', style: TextStyle(fontFamily: 'Inter', color: HabitatTheme.textSecondary, height: 1.5)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _triggerDemoAlarm() {
+  void _openActiveAlarmScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => const ActiveMissionScreen(
-          missionId: 'demo-action-001',
-          taskTitle: '15 Morning Pushups',
+          missionId: 'action-morning-001',
+          taskTitle: '10 Morning Push-ups',
           missionType: 'EXERCISE',
           verificationType: 'VIDEO',
         ),
       ),
     );
   }
-
-  void _startTask(LocalTask task) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ActiveMissionScreen(
-          missionId: 'action-${task.id}',
-          taskTitle: task.title,
-          missionType: task.category,
-          verificationType: task.taskType,
-        ),
-      ),
-    );
-  }
-}
-
-class BoxStyle {
-  final Color color;
-  final double blurRadius;
-  final Offset offset;
-  const BoxStyle({required this.color, required this.blurRadius, required this.offset});
 }
