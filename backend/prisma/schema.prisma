@@ -1,4 +1,4 @@
-// Authoritative Relational Prisma Schema for Habitat / Discipline Platform
+// Authoritative Relational Prisma Schema for Habitat Discipline Platform (Reconciled B1)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -8,99 +8,70 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum UserStatus {
-  ACTIVE
-  SUSPENDED
-  DELETED
-}
-
-enum TaskCategory {
-  PHYSICAL
-  HEALTH
-  MORNING
-  PERSONAL
-  DISCIPLINE
-  ENVIRONMENT
-  STUDY
-  WORK
-  CUSTOM
-}
-
-enum ProofType {
-  PHOTO
-  VIDEO
-  MANUAL
-  FUTURE_SENSOR
-  FUTURE_AI
-  HARDWARE_ANCHOR
-}
-
-enum DisciplineMode {
-  GENTLE
-  DISCIPLINE
-  HARDCORE
-}
-
-enum MissionStatus {
-  SCHEDULED
-  ACTIVE
-  SUBMITTED
-  VERIFYING
-  COMPLETED
-  FAILED
-  EXPIRED
-  CANCELLED
-}
-
-enum AttemptStatus {
-  IGNORED
-  SNOOZED
-  RESOLVED
-}
-
-enum VerificationStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  ERROR
-}
-
-enum VerificationMethod {
-  USER_CONFIRMATION
-  SYSTEM_RULE
-  AI_VISION
-  AI_VIDEO
-  SENSOR
-  MULTI_MODAL
-}
-
-enum Platform {
-  ANDROID
-  IOS
-  WEB
-}
+// -----------------------------------------------------------------------------
+// 1. Identity, Auth & User Preferences
+// -----------------------------------------------------------------------------
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  passwordHash    String           @map("password_hash")
-  displayName     String           @map("display_name")
-  timezone        String           @default("UTC")
-  status          UserStatus       @default(ACTIVE)
-  disciplineScore Int              @default(100) @map("discipline_score")
-  autonomyLevel   Int              @default(1) @map("autonomy_level")
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
+  id              String            @id @default(uuid())
+  email           String            @unique
+  passwordHash    String            @map("password_hash")
+  displayName     String            @map("display_name")
+  timezone        String            @default("UTC")
+  disciplineScore Int               @default(100) @map("discipline_score")
+  autonomyLevel   Int               @default(1) @map("autonomy_level")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
   // Relations
-  preferences     UserPreferences?
-  tasks           Task[]
-  alarms          Alarm[]
-  missions        Mission[]
-  xpEvents        XpEvent[]
-  streak          Streak?
-  devices         Device[]
-  notifications   Notification[]
+  preferences             UserPreferences?
+  tasks                   Task[]
+  alarms                  Alarm[]
+  alarmOccurrences        AlarmOccurrence[]
+  missions                Mission[]
+  proofs                  Proof[]
+  verifications           Verification[]
+  xpTransactions          XpTransaction[]
+  streak                  Streak?
+  gamification            UserGamification?
+  achievements            UserAchievement[]
+  dailyStats              DailyDisciplineStat[]
+  routines                Routine[]
+  scheduleRules           ScheduleRule[]
+  restDays                RestDay[]
+  behaviorEvents          BehaviorEvent[]
+  taskPerformances        TaskPerformance[]
+  recommendations         Recommendation[]
+  exerciseSessions        ExerciseSession[]
+  hydrationEntries        HydrationEntry[]
+  wellnessGoals           WellnessGoal[]
+  wellnessMetrics         WellnessMetric[]
+  healthConnections       HealthProviderConnection[]
+  disciplineProfile       DisciplineProfile?
+  behaviorPatterns        BehaviorPattern[]
+  dailyPlans              DailyPlan[]
+  coachSessions           CoachSession[]
+  coachMessages           CoachMessage[]
+  entitlements            UserEntitlement[]
+  socialRelationships     SocialRelationship[]       @relation("UserSocial")
+  targetedRelationships   SocialRelationship[]       @relation("TargetUserSocial")
+  contentReports          ContentReport[]
+  meshDevices             MeshDevice[]
+  meshEvents              MeshEvent[]
+  audioProfiles           AudioProfile[]
+  lockdownSettings        LockdownSetting?
+  disciplineBonds         DisciplineBond[]
+  emergencyBypasses       EmergencyBypass[]
+  squadsCreated           Squad[]                    @relation("SquadCreator")
+  squadMemberships        SquadMember[]
+  squadEvents             SquadEvent[]
+  challengeParticipations ChallengeParticipant[]
+  physicalAnchors         PhysicalAnchor[]
+  anchorVerifications     AnchorVerification[]
+  accountabilityPartners  AccountabilityPartner[]
+  accountabilityLogs      AccountabilityLog[]
+  sleepSessions           SleepSession[]
+  coachInsights           CoachInsight[]
 
   @@map("users")
 }
@@ -120,85 +91,158 @@ model UserPreferences {
   @@map("user_preferences")
 }
 
-model Task {
-  id                   String       @id @default(uuid())
-  userId               String?      @map("user_id")
-  slug                 String       @unique
+// -----------------------------------------------------------------------------
+// 2. Tasks & Templates Engine
+// -----------------------------------------------------------------------------
+
+model TaskTemplate {
+  id                   String        @id
   name                 String
   description          String
-  category             TaskCategory @default(MORNING)
-  proofType            ProofType    @default(PHOTO) @map("proof_type")
-  difficulty           Int          @default(2) // 1 to 5
-  xpReward             Int          @default(50) @map("xp_reward")
-  duration             Int          @default(60) // estimated duration in seconds
-  iconName             String?      @default("hotel") @map("icon_name")
   instructions         String
-  validationRules      String       @map("validation_rules")
-  isActive             Boolean      @default(true) @map("is_active")
-  isStarter            Boolean      @default(false) @map("is_starter")
-  createdAt            DateTime     @default(now()) @map("created_at")
-  updatedAt            DateTime     @updatedAt @map("updated_at")
+  category             String
+  proofType            String        @map("proof_type")
+  defaultDifficulty    Int?          @default(2) @map("default_difficulty")
+  baseXp               Int           @default(20) @map("base_xp")
+  estimatedDurationSec Int           @default(60) @map("estimated_duration_sec")
+  iconName             String?       @default("hotel") @map("icon_name")
+  validationRules      String        @map("validation_rules")
+  isActive             Boolean       @default(true) @map("is_active")
+  sortOrder            Int           @default(0) @map("sort_order")
+  createdAt            DateTime      @default(now()) @map("created_at")
 
-  // Relations
-  user                 User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks                Task[]
+  routineTasks         RoutineTask[]
+  scheduleRules        ScheduleRule[]
+
+  @@index([isActive, sortOrder])
+  @@map("task_templates")
+}
+
+model Task {
+  id                   String        @id @default(uuid())
+  userId               String?       @map("user_id")
+  templateId           String?       @map("template_id")
+  slug                 String        @unique
+  title                String
+  name                 String?
+  description          String
+  instructions         String
+  category             String
+  proofType            String        @map("proof_type")
+  verificationType     String        @default("BASIC") @map("verification_type")
+  difficulty           Int           @default(2)
+  baseXp               Int           @default(20) @map("base_xp")
+  xpReward             Int           @default(25) @map("xp_reward")
+  estimatedDurationSec Int           @default(60) @map("estimated_duration_sec")
+  iconName             String?       @default("hotel") @map("icon_name")
+  validationRules      String        @map("validation_rules")
+  status               String        @default("ACTIVE")
+  isActive             Boolean       @default(true) @map("is_active")
+  isStarter            Boolean       @default(false) @map("is_starter")
+  sortOrder            Int           @default(0) @map("sort_order")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime?     @updatedAt @map("updated_at")
+  archivedAt           DateTime?     @map("archived_at")
+
+  user                 User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template             TaskTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
   alarms               Alarm[]
   missions             Mission[]
+  routineTasks         RoutineTask[]
 
-  @@index([userId, isActive])
+  @@index([userId, status])
+  @@index([category, difficulty])
   @@map("tasks")
 }
 
-model Alarm {
-  id                   String         @id @default(uuid())
-  userId               String         @map("user_id")
-  taskId               String         @map("task_id")
-  timeOfDay            String         @map("time_of_day")
-  timezone             String         @default("UTC")
-  repeatDays           String         @map("repeat_days") // JSON array [1,2,3,4,5]
-  disciplineMode       DisciplineMode @default(DISCIPLINE) @map("discipline_mode")
-  gracePeriodMinutes   Int            @default(2) @map("grace_period_minutes")
-  retryIntervalMinutes Int            @default(5) @map("retry_interval_minutes")
-  maxRetries           Int            @default(3) @map("max_retries")
-  isEnabled            Boolean        @default(true) @map("is_enabled")
-  createdAt            DateTime       @default(now()) @map("created_at")
-  updatedAt            DateTime       @updatedAt @map("updated_at")
+// -----------------------------------------------------------------------------
+// 3. Alarms & Occurrences Engine
+// -----------------------------------------------------------------------------
 
-  // Relations
-  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  task                 Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+model Alarm {
+  id                   String            @id @default(uuid())
+  userId               String            @map("user_id")
+  taskId               String            @map("task_id")
+  timeOfDay            String            @map("time_of_day")
+  timezone             String            @default("UTC")
+  repeatDays           String            @map("repeat_days")
+  disciplineMode       String            @default("DISCIPLINE") @map("discipline_mode")
+  retryIntervalMinutes Int?              @default(5) @map("retry_interval_minutes")
+  isEnabled            Boolean           @default(true) @map("is_enabled")
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task                 Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
   missions             Mission[]
+  occurrences          AlarmOccurrence[]
 
   @@index([userId, isEnabled])
   @@map("alarms")
 }
 
+model AlarmOccurrence {
+  occurrenceId          String    @id @default(uuid()) @map("occurrence_id")
+  alarmId               String    @map("alarm_id")
+  missionId             String    @map("mission_id")
+  userId                String    @map("user_id")
+  scheduledAt           DateTime  @map("scheduled_at")
+  schedulerRegisteredAt DateTime  @map("scheduler_registered_at")
+  triggeredAt           DateTime? @map("triggered_at")
+  missionStartedAt      DateTime? @map("mission_started_at")
+  completedAt           DateTime? @map("completed_at")
+  retryCount            Int       @default(0) @map("retry_count")
+  failureReason         String?   @map("failure_reason")
+  platform              String    @default("android")
+  status                String    @default("SCHEDULED")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime? @updatedAt @map("updated_at")
+
+  alarm                 Alarm     @relation(fields: [alarmId], references: [id], onDelete: Cascade)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("alarm_occurrences")
+}
+
+// -----------------------------------------------------------------------------
+// 4. Missions & Verification Lifecycle Engine
+// -----------------------------------------------------------------------------
+
 model Mission {
-  id                String         @id @default(uuid())
-  userId            String         @map("user_id")
-  alarmId           String?        @map("alarm_id")
-  taskId            String         @map("task_id")
-  scheduledAt       DateTime       @map("scheduled_at")
-  startedAt         DateTime?      @map("started_at")
-  completedAt       DateTime?      @map("completed_at")
-  expiresAt         DateTime?      @map("expires_at")
-  status            MissionStatus  @default(SCHEDULED)
-  attemptCount      Int            @default(0) @map("attempt_count")
-  resistanceSeconds Int?           @map("resistance_seconds")
-  disciplineMode    DisciplineMode @default(DISCIPLINE) @map("discipline_mode")
-  xpAwarded         Int            @default(0) @map("xp_awarded")
-  idempotencyKey    String?        @unique @map("idempotency_key")
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @updatedAt @map("updated_at")
+  id                String            @id @default(uuid())
+  userId            String            @map("user_id")
+  alarmId           String?           @map("alarm_id")
+  taskId            String            @map("task_id")
+  scheduledAt       DateTime          @map("scheduled_at")
+  startedAt         DateTime?         @map("started_at")
+  triggeredAt       DateTime?         @map("triggered_at")
+  completedAt       DateTime?         @map("completed_at")
+  cancelledAt       DateTime?         @map("cancelled_at")
+  expiredAt         DateTime?         @map("expired_at")
+  status            String            @default("SCHEDULED")
+  attemptCount      Int               @default(0) @map("attempt_count")
+  retryCount        Int               @default(0) @map("retry_count")
+  nextRetryAt       DateTime?         @map("next_retry_at")
+  resistanceSeconds Int?              @map("resistance_seconds")
+  disciplineMode    String            @default("DISCIPLINE") @map("discipline_mode")
+  routineId         String?           @map("routine_id")
+  source            String            @default("MANUAL")
+  routineVersion    Int?              @map("routine_version")
+  idempotencyKey    String?           @unique @map("idempotency_key")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime?         @updatedAt @map("updated_at")
 
-  // Relations
-  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  alarm             Alarm?         @relation(fields: [alarmId], references: [id], onDelete: SetNull)
-  task              Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alarm             Alarm?            @relation(fields: [alarmId], references: [id], onDelete: SetNull)
+  task              Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
   attempts          MissionAttempt[]
+  events            MissionEvent[]
   proofs            Proof[]
-  xpEvents          XpEvent[]
+  verifications     Verification[]
+  verificationReports VerificationReport[]
+  xpTransactions    XpTransaction[]
 
-  @@index([userId, scheduledAt])
   @@index([userId, status])
   @@map("missions")
 }
@@ -207,119 +251,895 @@ model MissionAttempt {
   id               String        @id @default(uuid())
   missionId        String        @map("mission_id")
   attemptIndex     Int           @map("attempt_index")
-  triggeredAt      DateTime      @map("triggered_at")
+  startedAt        DateTime?     @map("started_at")
+  submittedAt      DateTime?     @map("submitted_at")
+  triggeredAt      DateTime?     @map("triggered_at")
   resolvedAt       DateTime?     @map("resolved_at")
-  status           AttemptStatus @default(IGNORED)
+  status           String        @default("IGNORED")
   sirenVolumeLevel Int           @default(70) @map("siren_volume_level")
+  failureReason    String?       @map("failure_reason")
+  createdAt        DateTime?     @default(now()) @map("created_at")
 
-  // Relations
   mission          Mission       @relation(fields: [missionId], references: [id], onDelete: Cascade)
   proofs           Proof[]
 
-  @@index([missionId])
   @@map("mission_attempts")
+}
+
+model MissionEvent {
+  id         String   @id @default(uuid())
+  missionId  String   @map("mission_id")
+  type       String
+  fromStatus String?  @map("from_status")
+  toStatus   String?  @map("to_status")
+  metadata   String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  mission    Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@map("mission_events")
 }
 
 model Proof {
   id                 String             @id @default(uuid())
   missionId          String             @map("mission_id")
+  userId             String?            @map("user_id")
   attemptId          String?            @map("attempt_id")
-  type               ProofType          @default(PHOTO)
+  uploadId           String?            @map("upload_id")
+  mediaType          String             @map("media_type")
   storageKey         String             @map("storage_key")
-  mimeType           String             @map("mime_type")
-  fileSize           Int                @default(0) @map("file_size")
-  duration           Int?
-  checksum           String?
-  deviceTelemetry    String             @map("device_telemetry") // JSON: { lux, motion }
+  objectKey          String?            @map("object_key")
+  thumbnailKey       String?            @map("thumbnail_key")
+  mimeType           String?            @map("mime_type")
+  sizeBytes          Int                @default(0) @map("size_bytes")
+  sha256             String?
+  durationMs         Int?               @map("duration_ms")
+  width              Int?
+  height             Int?
   capturedAt         DateTime           @map("captured_at")
-  uploadedAt         DateTime           @default(now()) @map("uploaded_at")
-  verificationStatus VerificationStatus @default(PENDING) @map("verification_status")
+  uploadedAt         DateTime?          @default(now()) @map("uploaded_at")
+  verifiedAt         DateTime?          @map("verified_at")
+  deviceTelemetry    String             @default("{}") @map("device_telemetry")
+  verificationStatus String             @default("PENDING") @map("verification_status")
+  rejectionReason    String?            @map("rejection_reason")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime?          @updatedAt @map("updated_at")
 
-  // Relations
   mission            Mission            @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  user               User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
   attempt            MissionAttempt?    @relation(fields: [attemptId], references: [id], onDelete: SetNull)
   verifications      Verification[]
 
-  @@index([missionId])
   @@map("proofs")
 }
 
-model Verification {
-  id          String             @id @default(uuid())
-  proofId     String             @map("proof_id")
-  status      VerificationStatus @default(PENDING)
-  method      VerificationMethod @default(SYSTEM_RULE)
-  confidence  Float              @default(1.0)
-  rejectionReason String?        @map("rejection_reason")
-  metadata    String?
-  verifiedAt  DateTime           @default(now()) @map("verified_at")
+model VerificationReport {
+  id               String   @id @default(uuid())
+  missionId        String   @map("mission_id")
+  proofId          String?  @map("proof_id")
+  strategyUsed     String   @map("strategy_used")
+  isValid          Boolean  @map("is_valid")
+  confidenceScore  Float    @map("confidence_score")
+  rejectionReason  String?  @map("rejection_reason")
+  extractedMetrics String   @default("{}") @map("extracted_metrics")
+  createdAt        DateTime @default(now()) @map("created_at")
 
-  proof       Proof              @relation(fields: [proofId], references: [id], onDelete: Cascade)
+  mission          Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@map("verification_reports")
+}
+
+model Verification {
+  id              String    @id @default(uuid())
+  proofId         String    @map("proof_id")
+  missionId       String    @map("mission_id")
+  attemptId       String?   @map("attempt_id")
+  userId          String    @map("user_id")
+  status          String
+  decision        String?
+  confidence      Float?
+  verifier        String
+  verifierVersion String    @map("verifier_version")
+  reasons         String    @default("[]")
+  checks          String    @default("[]")
+  startedAt       DateTime? @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  proof           Proof     @relation(fields: [proofId], references: [id], onDelete: Cascade)
+  mission         Mission   @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("verifications")
 }
 
-model XpEvent {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  missionId String?  @map("mission_id")
-  amount    Int
-  reason    String
-  createdAt DateTime @default(now()) @map("created_at")
+// -----------------------------------------------------------------------------
+// 5. Gamification & Progression Engine
+// -----------------------------------------------------------------------------
 
-  // Relations
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mission   Mission? @relation(fields: [missionId], references: [id], onDelete: SetNull)
+model XpTransaction {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  missionId      String?  @map("mission_id")
+  amount         Int
+  reason         String
+  sourceType     String?  @default("MISSION_COMPLETION") @map("source_type")
+  sourceId       String?  @map("source_id")
+  idempotencyKey String?  @map("idempotency_key")
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  @@index([userId, createdAt])
-  @@map("xp_events")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission        Mission? @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("xp_transactions")
 }
 
 model Streak {
   userId            String    @id @map("user_id")
-  current           Int       @default(0)
-  longest           Int       @default(0)
+  currentStreak     Int       @default(0) @map("current_streak")
+  longestStreak     Int       @default(0) @map("longest_streak")
   graceTokens       Int       @default(1) @map("grace_tokens")
   lastCompletedDate DateTime? @map("last_completed_date")
+  recoveryUsed      Boolean   @default(false) @map("recovery_used")
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
-  // Relations
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("streaks")
 }
 
-model Device {
+model UserGamification {
+  userId          String   @id @map("user_id")
+  totalXp         Int      @default(0) @map("total_xp")
+  level           Int      @default(1)
+  disciplineScore Float    @default(0.0) @map("discipline_score")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_gamification")
+}
+
+model Achievement {
+  id          String            @id @default(uuid())
+  code        String            @unique
+  name        String
+  description String
+  requirement String
+  xpReward    Int               @default(0) @map("xp_reward")
+  active      Boolean           @default(true)
+
+  unlocks     UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  achievementId String      @map("achievement_id")
+  unlockedAt    DateTime    @default(now()) @map("unlocked_at")
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model DailyDisciplineStat {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  date            String
+  tasksAssigned   Int      @default(0) @map("tasks_assigned")
+  tasksCompleted  Int      @default(0) @map("tasks_completed")
+  tasksFailed     Int      @default(0) @map("tasks_failed")
+  xpEarned        Int      @default(0) @map("xp_earned")
+  disciplineScore Float?   @map("discipline_score")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("daily_discipline_stats")
+}
+
+// -----------------------------------------------------------------------------
+// 6. Routine & Scheduling Planning Engine
+// -----------------------------------------------------------------------------
+
+model Routine {
+  id                   String           @id @default(uuid())
+  userId               String           @map("user_id")
+  name                 String           @default("")
+  title                String?
+  description          String?
+  type                 String           @default("MORNING")
+  status               String           @default("ACTIVE")
+  version              Int              @default(1)
+  triggerTime          String?          @map("trigger_time")
+  repeatDays           String?          @map("repeat_days")
+  isEnabled            Boolean          @default(true) @map("is_enabled")
+  pauseUntil           DateTime?        @map("pause_until")
+  minimumRequiredTasks Int              @default(1) @map("minimum_required_tasks")
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime?        @updatedAt @map("updated_at")
+
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks                RoutineTask[]
+  versions             RoutineVersion[]
+  scheduleRules        ScheduleRule[]
+
+  @@map("routines")
+}
+
+model RoutineTask {
+  id              String        @id @default(uuid())
+  routineId       String        @map("routine_id")
+  taskId          String?       @map("task_id")
+  taskTemplateId  String?       @map("task_template_id")
+  sequence        Int           @default(1)
+  stepOrder       Int?          @default(1) @map("step_order")
+  offsetMinutes   Int?          @default(0) @map("offset_minutes")
+  required        Boolean       @default(true)
+  createdAt       DateTime?     @default(now()) @map("created_at")
+
+  routine         Routine       @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  task            Task?         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  template        TaskTemplate? @relation(fields: [taskTemplateId], references: [id], onDelete: SetNull)
+
+  @@map("routine_tasks")
+}
+
+model RoutineVersion {
+  id            String   @id @default(uuid())
+  routineId     String   @map("routine_id")
+  version       Int
+  configuration String
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  routine       Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+
+  @@unique([routineId, version])
+  @@map("routine_versions")
+}
+
+model ScheduleRule {
+  id                  String        @id @default(uuid())
+  userId              String        @map("user_id")
+  routineId           String?       @map("routine_id")
+  taskTemplateId      String?       @map("task_template_id")
+  scheduleType        String        @map("schedule_type")
+  timeOfDay           String?       @map("time_of_day")
+  scheduleWindowStart String?       @map("schedule_window_start")
+  scheduleWindowEnd   String?       @map("schedule_window_end")
+  daysOfWeek          String?       @map("days_of_week")
+  startDate           String?       @map("start_date")
+  endDate             String?       @map("end_date")
+  timezone            String        @default("UTC")
+  enabled             Boolean       @default(true)
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routine             Routine?      @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  template            TaskTemplate? @relation(fields: [taskTemplateId], references: [id], onDelete: SetNull)
+
+  @@map("schedule_rules")
+}
+
+model TaskDependency {
+  id             String   @id @default(uuid())
+  routineId      String?  @map("routine_id")
+  prerequisiteId String   @map("prerequisite_id")
+  dependentId    String   @map("dependent_id")
+  dependencyType String   @default("HARD") @map("dependency_type")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("task_dependencies")
+}
+
+model RestDay {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  date      String
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("rest_days")
+}
+
+// -----------------------------------------------------------------------------
+// 7. Health, Wellness & Sleep Layer
+// -----------------------------------------------------------------------------
+
+model SleepSession {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  startTime        DateTime? @map("start_time")
+  endTime          DateTime? @map("end_time")
+  startedAt        DateTime? @map("started_at")
+  endedAt          DateTime? @map("ended_at")
+  durationMinutes  Int?      @default(0) @map("duration_minutes")
+  durationSec      Int?      @default(0) @map("duration_sec")
+  deepSleepMinutes Int?      @default(0) @map("deep_sleep_minutes")
+  remSleepMinutes  Int?      @default(0) @map("rem_sleep_minutes")
+  hrvScore         Int?      @map("hrv_score")
+  recoveryScore    Int?      @default(80) @map("recovery_score")
+  source           String?   @default("MANUAL")
+  quality          Int?
+  notes            String?
+  externalId       String?   @map("external_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startTime])
+  @@map("sleep_sessions")
+}
+
+model ExerciseTemplate {
+  id          String            @id @default(uuid())
+  name        String
+  category    String
+  description String?
+  unit        String            @default("REPETITIONS")
+  difficulty  String?           @default("BALANCED")
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  sessions    ExerciseSession[]
+
+  @@map("exercise_templates")
+}
+
+model ExerciseSession {
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  exerciseId  String           @map("exercise_id")
+  startedAt   DateTime         @map("started_at")
+  endedAt     DateTime?        @map("ended_at")
+  durationSec Int?             @default(0) @map("duration_sec")
+  quantity    Float?           @default(0)
+  unit        String?          @default("REPETITIONS")
+  sets        Int?             @default(1)
+  notes       String?
+  source      String?          @default("APP")
+  externalId  String?          @map("external_id")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template    ExerciseTemplate @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@map("exercise_sessions")
+}
+
+model HydrationEntry {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  amountMl   Int      @map("amount_ml")
+  timestamp  DateTime
+  source     String?  @default("APP")
+  externalId String?  @map("external_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("hydration_entries")
+}
+
+model WellnessGoal {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  type      String
+  target    Float
+  unit      String
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+  status    String    @default("ACTIVE")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wellness_goals")
+}
+
+model WellnessMetric {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  type       String
+  value      Float
+  unit       String
+  timestamp  DateTime
+  source     String
+  externalId String?  @map("external_id")
+  metadata   String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wellness_metrics")
+}
+
+model HealthProviderConnection {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  provider    String
+  status      String    @default("DISCONNECTED")
+  permissions String?
+  lastSyncAt  DateTime? @map("last_sync_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@map("health_provider_connections")
+}
+
+// -----------------------------------------------------------------------------
+// 8. Social, Squads & Challenges
+// -----------------------------------------------------------------------------
+
+model Squad {
+  id               String        @id @default(uuid())
+  name             String
+  inviteCode       String        @unique @map("invite_code")
+  collectiveStreak Int           @default(0) @map("collective_streak")
+  createdBy        String        @map("created_by")
+  createdAt        DateTime      @default(now()) @map("created_at")
+
+  creator          User          @relation("SquadCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  members          SquadMember[]
+  events           SquadEvent[]
+
+  @@map("squads")
+}
+
+model SquadMember {
+  id       String   @id @default(uuid())
+  squadId  String   @map("squad_id")
+  userId   String   @map("user_id")
+  role     String   @default("MEMBER")
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  squad    Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([squadId, userId])
+  @@index([squadId, userId])
+  @@map("squad_members")
+}
+
+model SquadEvent {
+  id          String   @id @default(uuid())
+  squadId     String   @map("squad_id")
+  userId      String   @map("user_id")
+  eventType   String   @map("event_type")
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  squad       Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([squadId, createdAt])
+  @@map("squad_events")
+}
+
+model Challenge {
+  id           String                 @id @default(uuid())
+  title        String
+  description  String
+  durationDays Int                    @map("duration_days")
+  rewardXp     Int                    @map("reward_xp")
+  trophyName   String                 @map("trophy_name")
+  taskIds      String                 @map("task_ids")
+  startDate    DateTime               @map("start_date")
+  endDate      DateTime               @map("end_date")
+  isActive     Boolean                @default(true) @map("is_active")
+  createdAt    DateTime               @default(now()) @map("created_at")
+
+  participants ChallengeParticipant[]
+
+  @@index([isActive, startDate])
+  @@map("challenges")
+}
+
+model ChallengeParticipant {
+  id                   String    @id @default(uuid())
+  challengeId          String    @map("challenge_id")
+  userId               String    @map("user_id")
+  daysCompleted        Int       @default(0) @map("days_completed")
+  averageResistanceSec Int       @default(120) @map("average_resistance_sec")
+  isCompleted          Boolean   @default(false) @map("is_completed")
+  joinedAt             DateTime  @default(now()) @map("joined_at")
+
+  challenge            Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+  @@index([challengeId, userId])
+  @@map("challenge_participants")
+}
+
+model SocialRelationship {
   id               String   @id @default(uuid())
   userId           String   @map("user_id")
-  platform         Platform @default(ANDROID)
-  deviceIdentifier String   @map("device_identifier")
-  pushToken        String?  @map("push_token")
-  appVersion       String   @default("0.1.0") @map("app_version")
-  timezone         String   @default("UTC")
-  lastSeenAt       DateTime @default(now()) @map("last_seen_at")
-  status           String   @default("ACTIVE")
+  targetUserId     String   @map("target_user_id")
+  relationshipType String   @map("relationship_type")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user             User     @relation("UserSocial", fields: [userId], references: [id], onDelete: Cascade)
+  targetUser       User     @relation("TargetUserSocial", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetUserId])
+  @@index([userId, relationshipType])
+  @@map("social_relationships")
+}
+
+model ContentReport {
+  id         String   @id @default(uuid())
+  reporterId String   @map("reporter_id")
+  targetId   String   @map("target_id")
+  targetType String   @map("target_type")
+  reason     String
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  reporter   User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@map("content_reports")
+}
+
+// -----------------------------------------------------------------------------
+// 9. Hardware Anchors, Audio & Mesh Synchronizer
+// -----------------------------------------------------------------------------
+
+model PhysicalAnchor {
+  id                 String               @id @default(uuid())
+  userId             String               @map("user_id")
+  name               String
+  anchorType         String               @map("anchor_type")
+  locationLabel      String               @map("location_label")
+  hardwareIdentifier String               @map("hardware_identifier")
+  secretKey          String               @map("secret_key")
+  isActive           Boolean              @default(true) @map("is_active")
+  createdAt          DateTime             @default(now()) @map("created_at")
+
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifications      AnchorVerification[]
+
+  @@index([userId, isActive])
+  @@map("physical_anchors")
+}
+
+model AnchorVerification {
+  id         String         @id @default(uuid())
+  anchorId   String         @map("anchor_id")
+  userId     String         @map("user_id")
+  missionId  String?        @map("mission_id")
+  nonce      String
+  verifiedAt DateTime       @default(now()) @map("verified_at")
+
+  anchor     PhysicalAnchor @relation(fields: [anchorId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("anchor_verifications")
+}
+
+model AudioProfile {
+  id                String   @id @default(uuid())
+  userId            String?  @map("user_id")
+  name              String
+  baseFrequencyHz   Int      @default(440) @map("base_frequency_hz")
+  binauralBeatHz    Float    @default(40.0) @map("binaural_beat_hz")
+  escalationProfile String   @default("EXPONENTIAL") @map("escalation_profile")
+  strobeIntervalMs  Int?     @default(250) @map("strobe_interval_ms")
+  isPreset          Boolean  @default(false) @map("is_preset")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  user              User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isPreset])
+  @@map("audio_profiles")
+}
+
+model MeshDevice {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  deviceName String   @map("device_name")
+  deviceType String   @map("device_type")
+  pushToken  String?  @map("push_token")
+  lastPingAt DateTime @map("last_ping_at")
+  isOnline   Boolean  @default(true) @map("is_online")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isOnline])
+  @@map("mesh_devices")
+}
+
+model MeshEvent {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  eventType    String   @map("event_type")
+  payload      String
+  dispatchedAt DateTime @map("dispatched_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mesh_events")
+}
+
+model LockdownSetting {
+  id                    String   @id @default(uuid())
+  userId                String   @unique @map("user_id")
+  isShieldEnabled       Boolean  @default(true) @map("is_shield_enabled")
+  blockedApps           String   @map("blocked_apps")
+  quarantineDurationMin Int      @default(60) @map("quarantine_duration_min")
+  strictMode            Boolean  @default(true) @map("strict_mode")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("lockdown_settings")
+}
+
+model DisciplineBond {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  missionId String?   @map("mission_id")
+  stakedXp  Int       @map("staked_xp")
+  status    String    @default("ACTIVE")
+  createdAt DateTime  @default(now()) @map("created_at")
+  settledAt DateTime? @map("settled_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("discipline_bonds")
+}
+
+model EmergencyBypass {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  reason       String
+  authorizedAt DateTime @map("authorized_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("emergency_bypasses")
+}
+
+// -----------------------------------------------------------------------------
+// 10. Accountability, Coach & Behavioral Intelligence
+// -----------------------------------------------------------------------------
+
+model AccountabilityPartner {
+  id                  String              @id @default(uuid())
+  userId              String              @map("user_id")
+  name                String
+  phone               String?
+  email               String?
+  escalationThreshold Int?                @default(3) @map("escalation_threshold")
+  isActive            Boolean             @default(true) @map("is_active")
+  createdAt           DateTime            @default(now()) @map("created_at")
+
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs                AccountabilityLog[]
+
+  @@map("accountability_partners")
+}
+
+model AccountabilityLog {
+  id           String                @id @default(uuid())
+  userId       String                @map("user_id")
+  missionId    String?               @map("mission_id")
+  partnerId    String                @map("partner_id")
+  message      String
+  dispatchedAt DateTime              @map("dispatched_at")
+
+  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  partner      AccountabilityPartner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("accountability_logs")
+}
+
+model CoachInsight {
+  id                       String   @id @default(uuid())
+  userId                   String   @map("user_id")
+  insightType              String   @map("insight_type")
+  headline                 String
+  content                  String
+  actionableRecommendation String   @map("actionable_recommendation")
+  createdAt                DateTime @default(now()) @map("created_at")
+
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("coach_insights")
+}
+
+model CoachSession {
+  id        String         @id @default(uuid())
+  userId    String         @map("user_id")
+  startedAt DateTime       @map("started_at")
+  endedAt   DateTime?      @map("ended_at")
+  summary   String?
+  metadata  String?
+  createdAt DateTime       @default(now()) @map("created_at")
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  CoachMessage[]
+
+  @@index([userId, createdAt])
+  @@map("coach_sessions")
+}
+
+model CoachMessage {
+  id        String       @id @default(uuid())
+  sessionId String       @map("session_id")
+  userId    String       @map("user_id")
+  role      String
+  content   String
+  metadata  String?
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  session   CoachSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+  @@map("coach_messages")
+}
+
+model DisciplineProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique @map("user_id")
+  preferredWake    String?  @map("preferred_wake")
+  preferredSleep   String?  @map("preferred_sleep")
+  consistency      Float    @default(0.0)
+  completionRate   Float    @default(0.0) @map("completion_rate")
+  preferredDays    String?  @map("preferred_days")
+  preferredTimes   String?  @map("preferred_times")
+  strengths        String?
+  frictionPoints   String?  @map("friction_points")
+  coachingStyle    String?  @default("DIRECT") @map("coaching_style")
+  planningAutonomy String?  @default("ASSISTED") @map("planning_autonomy")
+  version          Int      @default(1)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@map("devices")
+  @@map("discipline_profiles")
 }
 
-model Notification {
-  id           String   @id @default(uuid())
-  userId       String   @map("user_id")
-  type         String
-  title        String
-  body         String
-  payload      String?
-  scheduledAt  DateTime @map("scheduled_at")
-  sentAt       DateTime? @map("sent_at")
-  readAt       DateTime? @map("read_at")
-  status       String   @default("PENDING")
+model BehaviorEvent {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  type           String
+  missionId      String?  @map("mission_id")
+  taskId         String?  @map("task_id")
+  routineId      String?  @map("routine_id")
+  timestamp      DateTime
+  metadata       String?
+  idempotencyKey String?  @unique @map("idempotency_key")
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timestamp])
+  @@index([userId, type])
+  @@map("behavior_events")
+}
+
+model BehaviorPattern {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  patternType    String   @map("pattern_type")
+  confidence     Float    @default(0.8)
+  sampleSize     Int      @default(0) @map("sample_size")
+  periodDays     Int      @default(30) @map("period_days")
+  evidence       String?
+  classification String   @default("OBSERVED")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, patternType])
+  @@map("behavior_patterns")
+}
+
+model DailyPlan {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  planDate      String   @map("plan_date")
+  scheduleItems String   @map("schedule_items")
+  conflicts     String?
+  status        String   @default("PROPOSED")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planDate])
+  @@index([userId, planDate])
+  @@map("daily_plans")
+}
+
+model TaskPerformance {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id")
+  taskTemplateId     String   @map("task_template_id")
+  periodStart        DateTime @map("period_start")
+  periodEnd          DateTime @map("period_end")
+  attempts           Int      @default(0)
+  completions        Int      @default(0)
+  misses             Int      @default(0)
+  averageDelaySec    Int      @default(0) @map("average_delay_sec")
+  averageDurationSec Int      @default(0) @map("average_duration_sec")
+  successRate        Float    @default(0.0) @map("success_rate")
+  difficultyScore    Float    @default(0.0) @map("difficulty_score")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("task_performances")
+}
+
+model Recommendation {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  type        String
+  priority    String    @default("MEDIUM")
+  confidence  Float     @default(0.8)
+  title       String
+  explanation String
+  payload     String?
+  status      String    @default("PENDING")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  expiresAt   DateTime? @map("expires_at")
+  resolvedAt  DateTime? @map("resolved_at")
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, status])
-  @@map("notifications")
+  @@map("recommendations")
+}
+
+model UserEntitlement {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  entitlementCode String    @map("entitlement_code")
+  status          String    @default("ACTIVE")
+  expiresAt       DateTime? @map("expires_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entitlementCode])
+  @@index([userId, entitlementCode])
+  @@map("user_entitlements")
+}
+
+model FeatureFlag {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  isEnabled   Boolean  @default(true) @map("is_enabled")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("feature_flags")
 }
