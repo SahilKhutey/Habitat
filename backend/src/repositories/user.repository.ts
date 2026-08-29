@@ -1,5 +1,7 @@
-// User Repository Interface & Implementation
+// User Repository Interface & Dual Implementations (SQLite + Prisma PostgreSQL)
 import { DatabaseService } from '../db/connection';
+import { PrismaService } from '../db/prisma';
+import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface UserEntity {
@@ -14,27 +16,38 @@ export interface UserEntity {
   updatedAt: string;
 }
 
-export class UserRepository {
-  public static findById(id: string): UserEntity | null {
+export interface CreateUserInput {
+  email: string;
+  passwordHash: string;
+  displayName: string;
+  timezone?: string;
+}
+
+export interface IUserRepository {
+  findById(id: string): Promise<UserEntity | null> | (UserEntity | null);
+  findByEmail(email: string): Promise<UserEntity | null> | (UserEntity | null);
+  create(params: CreateUserInput): Promise<UserEntity> | UserEntity;
+}
+
+/**
+ * SQLite Implementation of User Repository
+ */
+export class SqliteUserRepository implements IUserRepository {
+  public findById(id: string): UserEntity | null {
     const db = DatabaseService.getDb();
     const row = db.prepare('SELECT * FROM users WHERE id = ?').get(id) as any;
     if (!row) return null;
     return this.mapRow(row);
   }
 
-  public static findByEmail(email: string): UserEntity | null {
+  public findByEmail(email: string): UserEntity | null {
     const db = DatabaseService.getDb();
     const row = db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase().trim()) as any;
     if (!row) return null;
     return this.mapRow(row);
   }
 
-  public static create(params: {
-    email: string;
-    passwordHash: string;
-    displayName: string;
-    timezone?: string;
-  }): UserEntity {
+  public create(params: CreateUserInput): UserEntity {
     const db = DatabaseService.getDb();
     const id = uuidv4();
     const now = new Date().toISOString();
@@ -47,7 +60,7 @@ export class UserRepository {
     return this.findById(id)!;
   }
 
-  private static mapRow(row: any): UserEntity {
+  private mapRow(row: any): UserEntity {
     return {
       id: row.id,
       email: row.email,
@@ -59,5 +72,100 @@ export class UserRepository {
       createdAt: row.created_at,
       updatedAt: row.updated_at
     };
+  }
+}
+
+/**
+ * Prisma PostgreSQL Implementation of User Repository
+ */
+export class PrismaUserRepository implements IUserRepository {
+  constructor(private readonly db: PrismaClient) {}
+
+  public async findById(id: string): Promise<UserEntity | null> {
+    const user = await this.db.user.findUnique({
+      where: { id }
+    });
+    if (!user) return null;
+    return this.mapPrismaModel(user);
+  }
+
+  public async findByEmail(email: string): Promise<UserEntity | null> {
+    const user = await this.db.user.findUnique({
+      where: { email: email.toLowerCase().trim() }
+    });
+    if (!user) return null;
+    return this.mapPrismaModel(user);
+  }
+
+  public async create(params: CreateUserInput): Promise<UserEntity> {
+    const user = await this.db.user.create({
+      data: {
+        email: params.email.toLowerCase().trim(),
+        passwordHash: params.passwordHash,
+        displayName: params.displayName,
+        timezone: params.timezone || 'UTC',
+        disciplineScore: 100,
+        autonomyLevel: 1
+      }
+    });
+
+    return this.mapPrismaModel(user);
+  }
+
+  private mapPrismaModel(user: any): UserEntity {
+    return {
+      id: user.id,
+      email: user.email,
+      passwordHash: user.passwordHash,
+      displayName: user.displayName,
+      timezone: user.timezone,
+      disciplineScore: user.disciplineScore,
+      autonomyLevel: user.autonomyLevel,
+      createdAt: user.createdAt instanceof Date ? user.createdAt.toISOString() : String(user.createdAt),
+      updatedAt: user.updatedAt instanceof Date ? user.updatedAt.toISOString() : String(user.updatedAt)
+    };
+  }
+}
+
+/**
+ * Facade maintaining 100% backward-compatible static API
+ */
+export class UserRepository {
+  private static sqliteAdapter = new SqliteUserRepository();
+  private static prismaAdapter: PrismaUserRepository | null = null;
+
+  private static getAdapter(): IUserRepository {
+    const provider = (process.env.DATABASE_PROVIDER || 'sqlite').toLowerCase().trim();
+    if (provider === 'postgres' || provider === 'postgresql') {
+      if (!this.prismaAdapter) {
+        this.prismaAdapter = new PrismaUserRepository(PrismaService.getClient());
+      }
+      return this.prismaAdapter;
+    }
+    return this.sqliteAdapter;
+  }
+
+  public static findById(id: string): UserEntity | null {
+    return this.sqliteAdapter.findById(id);
+  }
+
+  public static findByEmail(email: string): UserEntity | null {
+    return this.sqliteAdapter.findByEmail(email);
+  }
+
+  public static create(params: CreateUserInput): UserEntity {
+    return this.sqliteAdapter.create(params);
+  }
+
+  public static async findByIdAsync(id: string): Promise<UserEntity | null> {
+    return this.getAdapter().findById(id);
+  }
+
+  public static async findByEmailAsync(email: string): Promise<UserEntity | null> {
+    return this.getAdapter().findByEmail(email);
+  }
+
+  public static async createAsync(params: CreateUserInput): Promise<UserEntity> {
+    return this.getAdapter().create(params);
   }
 }
