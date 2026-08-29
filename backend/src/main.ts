@@ -63,10 +63,21 @@ const server = http.createServer(app);
 // Initialize WebSocket Gateway
 NotificationGateway.initialize(server);
 
+import { createVisionProvider } from './modules/verification/vision.factory';
+
 export function bootstrap() {
   DatabaseService.getDb();
   const { defaultUserId } = seedDatabase();
   console.log(`[DB] Database initialized & seeded. Default User ID: ${defaultUserId}`);
+
+  // Resolve active verification vision provider at composition root
+  const visionProvider = createVisionProvider();
+  const storageProvider = process.env.STORAGE_PROVIDER || 'local';
+  const databaseType = process.env.DATABASE_URL?.startsWith('postgres') ? 'postgres' : 'sqlite';
+
+  console.log(
+    `[Habitat Boot] Vision: ${visionProvider.modelName} (${process.env.VISION_PROVIDER || 'mock'}) | Storage: ${storageProvider} | Database: ${databaseType}`
+  );
 
   server.listen(PORT, () => {
     console.log(`=======================================================`);

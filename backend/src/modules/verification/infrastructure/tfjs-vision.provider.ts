@@ -12,7 +12,7 @@ import { IPoseAdapter, MoveNetPoseAdapter } from './movenet-pose.adapter';
 import { IObjectDetectionAdapter, UnsupportedObjectDetectionAdapter } from './object-detection.adapter';
 import { IVideoFrameExtractor, FFmpegFrameExtractor, FrameExtractionOptions } from './video-frame-extractor';
 
-export class RealVisionProvider implements IVisionProvider {
+export class TfjsVisionProvider implements IVisionProvider {
   public readonly providerId = 'real-tfjs-movenet-v1';
   public readonly modelName = 'MoveNet-Lightning';
   public readonly modelVersion = '1.0.0';
@@ -151,3 +151,7 @@ export class RealVisionProvider implements IVisionProvider {
     };
   }
 }
+
+// Canonical backwards-compatible alias
+export const RealVisionProvider = TfjsVisionProvider;
+export type RealVisionProvider = TfjsVisionProvider;
