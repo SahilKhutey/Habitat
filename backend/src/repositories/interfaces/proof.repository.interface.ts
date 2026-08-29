@@ -28,8 +28,8 @@ export interface ProofAssetEntity {
 }
 
 export interface IProofRepository extends IRepository<ProofAssetEntity> {
-  findByMissionId(missionId: string): ProofAssetEntity[];
-  findByUploadId(uploadId: string): ProofAssetEntity | null;
-  updateVerification(id: string, status: 'ACCEPTED' | 'REJECTED' | 'REVIEW', reason?: string | null): void;
-  markUploadComplete(id: string, sizeBytes: number, sha256: string): void;
+  findByMissionId(missionId: string): Promise<ProofAssetEntity[]> | ProofAssetEntity[];
+  findByUploadId(uploadId: string): Promise<ProofAssetEntity | null> | (ProofAssetEntity | null);
+  updateVerification(id: string, status: 'ACCEPTED' | 'REJECTED' | 'REVIEW', reason?: string | null): Promise<void> | void;
+  markUploadComplete(id: string, sizeBytes: number, sha256: string): Promise<void> | void;
 }
