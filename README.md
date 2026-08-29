@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-356%2F356%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-362%2F362%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Spoof%20Accepts-0%20(Release%20Approved)-brightgreen?style=for-the-badge&logo=shield&logoColor=white" alt="Spoof Accepts" />
   <img src="https://img.shields.io/badge/Backend-TypeScript%20%2B%20Express-blue?style=for-the-badge&logo=express&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Storage-S3%20%2B%20Local%20Abstraction-orange?style=for-the-badge&logo=amazons3&logoColor=white" alt="Storage" />
@@ -145,16 +145,16 @@ If the vision provider is configured as `mock`, verification uses deterministic 
 
 ---
 
-## Automated Test Suite: 356/356 Passing (100% Green)
+## Automated Test Suite: 362/362 Passing (100% Green)
 
 ```bash
 npm test
 ```
 
 ```
- Test Files  60 passed (60)
-      Tests  356 passed (356)
-   Duration  6.25s
+ Test Files  61 passed (61)
+      Tests  362 passed (362)
+   Duration  5.56s
 ```
 
 ### Real-Vision Adversarial Gate

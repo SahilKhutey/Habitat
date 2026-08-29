@@ -70,13 +70,14 @@ export function bootstrap() {
   const { defaultUserId } = seedDatabase();
   console.log(`[DB] Database initialized & seeded. Default User ID: ${defaultUserId}`);
 
-  // Resolve active verification vision provider at composition root
+  // Resolve active verification vision provider, storage, and database at composition root
   const visionProvider = createVisionProvider();
   const storageProvider = process.env.STORAGE_PROVIDER || 'local';
-  const databaseType = process.env.DATABASE_URL?.startsWith('postgres') ? 'postgres' : 'sqlite';
+  const { DatabaseFactory } = require('./db/database.factory');
+  const databaseType = DatabaseFactory.getProviderName();
 
   console.log(
-    `[Habitat Boot] Vision: ${visionProvider.modelName} (${process.env.VISION_PROVIDER || 'mock'}) | Storage: ${storageProvider} | Database: ${databaseType}`
+    `[Habitat Boot] Vision: ${visionProvider.modelName} (${process.env.VISION_PROVIDER || 'mock'}) | Storage: ${storageProvider} | Database: ${databaseType} (${process.env.DB_PROVIDER || 'sqlite'})`
   );
 
   server.listen(PORT, () => {

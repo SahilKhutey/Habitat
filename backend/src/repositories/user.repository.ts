@@ -132,18 +132,6 @@ export class PrismaUserRepository implements IUserRepository {
  */
 export class UserRepository {
   private static sqliteAdapter = new SqliteUserRepository();
-  private static prismaAdapter: PrismaUserRepository | null = null;
-
-  private static getAdapter(): IUserRepository {
-    const provider = (process.env.DATABASE_PROVIDER || 'sqlite').toLowerCase().trim();
-    if (provider === 'postgres' || provider === 'postgresql') {
-      if (!this.prismaAdapter) {
-        this.prismaAdapter = new PrismaUserRepository(PrismaService.getClient());
-      }
-      return this.prismaAdapter;
-    }
-    return this.sqliteAdapter;
-  }
 
   public static findById(id: string): UserEntity | null {
     return this.sqliteAdapter.findById(id);
@@ -158,14 +146,17 @@ export class UserRepository {
   }
 
   public static async findByIdAsync(id: string): Promise<UserEntity | null> {
-    return this.getAdapter().findById(id);
+    const { DatabaseFactory } = await import('../db/database.factory');
+    return DatabaseFactory.getRepositories().users.findById(id);
   }
 
   public static async findByEmailAsync(email: string): Promise<UserEntity | null> {
-    return this.getAdapter().findByEmail(email);
+    const { DatabaseFactory } = await import('../db/database.factory');
+    return DatabaseFactory.getRepositories().users.findByEmail(email);
   }
 
   public static async createAsync(params: CreateUserInput): Promise<UserEntity> {
-    return this.getAdapter().create(params);
+    const { DatabaseFactory } = await import('../db/database.factory');
+    return DatabaseFactory.getRepositories().users.create(params);
   }
 }
