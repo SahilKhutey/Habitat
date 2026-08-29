@@ -7,7 +7,7 @@ Habitat maintains a 100% automated test coverage baseline spanning all 8 core en
 * **Test Files**: 28 Suites
 * **Total Automated Tests**: 170 Unit, Integration & Acceptance Tests
 * **Pass Rate**: 100% Green
-* **Backend Framework**: NestJS + Vitest + TypeScript
+* **Backend Framework**: Express + Vitest + TypeScript
 * **Mobile Framework**: Flutter + Dart Unit/Widget Tests
 
 ## Test Suites Breakdown
