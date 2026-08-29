@@ -21,12 +21,18 @@ artifacts/
 *.zip
 *.tar.gz
 
+# Signing Keys & Certificates (NEVER COMMIT TO GIT)
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+*.pem
+*.key
+
 # Environment Secrets
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.*
+!.env.example
 
 # Databases & Local Media
 data/
@@ -36,13 +42,16 @@ uploads/
 *.db-wal
 *.db-shm
 
-# Flutter / Dart Specific
+# Flutter / Native Build Cache
 apps/mobile/.flutter-plugins
 apps/mobile/.flutter-plugins-dependencies
 apps/mobile/.flutter-plugin-dependencies
 apps/mobile/android/local.properties
 apps/mobile/ios/Flutter/Generated.xcconfig
 apps/mobile/ios/Flutter/flutter_export_environment.sh
+.gradle/
+Pods/
+DerivedData/
 
 # IDEs & System
 .idea/
