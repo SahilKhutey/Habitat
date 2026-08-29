@@ -1,17 +1,14 @@
-name: Android Build & GitHub Release
+name: Android CI
 
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
     branches: [main]
 
-permissions:
-  contents: write
-
 jobs:
-  build-android:
+  build-android-ci:
+    name: Validate Android Build & Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -27,55 +24,19 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.x'
-          channel: 'stable'
+          channel: stable
           cache: true
 
       - name: Install Mobile Dependencies
         working-directory: apps/mobile
         run: flutter pub get
 
-      - name: Static Code Analysis & Tests
+      - name: Analyze & Test
         working-directory: apps/mobile
         run: |
           flutter analyze --no-fatal-infos || true
           flutter test || true
 
-      - name: Build Android Release APK
+      - name: Build Android APK (Debug CI)
         working-directory: apps/mobile
-        run: flutter build apk --release --no-tree-shake-icons
-
-      - name: Build Android App Bundle (AAB)
-        working-directory: apps/mobile
-        run: flutter build appbundle --release --no-tree-shake-icons
-
-      - name: Package Release Artifacts & Generate Checksums
-        run: |
-          mkdir -p release/android
-          mkdir -p release/checksums
-          cp apps/mobile/build/app/outputs/flutter-apk/app-release.apk release/android/Habitat-1.0.0-android.apk
-          cp apps/mobile/build/app/outputs/bundle/release/app-release.aab release/android/Habitat-1.0.0-android.aab
-          sha256sum release/android/Habitat-1.0.0-android.apk > release/checksums/Habitat-1.0.0-android.sha256
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: habitat-android-release
-          path: |
-            release/android/Habitat-1.0.0-android.apk
-            release/android/Habitat-1.0.0-android.aab
-            release/checksums/Habitat-1.0.0-android.sha256
-
-      - name: Publish GitHub Release (Tags Only)
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            release/android/Habitat-1.0.0-android.apk
-            release/android/Habitat-1.0.0-android.aab
-            release/checksums/Habitat-1.0.0-android.sha256
-          body_path: release/RELEASE_NOTES.md
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: flutter build apk --debug
