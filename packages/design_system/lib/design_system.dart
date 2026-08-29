@@ -24,6 +24,7 @@ export 'components/sheets/app_sheets.dart';
 export 'components/feedback/app_feedback.dart';
 export 'components/progress/app_progress.dart';
 export 'components/layout/app_shell.dart';
+export 'components/habitat_components.dart';
 
 // Icons & Motion
 export 'icons/app_icons.dart';
