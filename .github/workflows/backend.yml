@@ -18,21 +18,29 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: 'backend/package-lock.json'
 
-      - name: Install Backend Dependencies
+      - name: Verify Node.js Runtime
         run: |
-          cd backend
-          npm ci || npm install
+          node --version
+          npm --version
+          node -e "
+            const { DatabaseSync } = require('node:sqlite');
+            const db = new DatabaseSync(':memory:');
+            db.exec('SELECT 1');
+            console.log('node:sqlite OK');
+          "
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm ci
 
       - name: Build TypeScript
-        run: |
-          cd backend
-          npm run build
+        working-directory: backend
+        run: npm run build
 
-      - name: Execute All Test Suites (Vitest)
-        run: |
-          cd backend
-          npm test
+      - name: Execute All Test Suites
+        working-directory: backend
+        run: npm test
