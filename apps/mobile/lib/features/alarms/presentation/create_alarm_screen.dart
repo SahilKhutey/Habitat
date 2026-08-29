@@ -1,6 +1,8 @@
 // Set Alarm Commitment Screen
 import 'package:flutter/material.dart';
 import '../../../../packages/design_system/lib/design_system.dart';
+import '../../../services/alarm_reliability_service.dart';
+import '../../onboarding/screens/alarm_reliability_screen.dart';
 
 class CreateAlarmScreen extends StatefulWidget {
   const CreateAlarmScreen({super.key});
@@ -19,7 +21,18 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
 
   void _saveAlarm() {
     AppFeedback.showToast(context, message: 'Alarm Committed for ${_selectedTime.format(context)}');
-    Navigator.of(context).pop();
+    final persisted = AlarmReliabilityService.instance.persistedState;
+    if (persisted == null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => AlarmReliabilityScreen(
+            onCompleted: () => Navigator.of(context).pop(),
+          ),
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override

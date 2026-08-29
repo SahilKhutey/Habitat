@@ -1,6 +1,8 @@
-// Alarm Management List Screen
+// Alarm Management List Screen with Reliability Status & Navigation (Milestones C1-C3)
 import 'package:flutter/material.dart';
 import '../../../core/theme/habitat_theme.dart';
+import '../../../services/alarm_reliability_service.dart';
+import '../../onboarding/screens/alarm_reliability_screen.dart';
 import 'edit_alarm_screen.dart';
 
 class AlarmListScreen extends StatefulWidget {
@@ -11,6 +13,8 @@ class AlarmListScreen extends StatefulWidget {
 }
 
 class _AlarmListScreenState extends State<AlarmListScreen> {
+  final AlarmReliabilityService _reliabilityService = AlarmReliabilityService.instance;
+
   final List<Map<String, dynamic>> _alarms = [
     {
       'id': 'a1',
@@ -43,11 +47,27 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isVerified = _reliabilityService.persistedState?.isVerifiedViaTest ?? false;
+
     return Scaffold(
       backgroundColor: HabitatTheme.background,
       appBar: AppBar(
         title: const Text('ALARM COMMITMENTS'),
         actions: [
+          IconButton(
+            icon: Icon(
+              isVerified ? Icons.verified_user : Icons.security,
+              color: isVerified ? const Color(0xFF10B981) : HabitatTheme.amberFocus,
+            ),
+            tooltip: 'Alarm Reliability & Diagnostics',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AlarmReliabilityScreen(isFromSettings: true),
+                ),
+              ).then((_) => setState(() {}));
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.add, color: HabitatTheme.amberFocus),
             onPressed: () {
@@ -58,13 +78,66 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
+      body: ListView(
         padding: const EdgeInsets.all(20),
-        itemCount: _alarms.length,
-        itemBuilder: (context, index) {
-          final alarm = _alarms[index];
-          return _buildAlarmCard(alarm, index);
-        },
+        children: [
+          // Reliability Status Banner
+          _buildReliabilityBanner(isVerified),
+          const SizedBox(height: 16),
+
+          // Alarm Cards
+          for (int i = 0; i < _alarms.length; i++)
+            _buildAlarmCard(_alarms[i], i),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReliabilityBanner(bool isVerified) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const AlarmReliabilityScreen(isFromSettings: true),
+          ),
+        ).then((_) => setState(() {}));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isVerified
+              ? const Color(0xFF10B981).withOpacity(0.12)
+              : const Color(0xFFF59E0B).withOpacity(0.12),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isVerified
+                ? const Color(0xFF10B981).withOpacity(0.3)
+                : const Color(0xFFF59E0B).withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isVerified ? Icons.verified : Icons.warning_amber_rounded,
+              size: 20,
+              color: isVerified ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                isVerified
+                    ? 'Hardware Alarm Path: Empirically Verified'
+                    : 'Alarm Reliability: Check background & battery permissions',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: isVerified ? const Color(0xFF10B981) : const Color(0xFFFBBF24),
+                ),
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 18, color: Colors.white54),
+          ],
+        ),
       ),
     );
   }
@@ -92,61 +165,64 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                alarm['time'] as String,
+                alarm['time'],
                 style: TextStyle(
-                  color: isEnabled ? Colors.white : HabitatTheme.textMuted,
-                  fontSize: 28,
+                  fontSize: 32,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
+                  letterSpacing: -1.0,
+                  color: isEnabled ? Colors.white : Colors.white38,
                 ),
               ),
-              Switch(
+              Switch.adaptive(
                 value: isEnabled,
                 activeColor: HabitatTheme.amberFocus,
                 onChanged: (val) {
                   setState(() {
-                    alarm['isEnabled'] = val;
+                    _alarms[index]['isEnabled'] = val;
                   });
                 },
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Row(
             children: [
-              Icon(Icons.shield, size: 14, color: isEnabled ? HabitatTheme.amberFocus : HabitatTheme.textMuted),
-              const SizedBox(width: 6),
-              Text(
-                alarm['taskTitle'] as String,
-                style: TextStyle(
-                  color: isEnabled ? HabitatTheme.textPrimary : HabitatTheme.textMuted,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                alarm['repeat'] as String,
-                style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 12),
-              ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: modeColor.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: modeColor.withOpacity(0.5)),
                 ),
                 child: Text(
-                  alarm['mode'] as String,
-                  style: TextStyle(color: modeColor, fontSize: 10, fontWeight: FontWeight.bold),
+                  alarm['mode'],
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: modeColor,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  alarm['taskTitle'],
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            alarm['repeat'],
+            style: const TextStyle(
+              fontSize: 13,
+              color: HabitatTheme.textSecondary,
+            ),
           ),
         ],
       ),
