@@ -25,6 +25,7 @@ import { meshController } from './modules/mesh/mesh.controller';
 import { verificationController } from './modules/verification/verification.controller';
 import { intelligenceController } from './modules/intelligence/presentation/intelligence.controller';
 import { socialController } from './modules/social/social.controller';
+import { storageController } from './modules/storage/storage.controller';
 
 export const appRouter = Router();
 
@@ -39,6 +40,7 @@ appRouter.use('/missions', missionsController);
 appRouter.use('/missions', proofsController);
 appRouter.use('/missions', verificationController);
 appRouter.use('/proofs', proofsController);
+appRouter.use('/storage', storageController);
 appRouter.use('/verification', verificationController);
 appRouter.use('/gamification', gamificationController);
 appRouter.use('/sync', syncController);

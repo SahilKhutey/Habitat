@@ -2,6 +2,8 @@
 import { Router, Request, Response } from 'express';
 import { DatabaseService } from '../../db/connection';
 import { v4 as uuidv4 } from 'uuid';
+import { AlarmReliabilityService } from './services/alarm-reliability.service';
+import { AlarmOccurrenceRepository } from '../../repositories/alarm-occurrence.repository';
 
 export class AlarmsService {
   public static getAll(userId: string) {
@@ -286,6 +288,47 @@ alarmsController.patch('/:id', (req: Request, res: Response) => {
     return;
   }
   res.json({ success: true, data: updated });
+});
+
+// POST /api/v1/alarms/diagnose - Check device health & OEM mitigations
+alarmsController.post('/diagnose', (req: Request, res: Response) => {
+  try {
+    const health = AlarmReliabilityService.diagnoseDevice(req.body);
+    res.json({ success: true, data: health });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/alarms/test-alarm/start - Start "Test My Alarm" session
+alarmsController.post('/test-alarm/start', (req: Request, res: Response) => {
+  try {
+    const delaySeconds = req.body.delaySeconds || 60;
+    const session = AlarmReliabilityService.startTestAlarm(delaySeconds);
+    res.status(201).json({ success: true, data: session });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/alarms/test-alarm/:testId/confirm - User confirms delivery
+alarmsController.post('/test-alarm/:testId/confirm', (req: Request, res: Response) => {
+  try {
+    const result = AlarmReliabilityService.confirmTestAlarm(String(req.params.testId));
+    res.json({ success: true, data: result });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// GET /api/v1/alarms/:id/occurrences - Observability audit log
+alarmsController.get('/:id/occurrences', (req: Request, res: Response) => {
+  try {
+    const occurrences = AlarmOccurrenceRepository.findByAlarmId(String(req.params.id));
+    res.json({ success: true, data: occurrences });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
 });
 
 // DELETE /api/v1/alarms/:id - Delete alarm commitment

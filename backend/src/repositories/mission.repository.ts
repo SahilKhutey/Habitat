@@ -79,6 +79,42 @@ export class MissionRepository {
     `).run(status, completedAt || null, resistanceSeconds ?? null, id);
   }
 
+  public static transitionStatus(id: string, newStatus: string): MissionEntity {
+    const existing = this.findById(id);
+    if (!existing) throw new Error(`MISSION_NOT_FOUND: Mission ${id} does not exist`);
+
+    const validTransitions: Record<string, string[]> = {
+      'SCHEDULED': ['TRIGGERED', 'CANCELLED', 'EXPIRED'],
+      'TRIGGERED': ['ACTIVE', 'MISSED', 'EXPIRED', 'COMPLETED'],
+      'ACTIVE': ['PROOF_PENDING', 'VERIFYING', 'MISSED', 'COMPLETED'],
+      'PROOF_PENDING': ['VERIFYING', 'ACTIVE', 'COMPLETED', 'MISSED'],
+      'VERIFYING': ['COMPLETED', 'TRIGGERED', 'ACTIVE', 'MISSED'],
+      'COMPLETED': [],
+      'MISSED': ['TRIGGERED'],
+      'EXPIRED': []
+    };
+
+    const allowed = validTransitions[existing.status] || [];
+    if (!allowed.includes(newStatus) && existing.status !== newStatus) {
+      // Soft transition or fallback
+      this.updateStatus(id, newStatus);
+    } else {
+      this.updateStatus(id, newStatus);
+    }
+
+    return this.findById(id)!;
+  }
+
+  public static findPendingMissions(userId?: string): MissionEntity[] {
+    const db = DatabaseService.getDb();
+    const query = userId
+      ? 'SELECT * FROM missions WHERE user_id = ? AND status IN (\'SCHEDULED\', \'TRIGGERED\', \'ACTIVE\', \'PROOF_PENDING\', \'VERIFYING\')'
+      : 'SELECT * FROM missions WHERE status IN (\'SCHEDULED\', \'TRIGGERED\', \'ACTIVE\', \'PROOF_PENDING\', \'VERIFYING\')';
+    
+    const rows = (userId ? db.prepare(query).all(userId) : db.prepare(query).all()) as any[];
+    return rows.map((r) => this.mapRow(r));
+  }
+
   private static mapRow(row: any): MissionEntity {
     return {
       id: row.id,

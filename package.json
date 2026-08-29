@@ -1,43 +1,20 @@
 {
-  "name": "habitat-backend",
+  "name": "habitat-platform",
   "version": "1.0.0",
-  "description": "Habitat: Mission-Driven Discipline Engine - Backend System & API Layer",
-  "main": "dist/index.js",
-  "type": "commonjs",
+  "description": "Habitat: Mission-Driven Discipline & Anti-Cheat Alarm Platform",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "Sahil Khutey",
   "scripts": {
-    "build": "tsc",
-    "start": "ts-node src/index.ts",
-    "dev": "ts-node src/index.ts",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "dev": "npm --prefix backend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix backend run build",
+    "build:backend": "npm --prefix backend run build",
+    "test": "npm --prefix backend test",
+    "test:backend": "npm --prefix backend test",
+    "start": "npm --prefix backend start"
   },
-  "keywords": [
-    "discipline",
-    "habits",
-    "alarm",
-    "mission",
-    "habit-engine"
-  ],
-  "author": "Habitat Team",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "multer": "^1.4.5-lts.1",
-    "uuid": "^11.1.0",
-    "ws": "^8.18.0",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.5",
-    "@types/uuid": "^10.0.0",
-    "@types/ws": "^8.5.14",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3",
-    "vitest": "^3.0.7"
-  }
+  "workspaces": [
+    "backend"
+  ]
 }

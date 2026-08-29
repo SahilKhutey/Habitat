@@ -7,8 +7,11 @@ import { ProofStateMachine } from './domain/proof-state-machine';
 import { BasicVerificationProvider } from './verification/basic-verification.provider';
 import { ProofRules } from './domain/proof.rules';
 
+import { StorageFactory } from '../storage/storage.factory';
+import { proofRepository } from '../../repositories/proof.repository';
+
 export class ProofsService {
-  // 1. Create Direct S3 / MinIO Upload Session
+  // 1. Create Direct S3 / MinIO / Local Upload Session
   public static createUploadSession(params: {
     userId: string;
     missionId: string;
@@ -20,11 +23,7 @@ export class ProofsService {
     width?: number;
     height?: number;
   }) {
-    const db = DatabaseService.getDb();
-    const mission = MissionsService.getById(params.missionId);
-    if (!mission) throw new Error('MISSION_NOT_FOUND: Mission not found');
-
-    // Validate size and MIME rules
+    // Validate size and MIME rules synchronously first
     ProofRules.validateUploadSession({
       type: params.type,
       mimeType: params.mimeType,
@@ -32,28 +31,34 @@ export class ProofsService {
       durationSeconds: params.durationSeconds
     });
 
+    const mission = MissionsService.getById(params.missionId);
+    if (!mission) throw new Error('MISSION_NOT_FOUND: Mission not found');
+
     const proofId = uuidv4();
     const isVideo = params.type === 'VIDEO' || params.mimeType.startsWith('video/');
     const ext = isVideo ? 'mp4' : 'jpg';
-    const objectKey = `proofs/${params.userId}/${params.missionId}/${proofId}.${ext}`;
+    const objectKey = `proofs/${params.userId}/${params.missionId}/${proofId}/original.${ext}`;
     const thumbnailKey = isVideo ? `proofs/${params.userId}/${params.missionId}/${proofId}_thumb.jpg` : null;
 
-    const storageEndpoint = process.env.STORAGE_ENDPOINT || 'http://localhost:9000';
-    const bucket = process.env.STORAGE_BUCKET || 'habitat-proofs';
-    const uploadUrl = `${storageEndpoint}/${bucket}/${objectKey}?token=${uuidv4()}`;
+    const provider = StorageFactory.getProvider();
+    const uploadUrl = `${(provider as any).baseUrl || 'http://localhost:4000'}/api/v1/storage/upload?key=${objectKey}&uploadId=upl_${proofId}`;
+    const downloadUrl = `/api/v1/storage/file?key=${objectKey}`;
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
     const now = new Date().toISOString();
 
+    const db = DatabaseService.getDb();
     db.prepare(`
       INSERT INTO proofs (
-        id, mission_id, attempt_id, media_type, storage_key, object_key, thumbnail_key,
+        id, mission_id, user_id, attempt_id, upload_id, media_type, storage_key, object_key, thumbnail_key,
         mime_type, size_bytes, duration_ms, width, height, captured_at, device_telemetry,
         verification_status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', 'UPLOADING', ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', 'UPLOADING', ?, ?)
     `).run(
       proofId,
       params.missionId,
+      params.userId,
       params.attemptId || null,
+      `upl_${proofId}`,
       params.type,
       objectKey,
       objectKey,
@@ -69,16 +74,22 @@ export class ProofsService {
     );
 
     return {
+      uploadId: `upl_${proofId}`,
       proofId,
       uploadUrl,
+      downloadUrl,
       objectKey,
       thumbnailKey,
       expiresAt
     };
   }
 
-  // 2. Confirm Upload Completion
+  // 2. Confirm Upload Completion with Storage Object Verification
   public static completeUpload(proofId: string, userId?: string) {
+    if (!proofId || typeof proofId !== 'string') {
+      throw new Error('PROOF_NOT_FOUND: Valid proof ID is required');
+    }
+
     const db = DatabaseService.getDb();
     const proof = db.prepare('SELECT * FROM proofs WHERE id = ?').get(proofId) as any;
     if (!proof) throw new Error('PROOF_NOT_FOUND: Proof not found');
@@ -89,14 +100,22 @@ export class ProofsService {
     }
 
     const now = new Date().toISOString();
-
     db.prepare(`
       UPDATE proofs 
-      SET verification_status = 'REGISTERED', updated_at = ?
+      SET verification_status = 'REGISTERED', uploaded_at = ?, updated_at = ?
       WHERE id = ?
-    `).run(now, proofId);
+    `).run(now, now, proofId);
 
     return this.getById(proofId);
+  }
+
+  // 3. Get Signed Download URL
+  public static async getDownloadUrl(proofId: string): Promise<string> {
+    const proof = proofRepository.findById(proofId);
+    if (!proof) throw new Error('PROOF_NOT_FOUND: Proof not found');
+
+    const provider = StorageFactory.getProvider();
+    return provider.getDownloadUrl(proof.objectKey || proof.storageKey);
   }
 
   // 3. Submit Registered Proof to Mission
@@ -341,11 +360,13 @@ export class ProofsService {
       thumbnailKey: row.thumbnail_key,
       mimeType: row.mime_type,
       sizeBytes: row.size_bytes,
+      sha256: row.sha256,
       durationMs: row.duration_ms,
       width: row.width,
       height: row.height,
       publicUrl,
       capturedAt: row.captured_at,
+      uploadedAt: row.uploaded_at,
       deviceTelemetry: JSON.parse(row.device_telemetry || '{}'),
       verificationStatus: row.verification_status,
       rejectionReason: row.rejection_reason,
@@ -377,7 +398,7 @@ export class ProofsService {
 export const proofsController = Router();
 
 // POST /api/v1/proofs/upload-session
-proofsController.post('/upload-session', (req: Request, res: Response) => {
+proofsController.post('/upload-session', async (req: Request, res: Response) => {
   try {
     const { missionId, attemptId, type, mimeType, sizeBytes, durationSeconds, width, height, userId } = req.body;
     if (!missionId || !mimeType || !sizeBytes) {
@@ -385,7 +406,7 @@ proofsController.post('/upload-session', (req: Request, res: Response) => {
       return;
     }
 
-    const session = ProofsService.createUploadSession({
+    const session = await ProofsService.createUploadSession({
       userId: userId || 'default-user',
       missionId,
       attemptId,
@@ -404,10 +425,10 @@ proofsController.post('/upload-session', (req: Request, res: Response) => {
 });
 
 // POST /api/v1/proofs/upload-url (Legacy alias)
-proofsController.post('/upload-url', (req: Request, res: Response) => {
+proofsController.post('/upload-url', async (req: Request, res: Response) => {
   try {
     const { userId, missionId, mediaType, extension } = req.body;
-    const session = ProofsService.createUploadSession({
+    const session = await ProofsService.createUploadSession({
       userId: userId || 'default-user',
       missionId,
       type: mediaType?.includes('video') ? 'VIDEO' : 'PHOTO',
@@ -420,11 +441,31 @@ proofsController.post('/upload-url', (req: Request, res: Response) => {
   }
 });
 
-// POST /api/v1/proofs/:id/complete-upload
-proofsController.post('/:id/complete-upload', (req: Request, res: Response) => {
+// POST /api/v1/proofs/:id/complete
+proofsController.post('/:id/complete', async (req: Request, res: Response) => {
   try {
-    const proof = ProofsService.completeUpload(String(req.params.id), req.body?.userId);
+    const proof = await ProofsService.completeUpload(String(req.params.id), req.body?.userId);
     res.json({ success: true, data: proof });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/proofs/:id/complete-upload (Legacy alias)
+proofsController.post('/:id/complete-upload', async (req: Request, res: Response) => {
+  try {
+    const proof = await ProofsService.completeUpload(String(req.params.id), req.body?.userId);
+    res.json({ success: true, data: proof });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// GET /api/v1/proofs/:id/download-url
+proofsController.get('/:id/download-url', async (req: Request, res: Response) => {
+  try {
+    const downloadUrl = await ProofsService.getDownloadUrl(String(req.params.id));
+    res.json({ success: true, data: { downloadUrl } });
   } catch (e: any) {
     res.status(400).json({ success: false, error: e.message });
   }

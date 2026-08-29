@@ -127,6 +127,26 @@ export class DatabaseService {
         FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
       );
 
+      CREATE TABLE IF NOT EXISTS alarm_occurrences (
+        occurrence_id TEXT PRIMARY KEY,
+        alarm_id TEXT NOT NULL,
+        mission_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        scheduled_at TEXT NOT NULL,
+        scheduler_registered_at TEXT NOT NULL,
+        triggered_at TEXT,
+        mission_started_at TEXT,
+        completed_at TEXT,
+        retry_count INTEGER DEFAULT 0,
+        failure_reason TEXT,
+        platform TEXT NOT NULL DEFAULT 'android',
+        status TEXT NOT NULL DEFAULT 'SCHEDULED',
+        created_at TEXT NOT NULL,
+        updated_at TEXT,
+        FOREIGN KEY (alarm_id) REFERENCES alarms(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
       CREATE TABLE IF NOT EXISTS audio_profiles (
         id TEXT PRIMARY KEY,
         user_id TEXT,
@@ -418,17 +438,22 @@ export class DatabaseService {
       CREATE TABLE IF NOT EXISTS proofs (
         id TEXT PRIMARY KEY,
         mission_id TEXT NOT NULL,
+        user_id TEXT,
         attempt_id TEXT,
+        upload_id TEXT,
         media_type TEXT NOT NULL,
         storage_key TEXT NOT NULL,
         object_key TEXT,
         thumbnail_key TEXT,
         mime_type TEXT,
         size_bytes INTEGER DEFAULT 0,
+        sha256 TEXT,
         duration_ms INTEGER,
         width INTEGER,
         height INTEGER,
         captured_at TEXT NOT NULL,
+        uploaded_at TEXT,
+        verified_at TEXT,
         device_telemetry TEXT NOT NULL DEFAULT '{}',
         verification_status TEXT NOT NULL DEFAULT 'PENDING',
         rejection_reason TEXT,

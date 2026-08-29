@@ -5,7 +5,7 @@ help:
 	@echo "--------------------------------------------------"
 	@echo "make docker-up    - Start PostgreSQL, Redis & MinIO S3 containers"
 	@echo "make docker-down  - Stop all local infrastructure containers"
-	@echo "make dev-backend  - Start NestJS backend in development mode"
+	@echo "make dev-backend  - Start TypeScript/Express backend in development mode"
 	@echo "make dev-mobile   - Run Flutter mobile app"
 	@echo "make dev-web      - Run Flutter web dashboard"
 	@echo "make test         - Run backend and domain unit/integration test suites"
