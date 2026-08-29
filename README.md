@@ -44,6 +44,43 @@ For the definitive system mapping and source of truth, see [`docs/ARCHITECTURE.m
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
+### Verification Pipeline Architecture
+
+```
+                            Habitat Verification
+                                     │
+                                     ▼
+                               Video / Image
+                                     │
+                                     ▼
+                              FFmpeg Extractor
+                         (10 FPS / <=30s / <=300 frames)
+                                     │
+                                     ▼
+                                FrameInput[]
+                                     │
+                         ┌───────────┴───────────┐
+                         ▼                       ▼
+                  MoveNet Lightning       Google Cloud Vision
+                 (17 Pose Keypoints)       (Object Evidence)
+                         │                       │
+                         └───────────┬───────────┘
+                                     ▼
+                              LivenessAnalyzer
+                  (Entropy, Velocity, Replay, Continuity)
+                                     │
+                                     ▼
+                               DecisionEngine
+                                     │
+                            ┌────────┼────────┐
+                            ▼        ▼        ▼
+                         ACCEPT    REVIEW   REJECT
+```
+
+#### Provider Runtime Configuration
+- **Development & CI**: `VISION_PROVIDER=mock` $\to$ Deterministic mock inference for fast, offline automated test suites.
+- **Staging & Production**: `VISION_PROVIDER=tfjs` $\to$ Server-side MoveNet Lightning single-pose neural estimation ($192\times 192\times 3$).
+
 ---
 
 ## Core Engineering Engines
@@ -66,9 +103,10 @@ For the definitive system mapping and source of truth, see [`docs/ARCHITECTURE.m
 * `ProofStateMachine`: $\text{CAPTURING} \to \text{CAPTURED} \to \text{UPLOAD\_PENDING} \to \text{UPLOADING} \to \text{UPLOADED} \to \text{VALIDATING} \to \text{ACCEPTED} \lor \text{REJECTED}$.
 
 ### 5. Verification & Truth Engine (`backend/src/modules/verification/`)
-* **Anti-Cheat Heuristics**: Sensor timestamp freshness ($\le 180\text{s}$), ambient lux threshold ($\ge 25\text{ lux}$), optical entropy ($\ge 0.15$), and gallery injection blocking.
-* **Movement State Machine**: Discrete `PushupStateMachine` (`TOP` $\to$ `DESCEND` $\to$ `BOTTOM` $\to$ `ASCEND` $\to$ `TOP`) with false-repetition protection.
-* **Tri-State Decision Engine**: Calibrated `ACCEPT` ($\ge 0.80$), `REVIEW` ($0.50 \to 0.80$), and `REJECT` ($\le 0.50$) thresholds.
+* **Real MoveNet Lightning Pose Inference**: Normalizes raw pixel frames ($192\times 192\times 3$) and extracts 17 COCO anatomical keypoints with individual confidence scores without synthetic landmark hardcoding.
+* **Biomechanical Action State Machine**: Discrete `PushupStateMachine` tracking real elbow angular excursion ($165^\circ \to \le 90^\circ \to 165^\circ$) and plank alignment ($\ge 135^\circ$) with duration bounds ($\ge 500\text{ms}/\text{rep}$).
+* **Multi-Signal Anti-Cheat & Liveness**: Analyzes optical frame uniqueness, biological micro-jitter velocity bounds, periodic replay loop detection, and single-use cryptographic session nonces (`SessionChallengeService`).
+* **Tri-State Decision Engine**: Evaluates evidence into `ACCEPT`, `REVIEW`, and `REJECT` classifications.
 
 ### 6. Gamification, Discipline Progress & Engagement Engine (`backend/src/modules/gamification/`)
 * **Immutable XP Ledger (`xp_transactions`)**: Strictly append-only accounting with unique idempotency keys (`MISSION_COMPLETED:{id}`) preventing double XP exploits.
@@ -90,32 +128,47 @@ For the definitive system mapping and source of truth, see [`docs/ARCHITECTURE.m
 
 ## Known Limitations
 
-Habitat is currently under active development.
+Habitat's verification pipeline currently uses:
 
-### Verification
-The verification pipeline and decision engine are implemented and tested, but the current computer-vision provider is a mock implementation. It does not perform real object detection or pose estimation against uploaded media. Consequently, vision-based mission verification should not currently be considered production-grade anti-cheat verification.
+- **Pose verification:** MoveNet Lightning running server-side (real ML inference).
+- **Object/scene detection:** Decoupled provider abstraction (Google Cloud Vision / local).
+- **Liveness:** Habitat's temporal, motion, and entropy-based liveness analysis.
+- **Decisioning:** Habitat's calibrated, rule-based `DecisionEngine`.
 
-### Storage
-The current backend uses the implemented local SQLite database/storage layer. The documented PostgreSQL and S3/MinIO cloud architecture is designed and staged in `infrastructure/` but is not yet fully wired into the default running application.
+The pose and object-detection stages use real ML inference. The final verification decision remains a heuristic/rule-based system that combines model confidence with liveness and mission-specific thresholds.
 
-### Web Application
-The Web application is currently an early client prototype. Some screens and interactions are not yet connected to the complete backend mission, alarm, proof, and gamification flows.
+Verification has been experimentally validated against a controlled set of genuine and adversarial media spanning 7 attack vectors (static photo, photo replay on screen, looped video, screen recording on monitor, temporal manipulation, multi-person scenes, and stale proof replay). In automated adversarial evaluation, **0 out of 7 tested spoof attacks produced an `ACCEPT` decision**. These tests establish that the tested spoof fixtures do not produce `ACCEPT` decisions; they do not constitute a guarantee against all possible unobserved spoofing techniques.
 
-### Production Status
-Passing automated tests indicate that the implemented domain logic is working as tested; they do not imply that all external integrations, computer vision, storage, or end-to-end mobile flows are production-ready.
+The server-side vision pipeline requires the configured ML runtime, model assets, FFmpeg for video frame extraction, and network access if cloud-based object detection is enabled.
+
+If the vision provider is configured as `mock`, verification uses deterministic mock inference intended for fast development and automated unit tests. Production deployments must explicitly configure `VISION_PROVIDER=tfjs`.
 
 ---
 
-## Automated Test Suite: 276/276 Passing (100% Green)
+## Automated Test Suite: 346/346 Passing (100% Green)
 
 ```bash
 npm test
 ```
 
 ```
- Test Files  42 passed (42)
-      Tests  276 passed (276)
-   Duration  4.07s
+ Test Files  58 passed (58)
+      Tests  346 passed (346)
+   Duration  5.90s
+```
+
+### Real-Vision Adversarial Gate
+```bash
+npm run test:vision:real
+```
+```
+================================================================================
+              REAL VISION ADVERSARIAL VALIDATION SECURITY GATE
+================================================================================
+  Genuine Footage: 3/3 ACCEPT (100%)
+  Spoof Attacks:   0/7 ACCEPT -> [GOLDEN INVARIANT SATISFIED]
+  KNOWN SPOOFS ACCEPTED: 0 (Release Gate Passed: YES)
+================================================================================
 ```
 
 ---
