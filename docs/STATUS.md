@@ -1,0 +1,36 @@
+# Habitat Implementation Status & Phase Gates
+
+## Canonical Status Table
+
+| Phase | Subsystem / Area | Status | Reality & Architecture Notes |
+| :--- | :--- | :---: | :--- |
+| **Phase 0** | **Monorepo Architecture & Cleanup** | ✅ **COMPLETE** | Duplicate root `/src` and `/tests` removed; proprietary license aligned; Express architecture documented. |
+| **Phase 1** | **Real Vision & Proof Integrity** | 🟡 **IN PROGRESS** | `IVisionProvider` abstraction, MoveNet Lightning 17-keypoint engine, joint geometry, biomechanical state machine, liveness analyzer, and anti-replay nonce challenges implemented. |
+| **Phase 2** | **Real Storage & Database** | 🟡 **PARTIAL** | S3/MinIO `@aws-sdk/client-s3` presigned URL flow + Local storage provider + `TransactionManager` complete. Runtime database is SQLite; PostgreSQL production migration documented. |
+| **Phase 3** | **Backend Consolidation** | ➖ **DEFERRED** | Express modular domain architecture retained and stabilized; NestJS migration deferred. |
+| **Phase 4** | **Alarm Reliability Hardening** | 🟡 **PARTIAL** | Native Android `AlarmManager` and iOS `UNNotificationRequest` scheduler, 5-minute escalation loop, reboot recovery, and diagnostic contracts exist. Multi-OEM physical device matrix pending. |
+| **Phase 5** | **Real-World & Adversarial Testing** | 🟡 **PARTIAL** | 7-vector adversarial spoof corpus, confusion matrix evaluator, and release invariant (`Spoof ACCEPT = 0`) complete. Real-model media pipeline tests wired to MoveNet Lightning. |
+| **Web** | **Web Dashboard & Admin** | 🟡 **PARTIAL** | Real Flutter Web dashboard shell exists; backend-connected API workflows in progress. |
+
+---
+
+## Status Definitions
+
+- **COMPLETE** ($\ge 95\%$): Full production implementation, automated test suite, integration verification, and real input validation.
+- **IN PROGRESS / PARTIAL** ($40\% - 90\%$): Production architecture and domain logic implemented; specific hardware, media, or release acceptance criteria in active development.
+- **DEFERRED**: Deliberate architectural decision to retain existing proven foundation (e.g. Express over NestJS).
+- **NOT STARTED** ($0\%$): No production implementation created.
+
+---
+
+## Verification & Quality Invariants
+
+1. **Anti-Cheat Golden Invariant**:
+   $$\boxed{\textbf{Known Spoof } \longrightarrow \textbf{ACCEPT } = 0}$$
+   *If a known adversarial or spoofed fixture returns `ACCEPT`, the release gate MUST fail.*
+
+2. **Network-Optional Reliability Axiom**:
+   > "The backend schedules data. The native OS schedules the alarm. The local database preserves the mission. The network is optional."
+
+3. **Inference vs. Verification Separation**:
+   $$\text{VisionProvider (MoveNet/TFLite)} \longrightarrow \text{PoseAnalyzer + LivenessAnalyzer} \longrightarrow \text{VerificationEngine}$$
