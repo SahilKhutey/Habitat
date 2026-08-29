@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habitat — Build the life you want to live.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #081C13;
+      --surface: #0F2E1F;
+      --surface-card: #133827;
+      --surface-elevated: #1A4732;
+      --border: #1E4D36;
+      --border-subtle: #163E2B;
+      --green: #1E5B38;
+      --growth: #4CAF50;
+      --sage: #A8D08D;
+      --cream: #F7F7F2;
+      --text-muted: #7E9B8B;
+      --text-secondary: #C3D4CA;
+      --amber: #FFB300;
+      --red: #EF5350;
+      --sidebar-width: 240px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--cream);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* APP LAYOUT */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100vw;
+    }
+
+    /* SIDEBAR */
+    aside.sidebar {
+      width: var(--sidebar-width);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    .brand-logo {
+      background: var(--green);
+      border: 1.5px solid var(--growth);
+      color: var(--cream);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+
+    .brand-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: 1.5px;
+      color: #fff;
+    }
+
+    .brand-tagline {
+      font-size: 10.5px;
+      color: var(--sage);
+      font-weight: 500;
+      margin-top: -2px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item a:hover {
+      background: var(--surface-card);
+      color: #fff;
+    }
+
+    .nav-item.active a {
+      background: var(--green);
+      color: #fff;
+      border: 1px solid var(--growth);
+    }
+
+    .nav-item.active a .nav-icon {
+      color: var(--growth);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--growth);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--sage);
+    }
+
+    .user-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* MAIN CONTENT */
+    main.main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--bg);
+    }
+
+    header.topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(76, 175, 80, 0.12);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--growth);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--growth);
+      box-shadow: 0 0 8px var(--growth);
+    }
+
+    .content-container {
+      padding: 28px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    /* HUD CARDS */
+    .hud-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .hud-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .hud-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--growth);
+    }
+
+    .hud-meta h4 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--sage);
+      text-transform: uppercase;
+    }
+
+    .hud-meta .hud-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 2px;
+    }
+
+    /* SECTION CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      background: var(--growth);
+      color: var(--surface);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 9px 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--sage);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--surface-card);
+      color: var(--cream);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-elevated);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: rgba(239, 83, 80, 0.15);
+      border: 1px solid var(--red);
+      color: var(--red);
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* LIST ROWS */
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .item-row:hover {
+      border-color: var(--growth);
+      transform: translateY(-1px);
+    }
+
+    .item-info h4 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .item-info p {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .badge-active { background: rgba(76, 175, 80, 0.2); color: var(--growth); border: 1px solid var(--growth); }
+    .badge-pending { background: rgba(255, 179, 0, 0.2); color: var(--amber); border: 1px solid var(--amber); }
+    .badge-completed { background: rgba(168, 208, 141, 0.2); color: var(--sage); border: 1px solid var(--sage); }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      padding: 28px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sage);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13.5px;
+      outline: none;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--growth);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    /* TOAST */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--surface-card);
+      border: 1px solid var(--growth);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 850px) {
+      aside.sidebar { display: none; }
+      .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        justify-content: space-around;
+        padding: 10px 0;
+        z-index: 50;
+      }
+      .bottom-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .bottom-nav a.active { color: var(--growth); }
+      .content-container { padding: 16px; margin-bottom: 60px; }
+    }
+
+    @media (min-width: 851px) {
+      .bottom-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- DESKTOP SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand-header">
+      <div class="brand-logo">H</div>
+      <div>
+        <div class="brand-title">HABITAT</div>
+        <div class="brand-tagline">Build your daily environment</div>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" data-view="dashboard"><a href="#dashboard"><span class="nav-icon">📊</span> Dashboard</a></li>
+      <li class="nav-item" data-view="tasks"><a href="#tasks"><span class="nav-icon">📋</span> Tasks</a></li>
+      <li class="nav-item" data-view="alarms"><a href="#alarms"><span class="nav-icon">⏰</span> Alarms</a></li>
+      <li class="nav-item" data-view="missions"><a href="#missions"><span class="nav-icon">🎯</span> Missions</a></li>
+      <li class="nav-item" data-view="proofs"><a href="#proofs"><span class="nav-icon">📸</span> Proofs</a></li>
+      <li class="nav-item" data-view="streak"><a href="#streak"><span class="nav-icon">🔥</span> Consistency & XP</a></li>
+      <li class="nav-item" data-view="health"><a href="#health"><span class="nav-icon">💧</span> Health Log</a></li>
+      <li class="nav-item" data-view="journal"><a href="#journal"><span class="nav-icon">📖</span> Journal</a></li>
+      <li class="nav-item" data-view="developer"><a href="#developer"><span class="nav-icon">🛠️</span> System Dev</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="user-pill" id="user-display">
+        <div class="user-avatar" id="user-avatar-char">S</div>
+        <div class="user-name" id="user-display-name">Recruit User</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="HabitatApp.logout()">Exit</button>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="main-viewport">
+    <header class="topbar">
+      <div style="font-family: 'Poppins'; font-weight: 700; font-size: 16px;" id="page-heading">Dashboard</div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span id="ws-status">Backend Online</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="HabitatApp.refreshAll()">🔄 Sync</button>
+      </div>
+    </header>
+
+    <div class="content-container" id="main-content">
+      <!-- DYNAMIC VIEWS RENDERED HERE -->
+    </div>
+  </main>
+</div>
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+  <a href="#dashboard" class="active"><span>📊</span><span>Today</span></a>
+  <a href="#tasks"><span>📋</span><span>Tasks</span></a>
+  <a href="#alarms"><span>⏰</span><span>Alarms</span></a>
+  <a href="#missions"><span>🎯</span><span>Missions</span></a>
+  <a href="#health"><span>💧</span><span>Health</span></a>
+</nav>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-container">
+  <div class="modal" id="modal-body">
+    <!-- Injected dynamically -->
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- HABITAT WEB CLIENT APPLICATION SCRIPT -->
+<script>
+const HabitatApp = {
+  apiBase: '/api/v1',
+  token: localStorage.getItem('habitat_jwt') || '',
+  currentUser: JSON.parse(localStorage.getItem('habitat_user') || 'null'),
+  tasks: [],
+  alarms: [],
+  missions: [],
+  stats: { streak: 7, xp: 280, level: 3 },
+  activeView: 'dashboard',
+
+  async init() {
+    this.bindRouting();
+    if (!this.currentUser) {
+      this.currentUser = { id: 'default-user', email: 'recruit@habitat.app', displayName: 'Default Recruit' };
+    }
+    this.updateUserUI();
+    this.connectWebSocket();
+    await this.refreshAll();
+  },
+
+  updateUserUI() {
+    if (this.currentUser) {
+      document.getElementById('user-display-name').innerText = this.currentUser.displayName || 'Recruit User';
+      document.getElementById('user-avatar-char').innerText = (this.currentUser.displayName || 'R')[0].toUpperCase();
+    }
+  },
+
+  bindRouting() {
+    window.addEventListener('hashchange', () => {
+      const view = window.location.hash.replace('#', '') || 'dashboard';
+      this.navigate(view);
+    });
+    const initialView = window.location.hash.replace('#', '') || 'dashboard';
+    this.navigate(initialView);
+  },
+
+  navigate(viewName) {
+    this.activeView = viewName;
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('data-view') === viewName);
+    });
+    document.querySelectorAll('.bottom-nav a').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('href') === '#' + viewName);
+    });
+
+    const heading = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+    document.getElementById('page-heading').innerText = heading;
+
+    switch(viewName) {
+      case 'dashboard': this.renderDashboard(); break;
+      case 'tasks': this.renderTasks(); break;
+      case 'alarms': this.renderAlarms(); break;
+      case 'missions': this.renderMissions(); break;
+      case 'proofs': this.renderProofs(); break;
+      case 'streak': this.renderStreak(); break;
+      case 'health': this.renderHealth(); break;
+      case 'journal': this.renderJournal(); break;
+      case 'developer': this.renderDeveloper(); break;
+      default: this.renderDashboard();
+    }
+  },
+
+  async request(path, options = {}) {
+    options.headers = options.headers || {};
+    if (this.token) {
+      options.headers['Authorization'] = 'Bearer ' + this.token;
+    }
+    options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/json';
+
+    try {
+      const res = await fetch(this.apiBase + path, options);
+      const data = await res.json();
+      return data;
+    } catch (e) {
+      this.showToast('Network error: ' + e.message, 'error');
+      return { success: false, error: e.message };
+    }
+  },
+
+  async refreshAll() {
+    try {
+      // 1. Tasks
+      const tasksRes = await this.request('/tasks');
+      if (tasksRes && tasksRes.data) this.tasks = tasksRes.data;
+
+      // 2. Alarms
+      const alarmsRes = await this.request('/alarms');
+      if (alarmsRes && alarmsRes.data) this.alarms = alarmsRes.data;
+
+      // 3. Missions
+      const missionsRes = await this.request('/missions');
+      if (missionsRes && missionsRes.data) this.missions = missionsRes.data;
+
+      // 4. Profile / Gamification
+      const profileRes = await this.request('/gamification/profile?userId=' + (this.currentUser?.id || 'default-user'));
+      if (profileRes && profileRes.data) {
+        this.stats = {
+          streak: profileRes.data.streak?.currentStreak ?? 7,
+          xp: profileRes.data.totalXp ?? 280,
+          level: profileRes.data.level ?? 3
+        };
+      }
+
+      this.navigate(this.activeView);
+    } catch(err) {
+      console.error('Refresh error:', err);
+    }
+  },
+
+  connectWebSocket() {
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const ws = new WebSocket(protocol + '//' + window.location.host + '/ws');
+      ws.onopen = () => {
+        document.getElementById('ws-status').innerText = 'Live Engine Connected';
+      };
+      ws.onmessage = (msg) => {
+        try {
+          const event = JSON.parse(msg.data);
+          this.showToast('⚡ Event: ' + (event.type || 'Update received'));
+          this.refreshAll();
+        } catch(e){}
+      };
+      ws.onclose = () => {
+        document.getElementById('ws-status').innerText = 'Offline Sync Mode';
+      };
+    } catch(e) {}
+  },
+
+  showToast(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerText = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  },
+
+  /* ------------------- VIEWS ------------------- */
+
+  renderDashboard() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="hud-grid">
+        <div class="hud-card">
+          <div class="hud-icon-box">🔥</div>
+          <div class="hud-meta">
+            <h4>Consistency</h4>
+            <div class="hud-value">${this.stats.streak} Days</div>
+          </div>
+        </div>
+        <div class="hud-card">
+          <div class="hud-icon-box">🌱</div>
+          <div class="hud-meta">
+            <h4>Growth Points</h4>
+            <div class="hud-value">${this.stats.xp} XP</div>
+          </div>
+        </div>
+        <div class="hud-card">
+          <div class="hud-icon-box">🌳</div>
+          <div class="hud-meta">
+            <h4>Stage</h4>
+            <div class="hud-value">Sprout (Lvl ${this.stats.level})</div>
+          </div>
+        </div>
+        <div class="hud-card">
+          <div class="hud-icon-box">⏰</div>
+          <div class="hud-meta">
+            <h4>Active Alarms</h4>
+            <div class="hud-value">${this.alarms.length}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Today's Action Queue</div>
+          <button class="btn btn-sm" onclick="HabitatApp.openCreateTaskModal()">+ New Task</button>
+        </div>
+        <div>
+          ${this.tasks.length === 0 ? '<p style="color: var(--text-muted);">No active tasks found in database.</p>' :
+            this.tasks.slice(0, 4).map((t, idx) => `
+              <div class="item-row">
+                <div class="item-info">
+                  <h4>${t.title || t.name}</h4>
+                  <p>${t.category || 'General'} • Proof: ${t.proof_type || t.proofType || 'PHOTO'}</p>
+                </div>
+                <button class="btn btn-sm" onclick="HabitatApp.triggerMissionForTask('${t.id}')">Start Action</button>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎯 Active Missions & Proof Escalations</div>
+          <button class="btn btn-secondary btn-sm" onclick="HabitatApp.navigate('missions')">View All</button>
+        </div>
+        <div>
+          ${this.missions.length === 0 ? '<p style="color: var(--text-muted);">No active mission triggers right now. System in standby.</p>' :
+            this.missions.slice(0, 3).map(m => `
+              <div class="item-row">
+                <div class="item-info">
+                  <h4>Mission #${m.id.substring(0,8)}</h4>
+                  <p>Scheduled: ${new Date(m.scheduledAt || m.scheduled_at).toLocaleTimeString()} • Status: ${m.status}</p>
+                </div>
+                <span class="badge badge-${m.status === 'COMPLETED' ? 'completed' : 'active'}">${m.status}</span>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  },
+
+  renderTasks() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Configured Discipline Tasks</div>
+          <button class="btn" onclick="HabitatApp.openCreateTaskModal()">+ Create Task</button>
+        </div>
+        <div>
+          ${this.tasks.map(t => `
+            <div class="item-row">
+              <div class="item-info">
+                <h4>${t.title || t.name}</h4>
+                <p>Category: <b>${t.category}</b> • Proof: <b>${t.proof_type || t.proofType || 'PHOTO'}</b> • Reward: <b>+${t.base_xp || 50} XP</b></p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm" onclick="HabitatApp.triggerMissionForTask('${t.id}')">Test Alarm</button>
+                <button class="btn btn-danger btn-sm" onclick="HabitatApp.deleteTask('${t.id}')">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  },
+
+  renderAlarms() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⏰ Scheduled Alarms & 5-Min Retry Escalations</div>
+          <button class="btn" onclick="HabitatApp.openCreateAlarmModal()">+ Add Alarm</button>
+        </div>
+        <div>
+          ${this.alarms.map(a => `
+            <div class="item-row">
+              <div class="item-info">
+                <h4>${a.time_of_day || a.timeOfDay || '08:00'} • ${a.task_name || 'Discipline Routine'}</h4>
+                <p>Days: ${a.days_of_week || 'Daily'} • Escalation: ${a.siren_escalation ? '5-Min Retry Non-Lethal' : 'Standard'}</p>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span class="badge ${a.enabled ? 'badge-active' : 'badge-pending'}">${a.enabled ? 'ENABLED' : 'MUTED'}</span>
+                <button class="btn btn-secondary btn-sm" onclick="HabitatApp.toggleAlarm('${a.id}', ${!a.enabled})">${a.enabled ? 'Mute' : 'Enable'}</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  },
+
+  renderMissions() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎯 Mission Execution Ledger</div>
+        </div>
+        <div>
+          ${this.missions.length === 0 ? '<p style="color: var(--text-muted);">No missions executed yet. Trigger a task above to start.</p>' :
+            this.missions.map(m => `
+              <div class="item-row">
+                <div class="item-info">
+                  <h4>Mission #${m.id.substring(0, 8)} • Task: ${m.taskId || 'Discipline'}</h4>
+                  <p>Created: ${new Date(m.createdAt || m.created_at).toLocaleString()} • Resistance: ${m.resistanceSeconds || 0}s</p>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span class="badge badge-${m.status === 'COMPLETED' ? 'completed' : 'active'}">${m.status}</span>
+                  ${m.status !== 'COMPLETED' ? `
+                    <button class="btn btn-sm" onclick="HabitatApp.openSubmitProofModal('${m.id}')">Upload Proof</button>
+                  ` : ''}
+                </div>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  },
+
+  renderProofs() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📸 Anti-Cheat Proof & Verification Reports</div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+          All physical photos and video captures undergo strict validation against timestamp freshness, illumination thresholds, pose repetitions, and object detection telemetry.
+        </p>
+        <div class="item-row">
+          <div class="item-info">
+            <h4>Sample Verification Strategy: POSE_ESTIMATION_REPS</h4>
+            <p>15 Push-ups • Motion Cycles: 15 • Confidence: 0.98</p>
+          </div>
+          <span class="badge badge-completed">ACCEPTED</span>
+        </div>
+      </div>
+    `;
+  },
+
+  renderStreak() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔥 Consistency Ledger & Growth Economics</div>
+        </div>
+        <div class="hud-grid">
+          <div class="hud-card">
+            <div class="hud-icon-box">🔥</div>
+            <div class="hud-meta">
+              <h4>Current Streak</h4>
+              <div class="hud-value">${this.stats.streak} Days</div>
+            </div>
+          </div>
+          <div class="hud-card">
+            <div class="hud-icon-box">⭐</div>
+            <div class="hud-meta">
+              <h4>Total XP</h4>
+              <div class="hud-value">${this.stats.xp} XP</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary);">
+          XP is tracked in an append-only cryptographic ledger with idempotent transaction keys. No manual adjustments allowed.
+        </p>
+      </div>
+    `;
+  },
+
+  renderHealth() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💧 Daily Health & Habit Reflection</div>
+        </div>
+        <div class="hud-grid">
+          <div class="hud-card" onclick="HabitatApp.logWater()" style="cursor: pointer;">
+            <div class="hud-icon-box">💧</div>
+            <div class="hud-meta">
+              <h4>Water Intake</h4>
+              <div class="hud-value" id="water-val">2.5 L</div>
+              <span style="font-size: 11px; color: var(--sage);">+ Click to add 250ml</span>
+            </div>
+          </div>
+          <div class="hud-card">
+            <div class="hud-icon-box">🚶</div>
+            <div class="hud-meta">
+              <h4>Daily Steps</h4>
+              <div class="hud-value">8,420</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  renderJournal() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📖 Daily Stoic Journal & Reflection</div>
+          <button class="btn" onclick="HabitatApp.openJournalModal()">+ Write Entry</button>
+        </div>
+        <div class="item-row">
+          <div class="item-info">
+            <h4>Today's Reflection: Showing Up Despite Friction</h4>
+            <p>"Woke up on the first alarm. Completed 15 push-ups without hesitation." • Rating: ★★★★★</p>
+          </div>
+          <span class="badge badge-completed">RECORDED</span>
+        </div>
+      </div>
+    `;
+  },
+
+  renderDeveloper() {
+    const el = document.getElementById('main-content');
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🛠️ System Health & Engine Telemetry</div>
+          <button class="btn btn-sm" onclick="HabitatApp.testApiHealth()">Ping API</button>
+        </div>
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+          ✓ Backend Engine: <b>Express Modular Monolith (TypeScript)</b><br>
+          ✓ Database: <b>Node.js Native SQLite (node:sqlite)</b><br>
+          ✓ Active Tasks: <b>${this.tasks.length}</b><br>
+          ✓ Active Alarms: <b>${this.alarms.length}</b><br>
+          ✓ Executed Missions: <b>${this.missions.length}</b>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ------------------- ACTIONS & MODALS ------------------- */
+
+  openCreateTaskModal() {
+    const modal = document.getElementById('modal-body');
+    modal.innerHTML = `
+      <div class="modal-header">
+        <h3 style="font-family: 'Poppins'; font-size: 18px; color: #fff;">Create Discipline Task</h3>
+        <button class="btn btn-secondary btn-sm" onclick="HabitatApp.closeModal()">✕</button>
+      </div>
+      <form onsubmit="HabitatApp.submitCreateTask(event)">
+        <div class="form-group">
+          <label class="form-label">Task Name</label>
+          <input class="form-input" id="t-name" required placeholder="e.g. 15 Morning Push-ups" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="t-cat">
+            <option value="EXERCISE">Physical Exercise</option>
+            <option value="HEALTH">Health & Hydration</option>
+            <option value="MIND">Mind & Reflection</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Proof Requirement</label>
+          <select class="form-select" id="t-proof">
+            <option value="VIDEO">Video Pose Repetition</option>
+            <option value="PHOTO">Photo Object Verification</option>
+          </select>
+        </div>
+        <button class="btn" style="width: 100%; justify-content: center;" type="submit">Save Task</button>
+      </form>
+    `;
+    document.getElementById('modal-container').classList.add('open');
+  },
+
+  async submitCreateTask(e) {
+    e.preventDefault();
+    const title = document.getElementById('t-name').value;
+    const category = document.getElementById('t-cat').value;
+    const proofType = document.getElementById('t-proof').value;
+
+    const res = await this.request('/tasks', {
+      method: 'POST',
+      body: JSON.stringify({
+        title,
+        category,
+        taskType: proofType,
+        baseXp: 50,
+        proofType
+      })
+    });
+
+    if (res.success || res.data) {
+      this.showToast('✓ Task created successfully!');
+      this.closeModal();
+      this.refreshAll();
+    } else {
+      this.showToast('Error: ' + (res.error || 'Failed to create task'));
+    }
+  },
+
+  openCreateAlarmModal() {
+    const modal = document.getElementById('modal-body');
+    modal.innerHTML = `
+      <div class="modal-header">
+        <h3 style="font-family: 'Poppins'; font-size: 18px; color: #fff;">Schedule New Alarm</h3>
+        <button class="btn btn-secondary btn-sm" onclick="HabitatApp.closeModal()">✕</button>
+      </div>
+      <form onsubmit="HabitatApp.submitCreateAlarm(event)">
+        <div class="form-group">
+          <label class="form-label">Time of Day (HH:MM)</label>
+          <input type="time" class="form-input" id="a-time" required value="06:30" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Linked Task</label>
+          <select class="form-select" id="a-task">
+            ${this.tasks.map(t => `<option value="${t.id}">${t.title || t.name}</option>`).join('')}
+          </select>
+        </div>
+        <button class="btn" style="width: 100%; justify-content: center;" type="submit">Set Alarm</button>
+      </form>
+    `;
+    document.getElementById('modal-container').classList.add('open');
+  },
+
+  async submitCreateAlarm(e) {
+    e.preventDefault();
+    const timeOfDay = document.getElementById('a-time').value;
+    const taskId = document.getElementById('a-task').value;
+
+    const res = await this.request('/alarms', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId: this.currentUser?.id || 'default-user',
+        taskId,
+        timeOfDay,
+        daysOfWeek: 'DAILY',
+        sirenEscalation: true
+      })
+    });
+
+    if (res.success || res.data) {
+      this.showToast('✓ Alarm scheduled!');
+      this.closeModal();
+      this.refreshAll();
+    }
+  },
+
+  async triggerMissionForTask(taskId) {
+    const res = await this.request('/missions', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId: this.currentUser?.id || 'default-user',
+        taskId,
+        scheduledAt: new Date().toISOString()
+      })
+    });
+
+    if (res.success || res.data) {
+      this.showToast('🚨 Alarm Fired! Mission Active!');
+      this.refreshAll();
+      this.navigate('missions');
+    }
+  },
+
+  openSubmitProofModal(missionId) {
+    const modal = document.getElementById('modal-body');
+    modal.innerHTML = `
+      <div class="modal-header">
+        <h3 style="font-family: 'Poppins'; font-size: 18px; color: #fff;">Upload Proof for Verification</h3>
+        <button class="btn btn-secondary btn-sm" onclick="HabitatApp.closeModal()">✕</button>
+      </div>
+      <div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+          Submit telemetry & image capture for mission verification.
+        </p>
+        <button class="btn" style="width: 100%; justify-content: center; margin-bottom: 10px;" onclick="HabitatApp.submitProof('${missionId}', true)">Simulate Camera Proof (Valid)</button>
+        <button class="btn btn-danger" style="width: 100%; justify-content: center;" onclick="HabitatApp.submitProof('${missionId}', false)">Simulate Spoofed / Dark Proof</button>
+      </div>
+    `;
+    document.getElementById('modal-container').classList.add('open');
+  },
+
+  async submitProof(missionId, isValid) {
+    const res = await this.request('/proofs/verify', {
+      method: 'POST',
+      body: JSON.stringify({
+        missionId,
+        mediaType: 'image/jpeg',
+        telemetry: isValid ? {
+          motionCycles: 15,
+          poseConfidence: 0.95,
+          ambientLux: 450,
+          detectedLabels: ['person', 'floor']
+        } : {
+          ambientLux: 10,
+          detectedLabels: []
+        }
+      })
+    });
+
+    this.closeModal();
+    if (res.success && res.data?.status === 'ACCEPTED') {
+      this.showToast('✓ PROOF ACCEPTED! Mission Completed +50 XP');
+    } else {
+      this.showToast('❌ Proof Rejected: 5-Minute Retry Active');
+    }
+    this.refreshAll();
+  },
+
+  logWater() {
+    this.showToast('💧 +250ml logged. Hydration goal updating.');
+  },
+
+  openJournalModal() {
+    const modal = document.getElementById('modal-body');
+    modal.innerHTML = `
+      <div class="modal-header">
+        <h3 style="font-family: 'Poppins'; font-size: 18px; color: #fff;">Daily Journal Entry</h3>
+        <button class="btn btn-secondary btn-sm" onclick="HabitatApp.closeModal()">✕</button>
+      </div>
+      <form onsubmit="HabitatApp.submitJournal(event)">
+        <div class="form-group">
+          <label class="form-label">Reflection</label>
+          <textarea class="form-textarea" rows="4" placeholder="What friction did you overcome today?" required></textarea>
+        </div>
+        <button class="btn" style="width: 100%; justify-content: center;" type="submit">Save Reflection</button>
+      </form>
+    `;
+    document.getElementById('modal-container').classList.add('open');
+  },
+
+  submitJournal(e) {
+    e.preventDefault();
+    this.showToast('📖 Reflection saved to local ledger.');
+    this.closeModal();
+  },
+
+  async deleteTask(id) {
+    if (!confirm('Are you sure you want to remove this task?')) return;
+    await this.request('/tasks/' + id, { method: 'DELETE' });
+    this.showToast('Task removed.');
+    this.refreshAll();
+  },
+
+  async toggleAlarm(id, enabled) {
+    await this.request('/alarms/' + id, {
+      method: 'PATCH',
+      body: JSON.stringify({ enabled })
+    });
+    this.showToast('Alarm status updated.');
+    this.refreshAll();
+  },
+
+  closeModal() {
+    document.getElementById('modal-container').classList.remove('open');
+  },
+
+  async testApiHealth() {
+    const res = await fetch('/health');
+    const data = await res.json();
+    alert('System Diagnostics:\n' + JSON.stringify(data, null, 2));
+  },
+
+  logout() {
+    localStorage.removeItem('habitat_jwt');
+    this.showToast('Session cleared. Default recruit active.');
+  }
+};
+
+window.addEventListener('DOMContentLoaded', () => HabitatApp.init());
+</script>
+</body>
+</html>
