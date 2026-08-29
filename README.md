@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-326%2F326%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-330%2F330%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Spoof%20Accepts-0%20(Release%20Approved)-brightgreen?style=for-the-badge&logo=shield&logoColor=white" alt="Spoof Accepts" />
   <img src="https://img.shields.io/badge/Backend-TypeScript%20%2B%20Express-blue?style=for-the-badge&logo=express&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Storage-S3%20%2B%20Local%20Abstraction-orange?style=for-the-badge&logo=amazons3&logoColor=white" alt="Storage" />
