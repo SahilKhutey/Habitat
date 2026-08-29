@@ -1,4 +1,3 @@
-// Responsive Layout Container & App Shell
 import 'package:flutter/material.dart';
 import '../../tokens/colors.dart';
 import '../../tokens/breakpoints.dart';
@@ -17,16 +16,17 @@ class ResponsiveLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (AppBreakpoints.isDesktop(context) && desktop != null) {
-      return desktop!;
-    }
-    if (AppBreakpoints.isTablet(context) && tablet != null) {
-      return tablet!;
-    }
+    if (AppBreakpoints.isDesktop(context) && desktop != null) return desktop!;
+    if (AppBreakpoints.isTablet(context) && tablet != null) return tablet!;
     return mobile;
   }
 }
 
+/// The canonical Habitat navigation shell.
+///
+/// The five product foundations are deliberately stable across platforms:
+/// Home, Tasks, Health, Progress, Profile.
+/// Alarms remain part of the Tasks/Actions domain.
 class AppShell extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onIndexChanged;
@@ -39,57 +39,117 @@ class AppShell extends StatelessWidget {
     required this.body,
   });
 
+  static const destinations = <NavigationDestination>[
+    NavigationDestination(
+      icon: Icon(Icons.home_outlined),
+      selectedIcon: Icon(Icons.home),
+      label: 'Home',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.task_alt_outlined),
+      selectedIcon: Icon(Icons.task_alt),
+      label: 'Tasks',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.favorite_outline),
+      selectedIcon: Icon(Icons.favorite),
+      label: 'Health',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.insights_outlined),
+      selectedIcon: Icon(Icons.insights),
+      label: 'Progress',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.person_outline),
+      selectedIcon: Icon(Icons.person),
+      label: 'Profile',
+    ),
+  ];
+
+  static const railDestinations = <NavigationRailDestination>[
+    NavigationRailDestination(
+      icon: Icon(Icons.home_outlined),
+      selectedIcon: Icon(Icons.home),
+      label: Text('Home'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.task_alt_outlined),
+      selectedIcon: Icon(Icons.task_alt),
+      label: Text('Tasks'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.favorite_outline),
+      selectedIcon: Icon(Icons.favorite),
+      label: Text('Health'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.insights_outlined),
+      selectedIcon: Icon(Icons.insights),
+      label: Text('Progress'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.person_outline),
+      selectedIcon: Icon(Icons.person),
+      label: Text('Profile'),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isDesktop = AppBreakpoints.isDesktop(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isDesktop) {
-      // Desktop / Web Navigation Rail Sidebar
       return Scaffold(
-        backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+        backgroundColor: isDark
+            ? AppColors.darkBackground
+            : AppColors.lightBackground,
         body: Row(
           children: [
-            NavigationRail(
-              backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-              selectedIndex: currentIndex,
-              onDestinationSelected: onIndexChanged,
-              labelType: NavigationRailLabelType.all,
-              selectedIconTheme: const IconThemeData(color: AppColors.amberFocus),
-              unselectedIconTheme: IconThemeData(
-                color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+            SafeArea(
+              child: NavigationRail(
+                selectedIndex: currentIndex,
+                onDestinationSelected: onIndexChanged,
+                labelType: NavigationRailLabelType.all,
+                leading: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Semantics(
+                    label: 'Habitat',
+                    header: true,
+                    child: CircleAvatar(
+                      radius: 22,
+                      backgroundColor: isDark
+                          ? AppColors.growthSoft
+                          : AppColors.lightSurfaceElevated,
+                      child: Icon(
+                        Icons.eco,
+                        color: isDark
+                            ? AppColors.growthGreen
+                            : AppColors.habitatGreen,
+                      ),
+                    ),
+                  ),
+                ),
+                destinations: railDestinations,
               ),
-              destinations: const [
-                NavigationRailDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: Text('Home')),
-                NavigationRailDestination(icon: Icon(Icons.check_circle_outline), selectedIcon: Icon(Icons.check_circle), label: Text('Tasks')),
-                NavigationRailDestination(icon: Icon(Icons.alarm_outlined), selectedIcon: Icon(Icons.alarm), label: Text('Alarms')),
-                NavigationRailDestination(icon: Icon(Icons.show_chart_outlined), selectedIcon: Icon(Icons.show_chart), label: Text('Progress')),
-              ],
             ),
-            const VerticalDivider(thickness: 1, width: 1),
+            const VerticalDivider(width: 1),
             Expanded(child: body),
           ],
         ),
       );
     }
 
-    // Mobile Bottom Navigation
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       body: body,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onIndexChanged,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-        selectedItemColor: AppColors.amberFocus,
-        unselectedItemColor: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), activeIcon: Icon(Icons.dashboard), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.check_circle_outline), activeIcon: Icon(Icons.check_circle), label: 'Tasks'),
-          BottomNavigationBarItem(icon: Icon(Icons.alarm_outlined), activeIcon: Icon(Icons.alarm), label: 'Alarms'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart_outlined), activeIcon: Icon(Icons.show_chart), label: 'Progress'),
-        ],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentIndex,
+        onDestinationSelected: onIndexChanged,
+        destinations: destinations,
       ),
     );
   }

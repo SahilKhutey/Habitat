@@ -50,6 +50,19 @@
             </intent-filter>
         </receiver>
 
+        <!-- Boot & Package Replacement Receiver -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
         <!-- Alarm Foreground Service with Media Playback Type -->
         <service
             android:name=".AlarmForegroundService"

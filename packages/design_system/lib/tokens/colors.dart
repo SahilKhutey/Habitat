@@ -38,6 +38,18 @@ class AppColors {
   static const Color reminderAlert = youngLeaf;
   static const Color crimsonAlert = Color(0xFFFF5252);
 
+  // Compatibility aliases used by existing feature screens.
+  // New code should prefer semantic names above.
+  static const Color amberFocus = youngLeaf;
+  static const Color amberFocusSubtle = Color(0x1FA8D08D);
+  static const Color emeraldVictory = growthGreen;
+  static const Color cyanDiscovery = Color(0xFF81C784);
+  static const Color indigoHero = Color(0xFF7986CB);
+  static const Color surfacePrimary = darkSurface;
+  static const Color surfaceSecondary = darkSurfaceElevated;
+  static const Color surfaceElevated = darkSurfaceElevated;
+  static const Color surfaceBorder = darkBorder;
+
   // Aliases for Backwards Compatibility
   static const Color deepForest = forest;
   static const Color forestGreen = habitatGreen;

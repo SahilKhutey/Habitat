@@ -1,28 +1,33 @@
 // Habitat Brand Theme (Calm, Premium Personal Growth Environment)
 import 'package:flutter/material.dart';
+import '../design_system/theme/habitat_theme_extension.dart';
+import '../design_system/tokens/colors.dart';
+import '../design_system/tokens/radii.dart';
+import '../design_system/tokens/spacing.dart';
+import '../design_system/tokens/typography.dart';
 
 class HabitatTheme {
   // Official Guidelines Palette
-  static const Color forest = Color(0xFF0F2E1F);         // #0F2E1F - Primary Forest
-  static const Color habitatGreen = Color(0xFF1E5B38);   // #1E5B38 - Secondary Green
-  static const Color growthGreen = Color(0xFF4CAF50);    // #4CAF50 - Growth Accent & Success
-  static const Color youngLeaf = Color(0xFFA8D08D);      // #A8D08D - Highlights & Subtle Accents
-  static const Color habitatCream = Color(0xFFF7F7F2);   // #F7F7F2 - Light Canvas & High-contrast Text
+  static const Color forest = HabitatColors.forest;
+  static const Color habitatGreen = HabitatColors.habitatGreen;
+  static const Color growthGreen = HabitatColors.growthGreen;
+  static const Color youngLeaf = HabitatColors.youngLeaf;
+  static const Color habitatCream = HabitatColors.habitatCream;
 
   // Dark Mode Semantic Surfaces (#081C13 Quiet Night Environment)
-  static const Color background = Color(0xFF081C13);     // #081C13
-  static const Color surfacePrimary = Color(0xFF10291E);  // #10291E
-  static const Color surfaceSecondary = Color(0xFF163525);// #163525
-  static const Color surfaceBorder = Color(0xFF1E4230);
+  static const Color background = HabitatColors.backgroundDark;
+  static const Color surfacePrimary = HabitatColors.surfacePrimary;
+  static const Color surfaceSecondary = HabitatColors.surfaceSecondary;
+  static const Color surfaceBorder = HabitatColors.surfaceBorder;
 
   // Typography Tokens
-  static const Color textPrimary = habitatCream;         // #F7F7F2
-  static const Color textSecondary = Color(0xFFB7C6BC);   // #B7C6BC
-  static const Color textMuted = Color(0xFF6E8577);
-  static const Color textDark = forest;
+  static const Color textPrimary = HabitatColors.textPrimary;
+  static const Color textSecondary = HabitatColors.textSecondary;
+  static const Color textMuted = HabitatColors.textMuted;
+  static const Color textDark = HabitatColors.textDark;
 
-  static const String fontHeading = 'Poppins';
-  static const String fontBody = 'Inter';
+  static const String fontHeading = HabitatTypography.fontHeading;
+  static const String fontBody = HabitatTypography.fontBody;
 
   // Backward compatibility aliases
   static const Color deepForest = forest;
@@ -38,11 +43,12 @@ class HabitatTheme {
       primaryColor: growthGreen,
       cardColor: surfacePrimary,
       dividerColor: surfaceBorder,
+      extensions: const [HabitatThemeExtension.dark],
       colorScheme: const ColorScheme.dark(
         primary: growthGreen,
         secondary: youngLeaf,
         surface: surfacePrimary,
-        error: Color(0xFFFF5252),
+        error: HabitatColors.danger,
         onPrimary: forest,
         onSecondary: forest,
         onSurface: textPrimary,
@@ -55,7 +61,7 @@ class HabitatTheme {
         titleTextStyle: TextStyle(
           fontFamily: fontHeading,
           color: textPrimary,
-          fontSize: 20,
+          fontSize: HabitatTypography.title,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.5,
         ),
@@ -65,14 +71,14 @@ class HabitatTheme {
         backgroundColor: surfacePrimary,
         selectedItemColor: growthGreen,
         unselectedItemColor: textMuted,
-        selectedLabelStyle: TextStyle(fontFamily: fontHeading, fontWeight: FontWeight.w600, fontSize: 11),
-        unselectedLabelStyle: TextStyle(fontFamily: fontBody, fontWeight: FontWeight.normal, fontSize: 11),
+        selectedLabelStyle: TextStyle(fontFamily: fontHeading, fontWeight: FontWeight.w600, fontSize: HabitatTypography.label),
+        unselectedLabelStyle: TextStyle(fontFamily: fontBody, fontWeight: FontWeight.normal, fontSize: HabitatTypography.label),
       ),
       cardTheme: CardTheme(
         color: surfacePrimary,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(HabitatRadius.lg),
           side: const BorderSide(color: surfaceBorder, width: 1),
         ),
       ),
@@ -81,8 +87,8 @@ class HabitatTheme {
           backgroundColor: habitatGreen,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(horizontal: HabitatSpacing.xl, vertical: HabitatSpacing.md),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.md)),
           textStyle: const TextStyle(
             fontFamily: fontHeading,
             fontWeight: FontWeight.w700,
@@ -102,6 +108,7 @@ class HabitatTheme {
       primaryColor: habitatGreen,
       cardColor: Colors.white,
       dividerColor: const Color(0xFFD4E2D8),
+      extensions: const [HabitatThemeExtension.light],
       colorScheme: const ColorScheme.light(
         primary: habitatGreen,
         secondary: growthGreen,
@@ -119,7 +126,7 @@ class HabitatTheme {
         titleTextStyle: TextStyle(
           fontFamily: fontHeading,
           color: textDark,
-          fontSize: 20,
+          fontSize: HabitatTypography.title,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.5,
         ),
@@ -129,14 +136,14 @@ class HabitatTheme {
         backgroundColor: Colors.white,
         selectedItemColor: habitatGreen,
         unselectedItemColor: Color(0xFF759482),
-        selectedLabelStyle: TextStyle(fontFamily: fontHeading, fontWeight: FontWeight.w600, fontSize: 11),
-        unselectedLabelStyle: TextStyle(fontFamily: fontBody, fontWeight: FontWeight.normal, fontSize: 11),
+        selectedLabelStyle: TextStyle(fontFamily: fontHeading, fontWeight: FontWeight.w600, fontSize: HabitatTypography.label),
+        unselectedLabelStyle: TextStyle(fontFamily: fontBody, fontWeight: FontWeight.normal, fontSize: HabitatTypography.label),
       ),
       cardTheme: CardTheme(
         color: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(HabitatRadius.lg),
           side: const BorderSide(color: Color(0xFFD4E2D8), width: 1),
         ),
       ),
@@ -145,8 +152,8 @@ class HabitatTheme {
           backgroundColor: habitatGreen,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(horizontal: HabitatSpacing.xl, vertical: HabitatSpacing.md),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.md)),
           textStyle: const TextStyle(
             fontFamily: fontHeading,
             fontWeight: FontWeight.w700,
