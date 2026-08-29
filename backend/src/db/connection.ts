@@ -715,7 +715,123 @@ export class DatabaseService {
         UNIQUE(user_id, provider)
       );
 
+      CREATE TABLE IF NOT EXISTS discipline_profiles (
+        id TEXT PRIMARY KEY,
+        user_id TEXT UNIQUE NOT NULL,
+        preferred_wake TEXT,
+        preferred_sleep TEXT,
+        consistency REAL DEFAULT 0.0,
+        completion_rate REAL DEFAULT 0.0,
+        preferred_days TEXT,
+        preferred_times TEXT,
+        strengths TEXT,
+        friction_points TEXT,
+        coaching_style TEXT DEFAULT 'DIRECT',
+        planning_autonomy TEXT DEFAULT 'ASSISTED',
+        version INTEGER DEFAULT 1,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS behavior_patterns (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        pattern_type TEXT NOT NULL,
+        confidence REAL NOT NULL DEFAULT 0.8,
+        sample_size INTEGER NOT NULL DEFAULT 0,
+        period_days INTEGER NOT NULL DEFAULT 30,
+        evidence TEXT,
+        classification TEXT NOT NULL DEFAULT 'OBSERVED',
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS daily_plans (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        plan_date TEXT NOT NULL,
+        schedule_items TEXT NOT NULL,
+        conflicts TEXT,
+        status TEXT NOT NULL DEFAULT 'PROPOSED',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, plan_date)
+      );
+
+      CREATE TABLE IF NOT EXISTS coach_sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        started_at TEXT NOT NULL,
+        ended_at TEXT,
+        summary TEXT,
+        metadata TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS coach_messages (
+        id TEXT PRIMARY KEY,
+        session_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        role TEXT NOT NULL,
+        content TEXT NOT NULL,
+        metadata TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (session_id) REFERENCES coach_sessions(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS user_entitlements (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        entitlement_code TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'ACTIVE',
+        expires_at TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, entitlement_code)
+      );
+
+      CREATE TABLE IF NOT EXISTS social_relationships (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        target_user_id TEXT NOT NULL,
+        relationship_type TEXT NOT NULL, -- 'FRIEND', 'BLOCKED', 'PENDING'
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (target_user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, target_user_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS content_reports (
+        id TEXT PRIMARY KEY,
+        reporter_id TEXT NOT NULL,
+        target_id TEXT NOT NULL,
+        target_type TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'PENDING', -- 'PENDING', 'REVIEWED', 'ACTIONED', 'DISMISSED'
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS feature_flags (
+        id TEXT PRIMARY KEY,
+        key TEXT UNIQUE NOT NULL,
+        is_enabled INTEGER NOT NULL DEFAULT 1,
+        description TEXT,
+        created_at TEXT NOT NULL
+      );
+
       CREATE INDEX IF NOT EXISTS idx_behavior_events ON behavior_events(user_id, timestamp);
+      CREATE INDEX IF NOT EXISTS idx_discipline_profiles_user ON discipline_profiles(user_id);
+      CREATE INDEX IF NOT EXISTS idx_behavior_patterns_user ON behavior_patterns(user_id, pattern_type);
+      CREATE INDEX IF NOT EXISTS idx_daily_plans_user_date ON daily_plans(user_id, plan_date);
+      CREATE INDEX IF NOT EXISTS idx_coach_sessions_user ON coach_sessions(user_id, created_at);
+      CREATE INDEX IF NOT EXISTS idx_coach_messages_session ON coach_messages(session_id, created_at);
+      CREATE INDEX IF NOT EXISTS idx_user_entitlements ON user_entitlements(user_id, entitlement_code);
+      CREATE INDEX IF NOT EXISTS idx_social_relationships ON social_relationships(user_id, relationship_type);
       CREATE INDEX IF NOT EXISTS idx_behavior_type ON behavior_events(user_id, type);
       CREATE INDEX IF NOT EXISTS idx_recommendations_user ON recommendations(user_id, status);
       CREATE INDEX IF NOT EXISTS idx_task_templates ON task_templates(is_active, sort_order);

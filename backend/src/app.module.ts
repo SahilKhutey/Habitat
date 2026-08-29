@@ -23,6 +23,8 @@ import { audioController } from './modules/audio/audio.controller';
 import { lockdownController } from './modules/lockdown/lockdown.controller';
 import { meshController } from './modules/mesh/mesh.controller';
 import { verificationController } from './modules/verification/verification.controller';
+import { intelligenceController } from './modules/intelligence/presentation/intelligence.controller';
+import { socialController } from './modules/social/social.controller';
 
 export const appRouter = Router();
 
@@ -55,3 +57,5 @@ appRouter.use('/anchors', anchorsController);
 appRouter.use('/audio', audioController);
 appRouter.use('/lockdown', lockdownController);
 appRouter.use('/mesh', meshController);
+appRouter.use('/intelligence', intelligenceController);
+appRouter.use('/social', socialController);

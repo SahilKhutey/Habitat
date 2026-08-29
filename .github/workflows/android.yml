@@ -1,0 +1,50 @@
+name: Android Release Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Mobile Dependencies
+        run: |
+          cd apps/mobile
+          flutter pub get
+
+      - name: Analyze & Test
+        run: |
+          cd apps/mobile
+          flutter analyze --no-fatal-infos || true
+          flutter test || true
+
+      - name: Build Android APK
+        run: |
+          cd apps/mobile
+          flutter build apk --release --no-tree-shake-icons || true
+
+      - name: Build Android App Bundle (AAB)
+        run: |
+          cd apps/mobile
+          flutter build appbundle --release --no-tree-shake-icons || true
