@@ -1,42 +1,46 @@
-// Semantic Color System for Habitat / Discipline Platform
+// Semantic Color System for Habitat Official Brand Palette
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Official Brand Palette Tokens
+  static const Color deepForest = Color(0xFF0F2E1F); // #0F2E1F - Primary Brand Surface / Dark BG
+  static const Color forestGreen = Color(0xFF1E5B38); // #1E5B38 - Primary Brand Tone
+  static const Color growthGreen = Color(0xFF4CAF50); // #4CAF50 - Active Growth & Positive Accent
+  static const Color sageGreen = Color(0xFFA8D08D);   // #A8D08D - Secondary Highlight & Badges
+  static const Color offWhite = Color(0xFFF7F7F2);    // #F7F7F2 - Light Canvas & Text Light
+
   // Light Palette Tokens
-  static const Color lightPrimary = Color(0xFFFF9500); // Amber Focus
-  static const Color lightSecondary = Color(0xFF007AFF);
-  static const Color lightBackground = Color(0xFFF2F2F7);
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightSurfaceElevated = Color(0xFFE5E5EA);
-  static const Color lightBorder = Color(0xFFD1D1D6);
-  static const Color lightTextPrimary = Color(0xFF000000);
-  static const Color lightTextSecondary = Color(0xFF6C6C70);
-  static const Color lightTextMuted = Color(0xFF8E8E93);
+  static const Color lightPrimary = forestGreen;
+  static const Color lightSecondary = growthGreen;
+  static const Color lightBackground = offWhite;
+  static const Color lightSurface = Colors.white;
+  static const Color lightSurfaceElevated = Color(0xFFE8EFEA);
+  static const Color lightBorder = Color(0xFFD3E0D7);
+  static const Color lightTextPrimary = deepForest;
+  static const Color lightTextSecondary = Color(0xFF4A6B58);
+  static const Color lightTextMuted = Color(0xFF7D9B89);
 
-  // Dark Palette Tokens (OLED Tactical)
-  static const Color darkPrimary = Color(0xFFFF9500); // Amber Focus
-  static const Color darkSecondary = Color(0xFF0A84FF);
-  static const Color darkBackground = Color(0xFF0A0A0C); // Obsidian
-  static const Color darkSurface = Color(0xFF141418); // Gunmetal
-  static const Color darkSurfaceElevated = Color(0xFF1C1C22);
-  static const Color darkBorder = Color(0xFF282832);
-  static const Color darkTextPrimary = Color(0xFFFFFFFF);
-  static const Color darkTextSecondary = Color(0xFF8E8E93);
-  static const Color darkTextMuted = Color(0xFF48484A);
+  // Dark Palette Tokens (Deep Forest Luxury)
+  static const Color darkPrimary = growthGreen;
+  static const Color darkSecondary = sageGreen;
+  static const Color darkBackground = Color(0xFF0A1F15); // Deep Obsidian Forest
+  static const Color darkSurface = deepForest; // #0F2E1F
+  static const Color darkSurfaceElevated = forestGreen; // #1E5B38
+  static const Color darkBorder = Color(0xFF285E42);
+  static const Color darkTextPrimary = Colors.white;
+  static const Color darkTextSecondary = Color(0xFFB0D0C0);
+  static const Color darkTextMuted = Color(0xFF5E8570);
 
-  // Semantic Action Accents (Identical Across Themes)
-  static const Color crimsonAlert = Color(0xFFFF3B30); // Wake-up Siren & Escalation
-  static const Color crimsonAlertSubtle = Color(0xFF2E1414);
-  static const Color amberFocus = Color(0xFFFF9500); // Active Missions & Streaks
-  static const Color amberFocusSubtle = Color(0xFF2E2214);
-  static const Color emeraldVictory = Color(0xFF34C759); // Mission Verified & XP
-  static const Color emeraldVictorySubtle = Color(0xFF142E1A);
-  static const Color cyanTelemetry = Color(0xFF00F2FE); // AI & Sensor Telemetry
-  static const Color purpleGraceVault = Color(0xFF5856D6); // Grace Tokens & Shields
+  // Semantic Action Accents
+  static const Color streakFlame = growthGreen;
+  static const Color growthTrending = sageGreen;
+  static const Color reminderAlert = Color(0xFF81C784);
+  static const Color crimsonAlert = Color(0xFFFF5252);
+  static const Color emeraldVictory = growthGreen;
 
   // Semantic Status Tokens
-  static const Color success = emeraldVictory;
-  static const Color warning = amberFocus;
+  static const Color success = growthGreen;
+  static const Color warning = sageGreen;
   static const Color error = crimsonAlert;
-  static const Color info = cyanTelemetry;
+  static const Color info = sageGreen;
 }

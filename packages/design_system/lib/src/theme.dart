@@ -1,4 +1,4 @@
-// Habitat Tactical OLED Dark ThemeData
+// Habitat Brand ThemeData
 import 'package:flutter/material.dart';
 import 'colors.dart';
 import 'typography.dart';
@@ -10,16 +10,16 @@ class HabitatThemeData {
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: HabitatColors.background,
-      primaryColor: HabitatColors.amberFocus,
+      primaryColor: HabitatColors.growthGreen,
       cardColor: HabitatColors.surfacePrimary,
       dividerColor: HabitatColors.surfaceBorder,
       colorScheme: const ColorScheme.dark(
-        primary: HabitatColors.amberFocus,
-        secondary: HabitatColors.crimsonAlert,
+        primary: HabitatColors.growthGreen,
+        secondary: HabitatColors.sageGreen,
         surface: HabitatColors.surfacePrimary,
         error: HabitatColors.crimsonAlert,
-        onPrimary: Colors.black,
-        onSecondary: Colors.white,
+        onPrimary: HabitatColors.deepForest,
+        onSecondary: HabitatColors.deepForest,
         onSurface: HabitatColors.textPrimary,
       ),
       appBarTheme: const AppBarTheme(
@@ -28,16 +28,16 @@ class HabitatThemeData {
         centerTitle: false,
         scrolledUnderElevation: 0,
         titleTextStyle: HabitatTypography.headline,
-        iconTheme: IconThemeData(color: HabitatColors.textPrimary),
+        iconTheme: IconThemeData(color: HabitatColors.growthGreen),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: HabitatColors.amberFocus,
-          foregroundColor: Colors.black,
+          backgroundColor: HabitatColors.growthGreen,
+          foregroundColor: HabitatColors.deepForest,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: HabitatSpacing.xl, vertical: HabitatSpacing.m),
           shape: const RoundedRectangleBorder(borderRadius: HabitatRadii.radiusL),
-          textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 1.0),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, letterSpacing: 0.5),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
