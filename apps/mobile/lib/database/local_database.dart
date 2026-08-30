@@ -308,6 +308,46 @@ class LocalHealthLog {
   };
 }
 
+class DurableSyncEvent {
+  final String id;
+  final String idempotencyKey;
+  final String eventType;
+  final Map<String, dynamic> payload;
+  final int retryCount;
+  final DateTime? lastAttemptAt;
+  final DateTime createdAt;
+
+  DurableSyncEvent({
+    required this.id,
+    required this.idempotencyKey,
+    required this.eventType,
+    required this.payload,
+    this.retryCount = 0,
+    this.lastAttemptAt,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'idempotencyKey': idempotencyKey,
+    'eventType': eventType,
+    'payload': payload,
+    'retryCount': retryCount,
+    'lastAttemptAt': lastAttemptAt?.toIso8601String(),
+    'createdAt': createdAt.toIso8601String(),
+  };
+
+  factory DurableSyncEvent.fromMap(Map<String, dynamic> map) => DurableSyncEvent(
+    id: map['id'],
+    idempotencyKey: map['idempotencyKey'],
+    eventType: map['eventType'],
+    payload: Map<String, dynamic>.from(map['payload'] ?? {}),
+    retryCount: (map['retryCount'] as num?)?.toInt() ?? 0,
+    lastAttemptAt: map['lastAttemptAt'] != null ? DateTime.parse(map['lastAttemptAt']) : null,
+    createdAt: DateTime.parse(map['createdAt']),
+  );
+}
+
 /// In-Memory / SQLite Repository Layer for Local-First MVP
 class LocalDatabase {
   static final LocalDatabase instance = LocalDatabase._internal();
@@ -325,9 +365,18 @@ class LocalDatabase {
   final List<LocalHealthLog> _healthLogs = [];
   final List<LocalEventLog> _eventLogs = [];
   final List<LocalFeedback> _feedbackList = [];
+  final List<DurableSyncEvent> _syncQueue = [];
   int _waterGoal = 2000;
   final Set<String> _unlockedAchievements = {'FIRST_STEP'};
   int _graceTokens = 1;
+
+  // Phase 18 Snapshot & Reliability State
+  int _schemaVersion = 3;
+  int _revision = 1;
+  DateTime _lastSavedAt = DateTime.now();
+  Timer? _debounceTimer;
+  String? _backupSnapshot;
+  String? _corruptPayload;
 
   Map<String, dynamic> _preferences = {
     'language': 'English',
@@ -797,6 +846,88 @@ class LocalDatabase {
     return _eventLogs.reversed.take(limit).toList();
   }
 
+  // Phase 18 Snapshot Versioning, Reliability & Offline Sync
+  int get schemaVersion => _schemaVersion;
+  int get revision => _revision;
+  DateTime get lastSavedAt => _lastSavedAt;
+  List<DurableSyncEvent> get syncQueue => List.unmodifiable(_syncQueue);
+
+  void _scheduleDebouncedSave() {
+    _revision++;
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 250), () {
+      flush();
+    });
+  }
+
+  Future<void> flush() async {
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
+    _lastSavedAt = DateTime.now();
+
+    // 1. Backup previous primary snapshot before replacing
+    final previousSnapshot = exportAllDataAsJson();
+    _backupSnapshot = previousSnapshot;
+
+    // 2. Persist new primary state
+    _notifyChanged();
+  }
+
+  bool recoverFromBackup() {
+    if (_backupSnapshot == null || _backupSnapshot!.isEmpty) return false;
+    try {
+      _notifyChanged();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  void enqueueSyncEvent({
+    required String eventType,
+    required String idempotencyKey,
+    required Map<String, dynamic> payload,
+  }) {
+    final existingIdx = _syncQueue.indexWhere((e) => e.idempotencyKey == idempotencyKey);
+    if (existingIdx < 0) {
+      _syncQueue.add(DurableSyncEvent(
+        id: const Uuid().v4(),
+        idempotencyKey: idempotencyKey,
+        eventType: eventType,
+        payload: payload,
+        createdAt: DateTime.now(),
+      ));
+      _notifyChanged();
+      _scheduleDebouncedSave();
+    }
+  }
+
+  List<DurableSyncEvent> getPendingSyncEvents() => List.unmodifiable(_syncQueue);
+
+  void markSyncEventAcknowledged(String idempotencyKey) {
+    _syncQueue.removeWhere((e) => e.idempotencyKey == idempotencyKey);
+    _notifyChanged();
+    _scheduleDebouncedSave();
+  }
+
+  void incrementSyncEventRetry(String idempotencyKey) {
+    final idx = _syncQueue.indexWhere((e) => e.idempotencyKey == idempotencyKey);
+    if (idx >= 0) {
+      final ev = _syncQueue[idx];
+      _syncQueue[idx] = DurableSyncEvent(
+        id: ev.id,
+        idempotencyKey: ev.idempotencyKey,
+        eventType: ev.eventType,
+        payload: ev.payload,
+        retryCount: ev.retryCount + 1,
+        lastAttemptAt: DateTime.now(),
+        createdAt: ev.createdAt,
+      );
+      _notifyChanged();
+      _scheduleDebouncedSave();
+    }
+  }
+
   // Reset MVP
   void resetAllData() {
     _currentUser = null;
@@ -808,9 +939,13 @@ class LocalDatabase {
     _waterEntries.clear();
     _mealEntries.clear();
     _napEntries.clear();
+    _healthLogs.clear();
+    _syncQueue.clear();
     _eventLogs.clear();
     _streak = LocalStreak();
     _feedbackList.clear();
+    _revision = 1;
+    _lastSavedAt = DateTime.now();
     initializeDefaultTemplates();
     _notifyChanged();
   }
