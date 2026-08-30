@@ -1,6 +1,5 @@
 // Habitat Mission Execution & Verification Service Unit & Integration Tests
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habitat_mobile/core/platform/media/native_camera_proof_pipeline.dart';
 import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 

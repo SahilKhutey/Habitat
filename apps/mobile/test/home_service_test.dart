@@ -106,7 +106,7 @@ void main() {
       db.addWater(milliliters: 250, recordedAt: now);
       db.addMeal(type: 'breakfast', recordedAt: now);
       db.addMeal(type: 'lunch', recordedAt: now);
-      final nap = db.startNap(startedAt: now.subtract(const Duration(minutes: 30)));
+      db.startNap(startedAt: now.subtract(const Duration(minutes: 30)));
 
       final state = service.load(now: now);
 
