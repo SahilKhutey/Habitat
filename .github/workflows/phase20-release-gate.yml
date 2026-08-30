@@ -1,0 +1,60 @@
+name: Habitat Phase 20 Automated Release Gate
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release-build:
+    name: Build & Publish Release Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        working-directory: ./apps/mobile
+        run: flutter pub get
+
+      - name: Run Tests
+        working-directory: ./apps/mobile
+        run: flutter test
+
+      - name: Build Android Release APK
+        working-directory: ./apps/mobile
+        run: flutter build apk --release
+
+      - name: Package & Generate SHA-256 Checksums
+        run: |
+          VERSION=${GITHUB_REF_NAME}
+          cp apps/mobile/build/app/outputs/flutter-apk/app-release.apk Habitat-${VERSION}-android.apk
+          sha256sum Habitat-${VERSION}-android.apk > Habitat-${VERSION}-android.sha256
+          echo "Release APK and SHA256 generated for ${VERSION}:"
+          cat Habitat-${VERSION}-android.sha256
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Habitat Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            Habitat-${{ github.ref_name }}-android.apk
+            Habitat-${{ github.ref_name }}-android.sha256
+          generate_release_notes: true
