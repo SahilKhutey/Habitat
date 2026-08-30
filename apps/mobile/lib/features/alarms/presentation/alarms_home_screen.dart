@@ -1,6 +1,6 @@
 // Tactical Alarms Management Screen
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class AlarmsHomeScreen extends StatefulWidget {
   const AlarmsHomeScreen({super.key});

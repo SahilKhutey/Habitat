@@ -1,6 +1,6 @@
 // Mission Success Celebration Screen
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class MissionSuccessScreen extends StatelessWidget {
   const MissionSuccessScreen({super.key});

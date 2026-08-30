@@ -1,6 +1,6 @@
 // 5-Step Progressive Task Creation Wizard
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class CreateTaskWizardScreen extends StatefulWidget {
   const CreateTaskWizardScreen({super.key});

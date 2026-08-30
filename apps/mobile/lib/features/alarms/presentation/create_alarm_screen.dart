@@ -1,6 +1,6 @@
 // Set Alarm Commitment Screen
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 import '../../../services/alarm_reliability_service.dart';
 import '../../onboarding/screens/alarm_reliability_screen.dart';
 

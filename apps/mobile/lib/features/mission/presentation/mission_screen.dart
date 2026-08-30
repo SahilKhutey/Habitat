@@ -1,6 +1,6 @@
 // Mission Execution HUD & State Machine View
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 import '../domain/mission.dart';
 
 class MissionScreen extends StatelessWidget {

@@ -1,7 +1,7 @@
 // Video Proof Capture Screen with Minimum Duration Enforcer
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 import '../data/camera_service.dart';
 
 class VideoCaptureScreen extends StatefulWidget {

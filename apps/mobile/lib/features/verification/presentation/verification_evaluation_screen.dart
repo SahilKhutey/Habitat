@@ -1,6 +1,6 @@
 // Tactical Verification & Truth Scanning HUD with Dynamic Feedback
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class VerificationEvaluationScreen extends StatefulWidget {
   final String missionId;

@@ -1,6 +1,6 @@
 // AI Discipline Coach Mobile Presentation HUD Screen
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class CoachScreen extends StatefulWidget {
   final String userId;

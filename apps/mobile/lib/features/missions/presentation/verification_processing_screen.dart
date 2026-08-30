@@ -1,6 +1,6 @@
 // Verification Processing Screen & Kinetic Radar Scanner
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class VerificationProcessingScreen extends StatefulWidget {
   const VerificationProcessingScreen({super.key});

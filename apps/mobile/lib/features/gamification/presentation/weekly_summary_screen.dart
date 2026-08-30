@@ -1,6 +1,6 @@
 // Tactical Weekly Discipline Summary Screen & Behavioral Insights
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class WeeklySummaryScreen extends StatelessWidget {
   final int tasksCompleted;

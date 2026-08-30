@@ -1,6 +1,6 @@
 // Gamification Dashboard Screen (Level Ring, XP, Streaks & Grace Vault)
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class GamificationDashboardScreen extends StatelessWidget {
   const GamificationDashboardScreen({super.key});

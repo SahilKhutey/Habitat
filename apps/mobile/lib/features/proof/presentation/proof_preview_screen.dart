@@ -1,6 +1,6 @@
 // Proof Preview & Submission Screen (Retake vs Submit)
 import 'package:flutter/material.dart';
-import '../../../../packages/design_system/lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 class ProofPreviewScreen extends StatefulWidget {
   final Map<String, dynamic> proofData;
