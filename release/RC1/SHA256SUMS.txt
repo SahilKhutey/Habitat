@@ -1,0 +1,5 @@
+# Habitat v1.0.0-rc1 SHA-256 Checksum Manifest
+# Generated for Release Candidate Verification
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  Habitat-v1.0.0-rc1.apk
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  Habitat-v1.0.0-rc1.aab
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  Habitat-Web-v1.0.0-rc1.tar.gz
