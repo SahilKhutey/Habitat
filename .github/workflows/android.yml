@@ -31,11 +31,15 @@ jobs:
         working-directory: apps/mobile
         run: flutter pub get
 
-      - name: Analyze & Test
+      - name: Format & Static Analysis
         working-directory: apps/mobile
         run: |
-          flutter analyze --no-fatal-infos || true
-          flutter test || true
+          dart format lib test
+          flutter analyze --no-fatal-infos
+
+      - name: Run Test Suite
+        working-directory: apps/mobile
+        run: flutter test
 
       - name: Build Android APK (Debug CI)
         working-directory: apps/mobile
