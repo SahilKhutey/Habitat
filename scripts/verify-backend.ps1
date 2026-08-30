@@ -19,7 +19,7 @@ cmd.exe /c "npm run test:backend"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "[4/4] Running security vulnerability audit..." -ForegroundColor Yellow
-cmd.exe /c "npm audit --audit-level=critical"
+cmd.exe /c "npm audit --audit-level=high"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "========================================================" -ForegroundColor Green

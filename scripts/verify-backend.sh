@@ -19,9 +19,9 @@ npm run build:backend
 echo "[3/4] Executing test suite..."
 npm run test:backend
 
-# 4. Critical security vulnerability audit
+# 4. Security vulnerability audit (High/Critical)
 echo "[4/4] Running security vulnerability audit..."
-npm audit --audit-level=critical
+npm audit --audit-level=high
 
 echo "========================================================"
 echo "  BACKEND QUALITY GATE: ALL CHECKS PASSED (100% GREEN)  "

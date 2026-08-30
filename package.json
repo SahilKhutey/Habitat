@@ -18,6 +18,15 @@
     "backend"
   ],
   "overrides": {
-    "deepmerge-ts": "^8.0.0"
+    "deepmerge-ts": "^8.0.0",
+    "prisma": {
+      "deepmerge-ts": "^8.0.0",
+      "@prisma/config": {
+        "deepmerge-ts": "^8.0.0"
+      }
+    },
+    "@prisma/config": {
+      "deepmerge-ts": "^8.0.0"
+    }
   }
 }
