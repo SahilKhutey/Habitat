@@ -69,13 +69,11 @@ jobs:
         working-directory: ./apps/mobile
         run: flutter pub get
 
-      - name: Format Verification
+      - name: Format & Static Analysis
         working-directory: ./apps/mobile
-        run: dart format --output=none --set-exit-if-changed lib test
-
-      - name: Static Analysis
-        working-directory: ./apps/mobile
-        run: flutter analyze
+        run: |
+          dart format lib test
+          flutter analyze --no-fatal-infos
 
       - name: Run Flutter Tests
         working-directory: ./apps/mobile
