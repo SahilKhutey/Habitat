@@ -15,6 +15,14 @@ class WaterService {
     _repository.addWater(milliliters, timestamp: timestamp);
   }
 
+  void logWater({required int amountMl, DateTime? timestamp}) {
+    addWater(amountMl, timestamp: timestamp);
+  }
+
+  List<WaterEntryModel> getTodayEntries([DateTime? date]) {
+    return _repository.getWaterEntries(date ?? DateTime.now());
+  }
+
   void removeWater(String id) {
     _repository.removeWater(id);
   }

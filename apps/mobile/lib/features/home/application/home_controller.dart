@@ -43,22 +43,34 @@ class HomeController extends ChangeNotifier {
   final WaterService _waterService;
   final ProgressionEngine _progressionEngine;
   final StreakCalculator _streakCalculator;
+  final dynamic service;
 
   late HomeState state;
 
   HomeController({
-    required LocalDatabase database,
-    required TaskLifecycleService taskService,
-    required WaterService waterService,
+    LocalDatabase? database,
+    TaskLifecycleService? taskService,
+    WaterService? waterService,
     ProgressionEngine? progressionEngine,
     StreakCalculator? streakCalculator,
-  })  : _database = database,
-        _taskService = taskService,
-        _waterService = waterService,
+    this.service,
+  })  : _database = database ?? LocalDatabase.instance,
+        _taskService = taskService ??
+            TaskLifecycleService(
+              taskRepository: TaskRepository(database ?? LocalDatabase.instance),
+              database: database ?? LocalDatabase.instance,
+            ),
+        _waterService = waterService ??
+            WaterService(HealthRepository(database ?? LocalDatabase.instance)),
         _progressionEngine = progressionEngine ?? ProgressionEngine(),
         _streakCalculator = streakCalculator ?? StreakCalculator() {
     _loadState();
     _database.changes.addListener(_onDataChanged);
+  }
+
+  void load() {
+    _loadState();
+    notifyListeners();
   }
 
   void _loadState() {

@@ -142,7 +142,7 @@ export class EvidenceVerificationEngine {
     // 3. Cryptographic SHA-256 & Byte Payload Integrity
     if (evidence.sha256) {
       const hex64Regex = /^[a-fA-F0-9]{64}$/;
-      if (!hex64Regex.hasMatch?.(evidence.sha256) && !hex64Regex.test(evidence.sha256)) {
+      if (!hex64Regex.test(evidence.sha256)) {
         checks.push({
           name: 'Sha256Format',
           passed: false,

@@ -66,9 +66,11 @@ class LocalTask {
   final String description;
   final String category;
   final String taskType;
+  final String difficulty;
   final bool requiresPhoto;
   final bool requiresVideo;
   final bool requiresVerification;
+  final bool isCompleted;
   final bool active;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -79,13 +81,47 @@ class LocalTask {
     this.description = '',
     required this.category,
     required this.taskType,
+    this.difficulty = 'MEDIUM',
     this.requiresPhoto = false,
     this.requiresVideo = false,
     this.requiresVerification = true,
+    this.isCompleted = false,
     this.active = true,
     required this.createdAt,
     required this.updatedAt,
   });
+
+  LocalTask copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? category,
+    String? taskType,
+    String? difficulty,
+    bool? requiresPhoto,
+    bool? requiresVideo,
+    bool? requiresVerification,
+    bool? isCompleted,
+    bool? active,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return LocalTask(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      taskType: taskType ?? this.taskType,
+      difficulty: difficulty ?? this.difficulty,
+      requiresPhoto: requiresPhoto ?? this.requiresPhoto,
+      requiresVideo: requiresVideo ?? this.requiresVideo,
+      requiresVerification: requiresVerification ?? this.requiresVerification,
+      isCompleted: isCompleted ?? this.isCompleted,
+      active: active ?? this.active,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
     'id': id,
@@ -93,9 +129,11 @@ class LocalTask {
     'description': description,
     'category': category,
     'taskType': taskType,
+    'difficulty': difficulty,
     'requiresPhoto': requiresPhoto ? 1 : 0,
     'requiresVideo': requiresVideo ? 1 : 0,
     'requiresVerification': requiresVerification ? 1 : 0,
+    'isCompleted': isCompleted ? 1 : 0,
     'active': active ? 1 : 0,
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
