@@ -321,6 +321,56 @@ alarmsController.post('/test-alarm/:testId/confirm', (req: Request, res: Respons
   }
 });
 
+// POST /api/v1/alarms/occurrences/:occurrenceId/trigger - Acknowledge native trigger
+alarmsController.post('/occurrences/:occurrenceId/trigger', (req: Request, res: Response) => {
+  try {
+    const occurrenceId = String(req.params.occurrenceId);
+    let occurrence = AlarmOccurrenceRepository.findById(occurrenceId);
+    if (!occurrence) {
+      // Auto-create occurrence if first time reported by native layer
+      const { alarmId, missionId, userId, scheduledAt, platform } = req.body;
+      if (alarmId && missionId && userId) {
+        occurrence = AlarmOccurrenceRepository.create({
+          occurrenceId,
+          alarmId,
+          missionId,
+          userId,
+          scheduledAt: scheduledAt || new Date().toISOString(),
+          platform: platform || 'android'
+        });
+      }
+    }
+
+    if (!occurrence) {
+      res.status(404).json({ success: false, error: 'Occurrence not found and required fields missing for creation' });
+      return;
+    }
+
+    AlarmOccurrenceRepository.markTriggered(occurrenceId);
+    res.json({ success: true, data: AlarmOccurrenceRepository.findById(occurrenceId) });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/alarms/occurrences/:occurrenceId/disarm - Complete mission and disarm occurrence
+alarmsController.post('/occurrences/:occurrenceId/disarm', (req: Request, res: Response) => {
+  try {
+    const occurrenceId = String(req.params.occurrenceId);
+    const occurrence = AlarmOccurrenceRepository.findById(occurrenceId);
+    if (!occurrence) {
+      res.status(404).json({ success: false, error: 'Occurrence not found' });
+      return;
+    }
+
+    const { completedAt } = req.body;
+    AlarmOccurrenceRepository.markDisarmed(occurrenceId, completedAt);
+    res.json({ success: true, data: AlarmOccurrenceRepository.findById(occurrenceId) });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 // GET /api/v1/alarms/:id/occurrences - Observability audit log
 alarmsController.get('/:id/occurrences', (req: Request, res: Response) => {
   try {
