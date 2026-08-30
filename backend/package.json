@@ -14,6 +14,8 @@
     "dev": "ts-node src/main.ts",
     "test": "vitest run",
     "test:vision:real": "vitest run tests/real_vision_adversarial_matrix.test.ts",
+    "prisma:generate": "prisma generate --schema=prisma/schema.prisma",
+    "postinstall": "prisma generate --schema=prisma/schema.prisma",
     "db:seed": "prisma db seed"
   },
   "prisma": {
