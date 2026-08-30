@@ -97,10 +97,16 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = AppBreakpoints.isDesktop(context);
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTabletOrDesktop = screenWidth >= AppBreakpoints.mobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    if (isDesktop) {
+    final wrappedBody = FocusTraversalGroup(
+      policy: OrderedTraversalPolicy(),
+      child: body,
+    );
+
+    if (isTabletOrDesktop) {
       return Scaffold(
         backgroundColor: isDark
             ? AppColors.darkBackground
@@ -112,10 +118,11 @@ class AppShell extends StatelessWidget {
                 selectedIndex: currentIndex,
                 onDestinationSelected: onIndexChanged,
                 labelType: NavigationRailLabelType.all,
+                minWidth: 72,
                 leading: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Semantics(
-                    label: 'Habitat',
+                    label: 'Habitat Navigation',
                     header: true,
                     child: CircleAvatar(
                       radius: 22,
@@ -135,7 +142,7 @@ class AppShell extends StatelessWidget {
               ),
             ),
             const VerticalDivider(width: 1),
-            Expanded(child: body),
+            Expanded(child: wrappedBody),
           ],
         ),
       );
@@ -145,7 +152,7 @@ class AppShell extends StatelessWidget {
       backgroundColor: isDark
           ? AppColors.darkBackground
           : AppColors.lightBackground,
-      body: body,
+      body: wrappedBody,
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: onIndexChanged,
