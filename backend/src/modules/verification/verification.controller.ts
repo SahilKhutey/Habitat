@@ -3,6 +3,7 @@ import { Router, Request, Response } from 'express';
 import { VerificationTruthService } from './verification.service';
 import { SessionChallengeService } from '../proofs/services/session-challenge.service';
 import { VerificationEngine } from './verification.engine';
+import { EvidenceVerificationEngine } from './engine/evidence-verification.engine';
 
 export const verificationController = Router();
 
@@ -17,6 +18,23 @@ verificationController.post('/challenge', (req: Request, res: Response) => {
 
     const challenge = SessionChallengeService.issueChallenge(String(missionId), String(userId));
     res.json({ success: true, data: challenge });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/verification/verify-evidence-v2 - Authoritative Phase 14 Evidence Verification
+verificationController.post('/verify-evidence-v2', (req: Request, res: Response) => {
+  try {
+    const { evidence, policy } = req.body;
+    if (!evidence) {
+      res.status(400).json({ success: false, error: 'Evidence payload is required' });
+      return;
+    }
+
+    const result = EvidenceVerificationEngine.verify(evidence, policy);
+    const statusCode = result.accepted ? 200 : 422;
+    res.status(statusCode).json({ success: result.accepted, data: result });
   } catch (e: any) {
     res.status(400).json({ success: false, error: e.message });
   }
