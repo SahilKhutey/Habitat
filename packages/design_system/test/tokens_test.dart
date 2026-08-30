@@ -27,4 +27,21 @@ void main() {
     expect(dark.brightness, Brightness.dark);
     expect(dark.scaffoldBackgroundColor, AppColors.darkBackground);
   });
+
+  test('public design system token API is complete', () {
+    expect(AppRadii.card, equals(18.0));
+    expect(AppRadii.button, equals(14.0));
+    expect(AppElevation.card, equals(2.0));
+    expect(AppElevation.modal, equals(8.0));
+
+    expect(AppDurations.instant, isA<Duration>());
+    expect(AppDurations.fast, isA<Duration>());
+    expect(AppDurations.standard, isA<Duration>());
+    expect(AppDurations.normal, isA<Duration>());
+    expect(AppDurations.slow, isA<Duration>());
+    expect(AppDurations.instant, equals(const Duration(milliseconds: 0)));
+    expect(AppDurations.fast, equals(const Duration(milliseconds: 150)));
+    expect(AppDurations.standard, equals(const Duration(milliseconds: 250)));
+    expect(AppDurations.normal, equals(AppDurations.standard));
+  });
 }

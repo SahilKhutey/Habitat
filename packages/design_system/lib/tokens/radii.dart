@@ -28,16 +28,3 @@ class AppRadii {
   static const BorderRadius radiusLarge = radiusCard;
   static const BorderRadius radiusExtraLarge = radiusHeroCard;
 }
-
-class AppElevation {
-  static const double none = 0.0;
-  static const double subtle = 1.0;
-  static const double card = 2.0;
-  static const double modal = 8.0;
-}
-
-class AppDurations {
-  static const Duration fast = Duration(milliseconds: 150);
-  static const Duration normal = Duration(milliseconds: 250);
-  static const Duration slow = Duration(milliseconds: 400);
-}
