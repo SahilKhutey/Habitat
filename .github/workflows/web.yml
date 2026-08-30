@@ -7,8 +7,12 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   build-web:
+    name: Build Habitat Web
     runs-on: ubuntu-latest
 
     steps:
@@ -18,14 +22,36 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: '3.22.3'
+          channel: stable
           cache: true
 
-      - name: Install Dependencies & Build Web
+      - name: Install Dependencies
+        working-directory: apps/web
+        run: flutter pub get
+
+      - name: Format Verification
+        working-directory: apps/web
+        run: dart format lib test
+
+      - name: Static Analysis
+        working-directory: apps/web
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run Tests
+        working-directory: apps/web
+        run: flutter test
+
+      - name: Build Web Release
+        working-directory: apps/web
+        run: flutter build web --release
+
+      - name: Verify Web Artifact
         run: |
-          cd apps/mobile
-          flutter pub get
-          dart format lib test
-          flutter analyze --no-fatal-infos
-          flutter test
-          flutter build web --release
+          test -f apps/web/build/web/index.html
+
+      - name: Upload Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: habitat-web-release
+          path: apps/web/build/web

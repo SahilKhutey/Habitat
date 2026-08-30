@@ -7,8 +7,12 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   build-ios:
+    name: Validate iOS Build
     runs-on: macos-14
 
     steps:
@@ -18,18 +22,32 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: '3.22.3'
+          channel: stable
           cache: true
 
-      - name: Install Mobile Dependencies
+      - name: Install Dependencies
+        working-directory: apps/mobile
+        run: flutter pub get
+
+      - name: Verify Xcode Project Structure
+        working-directory: apps/mobile
         run: |
-          cd apps/mobile
-          flutter pub get
-          dart format lib test
-          flutter analyze --no-fatal-infos
-          flutter test
+          test -f ios/Runner.xcodeproj/project.pbxproj
+          test -f ios/Podfile
+
+      - name: Format Verification
+        working-directory: apps/mobile
+        run: dart format lib test
+
+      - name: Static Analysis
+        working-directory: apps/mobile
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run Tests
+        working-directory: apps/mobile
+        run: flutter test
 
       - name: Build iOS App Framework
-        run: |
-          cd apps/mobile
-          flutter build ios --release --no-codesign --no-tree-shake-icons
+        working-directory: apps/mobile
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons

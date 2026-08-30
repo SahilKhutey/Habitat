@@ -1,10 +1,13 @@
-name: Habitat Monorepo Fail-Closed CI (Phase 20)
+name: Habitat Monorepo Fail-Closed CI (Phase 21 RC1)
 
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+
+permissions:
+  contents: read
 
 jobs:
   backend-gate:
@@ -19,7 +22,7 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Verify Node.js SQLite
         run: |
@@ -31,19 +34,15 @@ jobs:
           "
 
       - name: Install Dependencies
-        working-directory: ./backend
         run: npm ci
 
       - name: Compile TypeScript
-        working-directory: ./backend
-        run: npm run build
+        run: npm run build:backend
 
       - name: Run Test Suite (Vitest)
-        working-directory: ./backend
-        run: npm test
+        run: npm run test:backend
 
       - name: Dependency Security Audit
-        working-directory: ./backend
         run: npm audit --audit-level=high
 
   mobile-gate:
@@ -62,6 +61,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
 
@@ -69,11 +69,21 @@ jobs:
         working-directory: ./apps/mobile
         run: flutter pub get
 
-      - name: Format & Static Analysis
+      - name: Verify Android Platform Structure
+        working-directory: ./apps/mobile
+        run: |
+          test -f android/settings.gradle
+          test -f android/app/build.gradle
+          test -f android/gradlew
+
+      - name: Format Verification
         working-directory: ./apps/mobile
         run: |
           dart format lib test
-          flutter analyze --no-fatal-infos
+
+      - name: Static Analysis
+        working-directory: ./apps/mobile
+        run: flutter analyze --no-fatal-infos
 
       - name: Run Flutter Tests
         working-directory: ./apps/mobile
@@ -93,22 +103,40 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
 
       - name: Install Dependencies
-        working-directory: ./apps/mobile
+        working-directory: ./apps/web
         run: flutter pub get
 
+      - name: Format Verification
+        working-directory: ./apps/web
+        run: |
+          dart format lib test
+
+      - name: Static Analysis
+        working-directory: ./apps/web
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run Web Tests
+        working-directory: ./apps/web
+        run: flutter test
+
       - name: Build Flutter Web Release
-        working-directory: ./apps/mobile
+        working-directory: ./apps/web
         run: flutter build web --release
+
+      - name: Verify Web Artifact
+        run: |
+          test -f apps/web/build/web/index.html
 
       - name: Upload Web Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: habitat-web-release
-          path: apps/mobile/build/web
+          path: apps/web/build/web
 
   ios-gate:
     name: iOS Quality Gate (macOS Runner)
@@ -120,12 +148,32 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
 
       - name: Install Dependencies
         working-directory: ./apps/mobile
         run: flutter pub get
+
+      - name: Verify iOS Platform Structure
+        working-directory: ./apps/mobile
+        run: |
+          test -f ios/Runner.xcodeproj/project.pbxproj
+          test -f ios/Podfile
+
+      - name: Format Verification
+        working-directory: ./apps/mobile
+        run: |
+          dart format lib test
+
+      - name: Static Analysis
+        working-directory: ./apps/mobile
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run iOS Tests
+        working-directory: ./apps/mobile
+        run: flutter test
 
       - name: Build iOS Release (No Codesign)
         working-directory: ./apps/mobile
@@ -139,7 +187,7 @@ jobs:
       - name: Verify All Quality Gates Passed
         run: |
           echo "========================================================"
-          echo "  HABITAT PHASE 20 CROSS-PHASE QUALITY GATES PASSED     "
+          echo "  HABITAT PHASE 21 RC1 CROSS-PHASE QUALITY GATES PASSED "
           echo "  - Backend (Vitest, TS, Security Audit)        [PASSED]"
           echo "  - Android Mobile (Analyze, Tests, APK Build)  [PASSED]"
           echo "  - Web Platform (Analyze, Tests, Web Release)  [PASSED]"
