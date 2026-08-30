@@ -275,6 +275,39 @@ class LocalEventLog {
   });
 }
 
+class LocalHealthLog {
+  final String id;
+  final String type; // WATER, MEAL, NAP, EXERCISE
+  final DateTime recordedAt;
+  final double amount;
+  final String unit;
+  final String? mealType;
+  final int? durationMinutes;
+  final String note;
+
+  LocalHealthLog({
+    required this.id,
+    required this.type,
+    required this.recordedAt,
+    this.amount = 0.0,
+    this.unit = '',
+    this.mealType,
+    this.durationMinutes,
+    this.note = '',
+  });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'type': type,
+    'recordedAt': recordedAt.toIso8601String(),
+    'amount': amount,
+    'unit': unit,
+    'mealType': mealType,
+    'durationMinutes': durationMinutes,
+    'note': note,
+  };
+}
+
 /// In-Memory / SQLite Repository Layer for Local-First MVP
 class LocalDatabase {
   static final LocalDatabase instance = LocalDatabase._internal();
@@ -289,6 +322,7 @@ class LocalDatabase {
   final List<LocalWaterEntry> _waterEntries = [];
   final List<LocalMealEntry> _mealEntries = [];
   final List<LocalNapEntry> _napEntries = [];
+  final List<LocalHealthLog> _healthLogs = [];
   final List<LocalEventLog> _eventLogs = [];
   final List<LocalFeedback> _feedbackList = [];
   int _waterGoal = 2000;
@@ -600,6 +634,81 @@ class LocalDatabase {
   List<LocalWaterEntry> getAllWaterEntries() => List.unmodifiable(_waterEntries);
   List<LocalMealEntry> getAllMealEntries() => List.unmodifiable(_mealEntries);
   List<LocalNapEntry> getAllNapEntries() => List.unmodifiable(_napEntries);
+
+  // Phase 16 Health Logs & 7-Day Visual Progress Aggregations
+  void recordHealthLog(LocalHealthLog log) {
+    _healthLogs.add(log);
+    _notifyChanged();
+  }
+
+  List<LocalHealthLog> getAllHealthLogs() => List.unmodifiable(_healthLogs);
+
+  List<LocalHealthLog> getTodayHealthLogs() {
+    final now = DateTime.now();
+    return _healthLogs.where((l) => _sameDay(l.recordedAt, now)).toList();
+  }
+
+  double getTodayWaterLiters() {
+    final todayLogs = getTodayHealthLogs().where((l) => l.type == 'WATER');
+    if (todayLogs.isNotEmpty) {
+      final totalMl = todayLogs.fold<double>(0.0, (sum, l) => sum + (l.unit == 'L' ? l.amount * 1000 : l.amount));
+      return totalMl / 1000.0;
+    }
+    final now = DateTime.now();
+    final waterEntries = getWaterEntriesForDay(now);
+    final totalMl = waterEntries.fold<int>(0, (sum, e) => sum + e.milliliters);
+    return totalMl / 1000.0;
+  }
+
+  int getTodayMealCount() {
+    final todayMealLogs = getTodayHealthLogs().where((l) => l.type == 'MEAL');
+    if (todayMealLogs.isNotEmpty) {
+      return todayMealLogs.length;
+    }
+    final now = DateTime.now();
+    return getMealEntriesForDay(now).length;
+  }
+
+  int getTodayNapMinutes() {
+    final todayNapLogs = getTodayHealthLogs().where((l) => l.type == 'NAP');
+    if (todayNapLogs.isNotEmpty) {
+      return todayNapLogs.fold<int>(0, (sum, l) => sum + (l.durationMinutes ?? l.amount.toInt()));
+    }
+    final now = DateTime.now();
+    final napEntries = getNapEntriesForDay(now);
+    return napEntries.fold<int>(0, (sum, e) => sum + e.durationMinutes);
+  }
+
+  Map<String, int> getDailyCompletions() {
+    final result = <String, int>{};
+    final now = DateTime.now();
+    for (int i = 6; i >= 0; i--) {
+      final day = now.subtract(Duration(days: i));
+      final dateKey = '${day.year}-${day.month.toString().padLeft(2, "0")}-${day.day.toString().padLeft(2, "0")}';
+      final completedCount = _attempts.where((a) => a.status == 'COMPLETED' && _sameDay(a.triggeredAt, day)).length;
+      result[dateKey] = completedCount;
+    }
+    return result;
+  }
+
+  Map<String, double> getDailyWater() {
+    final result = <String, double>{};
+    final now = DateTime.now();
+    for (int i = 6; i >= 0; i--) {
+      final day = now.subtract(Duration(days: i));
+      final dateKey = '${day.year}-${day.month.toString().padLeft(2, "0")}-${day.day.toString().padLeft(2, "0")}';
+      final waterEntries = getWaterEntriesForDay(day);
+      final healthWater = _healthLogs.where((l) => l.type == 'WATER' && _sameDay(l.recordedAt, day));
+      double totalLiters = 0.0;
+      if (healthWater.isNotEmpty) {
+        totalLiters = healthWater.fold<double>(0.0, (sum, l) => sum + (l.unit == 'L' ? l.amount : l.amount / 1000.0));
+      } else {
+        totalLiters = waterEntries.fold<int>(0, (sum, e) => sum + e.milliliters) / 1000.0;
+      }
+      result[dateKey] = totalLiters;
+    }
+    return result;
+  }
 
   bool _sameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
 
