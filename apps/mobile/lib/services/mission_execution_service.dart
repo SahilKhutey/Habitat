@@ -5,6 +5,8 @@ import '../core/events/habitat_events.dart';
 import '../core/platform/alarm/platform_alarm_service.dart';
 import '../core/platform/media/native_camera_proof_pipeline.dart';
 import '../database/local_database.dart';
+import '../features/proof/domain/capture_result.dart';
+import '../features/proof/domain/evidence_verification_engine.dart';
 
 @immutable
 class ProofSubmission {
@@ -38,15 +40,15 @@ class MissionCompletionResult {
 
 class MissionExecutionService {
   final LocalDatabase _database;
-  final MediaVerificationEngine _verificationEngine;
+  final EvidenceVerificationEngine _verificationEngine;
   final PlatformAlarmService _alarmService;
 
   MissionExecutionService({
     required LocalDatabase database,
-    MediaVerificationEngine? verificationEngine,
+    EvidenceVerificationEngine? verificationEngine,
     PlatformAlarmService? alarmService,
   })  : _database = database,
-        _verificationEngine = verificationEngine ?? MediaVerificationEngine(),
+        _verificationEngine = verificationEngine ?? EvidenceVerificationEngine(),
         _alarmService = alarmService ?? PlatformAlarmService.create();
 
   Future<LocalTaskAttempt> start(String taskId, {String? alarmId}) async {
@@ -82,20 +84,24 @@ class MissionExecutionService {
     final attempt = _database.getAttempt(attemptId);
     if (attempt == null) throw ArgumentError('Attempt not found: $attemptId');
 
+    final task = _database.getTask(attempt.taskId);
+    if (task == null) throw ArgumentError('Task not found: ${attempt.taskId}');
+
     _database.updateAttemptStatus(attemptId: attemptId, status: 'VERIFYING');
 
-    final proofFile = CapturedProofFile(
+    final capture = CaptureResult(
       filePath: submission.filePath,
       mimeType: submission.type == 'VIDEO' ? 'video/mp4' : 'image/jpeg',
-      byteSize: 1024 * 1024,
+      byteSize: submission.type == 'VIDEO' ? 1024 * 1024 : 1024 * 256,
       sha256Checksum: submission.sha256Checksum,
       durationSeconds: submission.durationSeconds,
       capturedAt: DateTime.now(),
     );
 
-    final verification = await _verificationEngine.verifyProof(
-      proofFile,
-      requiredType: submission.type,
+    final verification = await _verificationEngine.verifyEvidence(
+      capture,
+      task: task,
+      attemptId: attemptId,
     );
 
     final proof = LocalProof(
@@ -117,7 +123,12 @@ class MissionExecutionService {
       _database.updateAttemptStatus(attemptId: attemptId, status: 'FAILED');
     }
 
-    return verification;
+    return VerificationResult(
+      isPassed: verification.isPassed,
+      confidenceScore: verification.confidenceScore,
+      failureReason: verification.failureMessage,
+      details: verification.telemetry,
+    );
   }
 
   Future<MissionCompletionResult> complete(String attemptId) async {

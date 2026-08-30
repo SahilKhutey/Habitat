@@ -127,7 +127,7 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/water.jpg',
-          sha256Checksum: 'hash123',
+          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -159,7 +159,7 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/desk.jpg',
-          sha256Checksum: 'sha_desk_123',
+          sha256Checksum: '9999888877776666555544443333222211110000aaaabbbbccccddddeeeeffff',
         ),
       );
       await missionService.complete(attempt.id);
