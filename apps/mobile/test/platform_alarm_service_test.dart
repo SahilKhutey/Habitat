@@ -56,5 +56,12 @@ void main() {
       expect(scheduled.length, equals(1));
       expect(scheduled.first.id, equals('alarm_web_01'));
     });
+
+    test('PlatformAlarmService.instance returns a valid singleton', () {
+      final instance1 = PlatformAlarmService.instance;
+      final instance2 = PlatformAlarmService.instance;
+      expect(instance1, isNotNull);
+      expect(identical(instance1, instance2), isTrue);
+    });
   });
 }

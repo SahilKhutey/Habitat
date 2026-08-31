@@ -1,18 +1,55 @@
 // Tactical Full-Screen Alarm Ringing HUD
 import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
+import '../../../tasks/domain/services/alarm_service.dart';
+import '../../../../core/platform/alarm/platform_alarm_service.dart';
+import '../../../../core/alarm/native_alarm_service.dart';
 
 class AlarmRingingScreen extends StatefulWidget {
-  const AlarmRingingScreen({super.key});
+  /// The active mission/alarm ID — used to disarm and cancel escalations.
+  final String missionId;
+
+  /// Human-readable task title shown on the ringing HUD.
+  final String taskTitle;
+
+  /// The time the alarm was originally scheduled to fire.
+  final DateTime triggerTime;
+
+  /// Which escalation attempt this is (1 = first, 2 = T+5min, …).
+  final int attemptIndex;
+
+  const AlarmRingingScreen({
+    super.key,
+    required this.missionId,
+    required this.taskTitle,
+    required this.triggerTime,
+    this.attemptIndex = 1,
+  });
 
   @override
   State<AlarmRingingScreen> createState() => _AlarmRingingScreenState();
 }
 
-class _AlarmRingingScreenState extends State<AlarmRingingScreen> with SingleTickerProviderStateMixin {
+class _AlarmRingingScreenState extends State<AlarmRingingScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
-  int _attemptIndex = 1;
-  int _volumeDb = 70;
+
+  /// Volume ramp: attempt 1 → 70 dB, 2 → 85 dB, 3+ → 100 dB
+  int get _volumeDb {
+    return switch (widget.attemptIndex) {
+      1    => 70,
+      2    => 85,
+      _    => 100,
+    };
+  }
+
+  String get _formattedTime {
+    final h = widget.triggerTime.hour;
+    final m = widget.triggerTime.minute.toString().padLeft(2, '0');
+    final period = h >= 12 ? 'PM' : 'AM';
+    final hour12 = h % 12 == 0 ? 12 : h % 12;
+    return '$hour12:$m $period';
+  }
 
   @override
   void initState() {
@@ -29,6 +66,23 @@ class _AlarmRingingScreenState extends State<AlarmRingingScreen> with SingleTick
     super.dispose();
   }
 
+  Future<void> _disarmAndBeginMission() async {
+    // Stop siren audio immediately
+    await NativeAlarmService.stopSiren();
+
+    // Cancel all pending escalation notifications
+    final platformService = PlatformAlarmService.instance;
+    await platformService.cancel(widget.missionId);
+
+    if (mounted) {
+      AppFeedback.showToast(
+        context,
+        message: 'Mission Active! Proof camera launching…',
+      );
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,32 +93,55 @@ class _AlarmRingingScreenState extends State<AlarmRingingScreen> with SingleTick
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Top Alert Banner
+              // ── Top Alert Banner ──────────────────────────────────────────
               Column(
                 children: [
                   const SizedBox(height: AppSpacing.xl),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.warning_amber_rounded, color: AppColors.crimsonAlert, size: 28),
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: AppColors.crimsonAlert,
+                        size: 28,
+                      ),
                       const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        'WAKE-UP ESCALATION ACTIVE • ATT #$_attemptIndex ($_volumeDb dB)',
-                        style: const TextStyle(
-                          color: AppColors.crimsonAlert,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
+                      Flexible(
+                        child: Text(
+                          'WAKE-UP ESCALATION ACTIVE'
+                          ' • ATT #${widget.attemptIndex}'
+                          ' ($_volumeDb dB)',
+                          style: const TextStyle(
+                            color: AppColors.crimsonAlert,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const Text('07:00 AM', style: TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: Colors.white)),
-                  const Text('10 MORNING PUSH-UPS PROTOCOL', style: TextStyle(color: Colors.white70, letterSpacing: 1)),
+                  Text(
+                    _formattedTime,
+                    style: const TextStyle(
+                      fontSize: 64,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    widget.taskTitle.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      letterSpacing: 1,
+                    ),
+                  ),
                 ],
               ),
 
-              // Animated Pulsing War Siren Icon
+              // ── Animated Pulsing War Siren Icon ───────────────────────────
               AnimatedBuilder(
                 animation: _pulseController,
                 builder: (context, child) {
@@ -87,28 +164,33 @@ class _AlarmRingingScreenState extends State<AlarmRingingScreen> with SingleTick
                         ],
                       ),
                       alignment: Alignment.center,
-                      child: const Icon(Icons.volume_up, color: AppColors.crimsonAlert, size: 64),
+                      child: const Icon(
+                        Icons.volume_up,
+                        color: AppColors.crimsonAlert,
+                        size: 64,
+                      ),
                     ),
                   );
                 },
               ),
 
-              // Bottom Instant Action Button
+              // ── Bottom Action + Escalation Warning ────────────────────────
               Column(
                 children: [
                   Text(
-                    'No Snooze Allowed in Discipline Mode.\n5-minute inactivity will escalate siren volume to 85 dB.',
+                    'No Snooze Allowed in Discipline Mode.\n'
+                    '5-minute inactivity escalates siren to ${_volumeDb < 100 ? _volumeDb + 15 : 100} dB.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   AppButton.primary(
                     label: 'BEGIN MISSION & DISARM ALARM',
                     icon: Icons.fitness_center,
-                    onPressed: () {
-                      AppFeedback.showToast(context, message: 'Mission Active! Proof camera launching...');
-                      Navigator.of(context).pop();
-                    },
+                    onPressed: _disarmAndBeginMission,
                   ),
                 ],
               ),

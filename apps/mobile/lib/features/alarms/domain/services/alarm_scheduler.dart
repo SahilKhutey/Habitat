@@ -24,6 +24,10 @@ class HabitatAlarm {
     this.retryIntervalMinutes = 5,
   });
 
+  TimeOfDay get scheduledTime => time;
+  String get taskTitle => title;
+  List<int> get repeatDays => recurringDays;
+
   HabitatAlarm copyWith({
     String? id,
     String? taskId,

@@ -37,6 +37,10 @@ class NativeAlarmEvent {
 }
 
 abstract interface class PlatformAlarmService {
+  static PlatformAlarmService? _instance;
+  static PlatformAlarmService get instance => _instance ??= PlatformAlarmService.create();
+  static set instance(PlatformAlarmService value) => _instance = value;
+
   Stream<NativeAlarmEvent> get alarmEvents;
   Future<bool> requestPermission();
   Future<void> schedule(HabitatAlarm alarm);
@@ -149,7 +153,7 @@ class AndroidAlarmService implements PlatformAlarmService {
 }
 
 class IOSAlarmService implements PlatformAlarmService {
-  static const MethodChannel _channel = MethodChannel('com.habitat.app/native_alarm');
+  static const MethodChannel _channel = MethodChannel('habitat/native_alarm');
   final StreamController<NativeAlarmEvent> _eventController = StreamController<NativeAlarmEvent>.broadcast();
   final Map<String, HabitatAlarm> _scheduledAlarms = {};
 
@@ -163,26 +167,67 @@ class IOSAlarmService implements PlatformAlarmService {
 
   @override
   Future<bool> requestPermission() async {
-    return true;
+    return true; // iOS permission requested in AppDelegate at launch
   }
 
   @override
   Future<void> schedule(HabitatAlarm alarm) async {
     _scheduledAlarms[alarm.id] = alarm;
-    // Schedules bounded notification chain T+0, T+5, T+10, T+15, T+20, T+25
+
+    final now = DateTime.now();
+    var target = DateTime(
+      now.year, now.month, now.day,
+      alarm.scheduledTime.hour,
+      alarm.scheduledTime.minute,
+    );
+    if (target.isBefore(now)) {
+      target = target.add(const Duration(days: 1));
+    }
+
+    try {
+      // Triggers AppDelegate.scheduleAlarmChain() — 6 notifications at
+      // T+0, T+5, T+10, T+15, T+20, T+25 min with Time Sensitive level.
+      await _channel.invokeMethod<bool>('scheduleExactAlarm', {
+        'missionId':      alarm.id,
+        'taskTitle':      alarm.taskTitle,
+        'triggerEpochMs': target.millisecondsSinceEpoch,
+        'sirenVolume':    70,
+        'attemptIndex':   1,
+      });
+    } catch (e) {
+      // Graceful degradation — log but do not crash
+      debugPrint('[IOSAlarmService] scheduleExactAlarm channel error: $e');
+    }
   }
 
   @override
   Future<void> cancel(String alarmId) async {
     _scheduledAlarms.remove(alarmId);
+    try {
+      await _channel.invokeMethod<bool>('cancelAlarm', {'missionId': alarmId});
+    } catch (e) {
+      debugPrint('[IOSAlarmService] cancelAlarm channel error: $e');
+    }
   }
 
   @override
-  Future<void> stopSiren() async {}
+  Future<void> stopSiren() async {
+    try {
+      await _channel.invokeMethod<bool>('stopSiren');
+    } catch (e) {
+      debugPrint('[IOSAlarmService] stopSiren channel error: $e');
+    }
+  }
 
   @override
   Future<void> cancelAll() async {
+    final ids = _scheduledAlarms.keys.toList();
     _scheduledAlarms.clear();
+    for (final id in ids) {
+      try {
+        await _channel.invokeMethod<bool>('cancelAlarm', {'missionId': id});
+      } catch (_) {}
+    }
   }
 
   @override
