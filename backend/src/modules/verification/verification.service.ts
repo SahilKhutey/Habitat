@@ -7,8 +7,145 @@ import { AntiCheatValidator } from './domain/anti-cheat.validator';
 import { CvLabelDetector } from './domain/cv-label.detector';
 import { PoseRepCounter } from './domain/pose-rep.counter';
 import { VerificationEvaluationResult, VerificationStrategy } from './domain/verification.types';
+import { VisionProviderFactory } from './vision.factory';
+import { VisionInput, VisionFrame } from './domain/vision-provider.interface';
+import { VerificationEngine } from './verification.engine';
+import { EvidenceVerificationResult, VerificationEvidence, FramePoseRecord } from './domain/evidence.types';
+import { SessionChallengeService } from '../proofs/services/session-challenge.service';
+import { PoseGeometryCalculator } from './engine/pose-geometry.calculator';
+import { PushupStateMachine } from './domain/pushup-state-machine';
+import { LivenessAnalyzer } from './engine/liveness-analyzer';
 
 export class VerificationTruthService {
+  /**
+   * Authoritative Server-Side Media Verification:
+   * Accepts raw video frames/buffers, executes server-side MoveNet pose estimation,
+   * generates authoritative VerificationEvidence, and verifies with EvidenceVerificationEngine.
+   */
+  public static async evaluateMediaProof(params: {
+    missionId: string;
+    proofId?: string;
+    sessionId: string;
+    sessionNonce: string;
+    taskSlug: string;
+    frames: VisionFrame[];
+    startedAt?: number;
+    endedAt?: number;
+    policy?: { minRepetitions?: number; minLivenessScore?: number; skipNonceValidation?: boolean };
+  }): Promise<{
+    verification: EvidenceVerificationResult;
+    evidence: VerificationEvidence;
+    missionStatus: string;
+    xpAwarded: number;
+  }> {
+    const provider = VisionProviderFactory.getProvider();
+    const visionInput: VisionInput = {
+      sessionId: params.sessionId,
+      taskSlug: params.taskSlug,
+      frames: params.frames,
+      startedAt: params.startedAt || Date.now() - 5000,
+      endedAt: params.endedAt || Date.now()
+    };
+
+    // 1. Run authoritative server-side MoveNet inference and generate evidence
+    let evidence: VerificationEvidence;
+    if (typeof (provider as any).generateVerificationEvidence === 'function') {
+      evidence = await (provider as any).generateVerificationEvidence(visionInput, params.sessionNonce);
+    } else {
+      const poseResult = await provider.detectPose(visionInput);
+      const frameTrajectory: FramePoseRecord[] = poseResult.detections.map((d) => {
+        const geometry = PoseGeometryCalculator.calculateMetrics(d.keypoints);
+        return {
+          frameIndex: d.frameIndex,
+          timestampMs: d.timestampMs,
+          frameHash: d.frameHash,
+          keypoints: d.keypoints,
+          leftElbowAngleDeg: geometry.leftElbowAngleDeg,
+          rightElbowAngleDeg: geometry.rightElbowAngleDeg,
+          bodyAlignmentAngleDeg: geometry.bodyAlignmentAngleDeg
+        };
+      });
+      const sm = new PushupStateMachine();
+      const repStats = sm.feedTrajectory(frameTrajectory);
+      const livenessResult = LivenessAnalyzer.analyze(frameTrajectory);
+
+      evidence = {
+        sessionId: params.sessionId,
+        sessionNonce: params.sessionNonce,
+        missionId: params.missionId,
+        taskSlug: params.taskSlug,
+        startedAt: new Date(visionInput.startedAt).toISOString(),
+        completedAt: new Date(visionInput.endedAt!).toISOString(),
+        durationMs: (visionInput.endedAt || Date.now()) - visionInput.startedAt,
+        pose: {
+          model: provider.modelName,
+          modelVersion: provider.modelVersion,
+          totalFramesSampled: params.frames.length,
+          meanPoseConfidence: poseResult.meanPoseConfidence,
+          frameTrajectory,
+          repsCalculated: repStats.validReps,
+          shallowRepsCalculated: repStats.shallowReps,
+          stateTransitions: repStats.stateTransitions
+        },
+        liveness: {
+          livenessScore: livenessResult.livenessScore,
+          temporalContinuityScore: livenessResult.temporalContinuityScore,
+          frameUniquenessScore: livenessResult.frameUniquenessScore,
+          trajectoryConsistencyScore: livenessResult.trajectoryConsistencyScore,
+          motionContinuityScore: livenessResult.motionContinuityScore,
+          replayRiskScore: livenessResult.replayRiskScore,
+          challengePassed: livenessResult.isLivenessValid
+        },
+        integrity: {
+          clientAppVersion: '1.0.0',
+          evidencePayloadHash: `sha256_${params.sessionId}`
+        }
+      };
+    }
+
+    // 2. Evaluate with Authoritative VerificationEngine
+    const verification = VerificationEngine.verifyEvidence(evidence, params.policy);
+
+    // 3. Persist and trigger state transitions
+    if (verification.decision === 'ACCEPT') {
+      const acc = this.handleAcceptance({
+        missionId: params.missionId,
+        proofId: params.proofId,
+        strategy: 'POSE_ESTIMATION_REPS',
+        confidence: verification.truthScore,
+        metrics: {
+          repsCounted: evidence.pose?.repsCalculated ?? 0,
+          livenessScore: evidence.liveness?.livenessScore ?? 1.0,
+          flags: verification.flags
+        }
+      });
+      return {
+        verification,
+        evidence,
+        missionStatus: acc.missionStatus,
+        xpAwarded: acc.xpAwarded
+      };
+    } else {
+      const rej = this.handleRejection({
+        missionId: params.missionId,
+        proofId: params.proofId,
+        strategy: 'POSE_ESTIMATION_REPS',
+        reason: verification.rejectionReason || 'Physical mission criteria not met.',
+        advice: 'Ensure full range of motion and good lighting.',
+        metrics: {
+          flags: verification.flags,
+          livenessScore: evidence.liveness?.livenessScore ?? 0.0
+        }
+      });
+      return {
+        verification,
+        evidence,
+        missionStatus: rej.missionStatus,
+        xpAwarded: 0
+      };
+    }
+  }
+
   /**
    * Evaluates submitted proof against task-specific truth models and anti-cheat heuristics
    */

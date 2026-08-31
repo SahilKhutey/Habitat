@@ -8,6 +8,12 @@ import {
   FrameInput,
   PoseInferenceResult
 } from '../domain/vision-provider.interface';
+import { VerificationEvidence, FramePoseRecord } from '../domain/evidence.types';
+import { MoveNetLightningEngine } from '../engine/movenet-lightning.engine';
+import { PoseGeometryCalculator } from '../engine/pose-geometry.calculator';
+import { PushupStateMachine } from '../domain/pushup-state-machine';
+import { LivenessAnalyzer } from '../engine/liveness-analyzer';
+import { createDefaultProvenance } from '../domain/evidence-provenance';
 import { IPoseAdapter, MoveNetPoseAdapter } from './movenet-pose.adapter';
 import { IObjectDetectionAdapter, UnsupportedObjectDetectionAdapter } from './object-detection.adapter';
 import { IVideoFrameExtractor, FFmpegFrameExtractor, FrameExtractionOptions } from './video-frame-extractor';
@@ -138,6 +144,86 @@ export class TfjsVisionProvider implements IVisionProvider {
       modelVersion: '1.0.0',
       provider: 'TFLite',
       detectedObjects: detected
+    };
+  }
+
+  /**
+   * Complete Pipeline: VisionInput -> MoveNet Inference -> PoseGeometryCalculator
+   * -> PushupStateMachine -> LivenessAnalyzer -> VerificationEvidence
+   */
+  public async generateVerificationEvidence(
+    input: VisionInput,
+    sessionNonce: string
+  ): Promise<VerificationEvidence> {
+    const poseResult = await this.detectPose(input);
+    const frameTrajectory: FramePoseRecord[] = [];
+
+    for (const detection of poseResult.detections) {
+      const geometry = PoseGeometryCalculator.calculateMetrics(detection.keypoints);
+
+      frameTrajectory.push({
+        timestampMs: detection.timestampMs,
+        frameIndex: detection.frameIndex,
+        frameHash: detection.frameHash,
+        keypoints: detection.keypoints,
+        leftElbowAngleDeg: geometry.leftElbowAngleDeg,
+        rightElbowAngleDeg: geometry.rightElbowAngleDeg,
+        bodyAlignmentAngleDeg: geometry.bodyAlignmentAngleDeg
+      });
+    }
+
+    // 1. Biomechanical Repetition Counting via PushupStateMachine
+    const sm = new PushupStateMachine();
+    const repStats = sm.feedTrajectory(frameTrajectory);
+
+    // 2. Multi-Signal Liveness & Anti-Cheat Analysis
+    const livenessResult = LivenessAnalyzer.analyze(frameTrajectory);
+
+    // 3. Construct Model Provenance
+    const provenance = createDefaultProvenance({
+      modelName: this.modelName,
+      modelVersion: this.modelVersion,
+      provider: 'TFLite',
+      runtimePlatform: 'android',
+      inputResolution: MoveNetLightningEngine.INPUT_RESOLUTION
+    });
+
+    const durationMs =
+      input.endedAt && input.startedAt
+        ? input.endedAt - input.startedAt
+        : (input.frames.length > 0 ? input.frames[input.frames.length - 1].timestampMs : 0);
+
+    return {
+      sessionId: input.sessionId,
+      sessionNonce,
+      missionId: `mission_${input.sessionId}`,
+      taskSlug: input.taskSlug,
+      startedAt: new Date(input.startedAt || Date.now()).toISOString(),
+      completedAt: new Date(input.endedAt || Date.now()).toISOString(),
+      durationMs,
+      pose: {
+        model: provenance.modelName,
+        modelVersion: provenance.modelVersion,
+        totalFramesSampled: input.frames.length,
+        meanPoseConfidence: poseResult.meanPoseConfidence,
+        frameTrajectory,
+        repsCalculated: repStats.validReps,
+        shallowRepsCalculated: repStats.shallowReps,
+        stateTransitions: repStats.stateTransitions
+      },
+      liveness: {
+        livenessScore: livenessResult.livenessScore,
+        temporalContinuityScore: livenessResult.temporalContinuityScore,
+        frameUniquenessScore: livenessResult.frameUniquenessScore,
+        trajectoryConsistencyScore: livenessResult.trajectoryConsistencyScore,
+        motionContinuityScore: livenessResult.motionContinuityScore,
+        replayRiskScore: livenessResult.replayRiskScore,
+        challengePassed: livenessResult.isLivenessValid
+      },
+      integrity: {
+        clientAppVersion: '1.0.0',
+        evidencePayloadHash: `sha256_${input.sessionId}_${frameTrajectory.length}`
+      }
     };
   }
 

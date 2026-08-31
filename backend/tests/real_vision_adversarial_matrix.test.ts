@@ -1,24 +1,29 @@
-// Real-Provider Adversarial Validation Matrix & Real-Media Security Gate (Milestone A4)
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { REAL_MEDIA_CORPUS } from './fixtures/adversarial-real/corpus-manifest';
 import { AdversarialMediaGenerator } from './fixtures/adversarial-real/media-generator';
 import {
   RealVisionAdversarialEvaluator,
   FixtureEvaluationMetrics
 } from './fixtures/adversarial-real/real-vision-adversarial.evaluator';
+import { MoveNetLightningEngine } from '../src/modules/verification/engine/movenet-lightning.engine';
 
 describe('Milestone A4: Real-Provider Adversarial Validation & Release Security Gate', () => {
   const evaluationResults: FixtureEvaluationMetrics[] = [];
 
-  it('A4.1: Evaluates full 10-fixture Real-Media Adversarial Corpus through Real Vision Stack', () => {
+  beforeAll(async () => {
+    process.env.VISION_PROVIDER = 'movenet';
+    await MoveNetLightningEngine.initialize();
+  });
+
+  it('A4.1: Evaluates full 10-fixture Real-Media Adversarial Corpus through Real Vision Stack', async () => {
     for (const fixtureMeta of REAL_MEDIA_CORPUS) {
       const fixtureData = AdversarialMediaGenerator.generate(fixtureMeta);
-      const metrics = RealVisionAdversarialEvaluator.evaluate(fixtureData);
+      const metrics = await RealVisionAdversarialEvaluator.evaluate(fixtureData);
       evaluationResults.push(metrics);
     }
 
     expect(evaluationResults.length).toBe(REAL_MEDIA_CORPUS.length);
-  });
+  }, 120000);
 
   it('A4.2: Golden Security Invariant: Known Spoof -> ACCEPT = 0 across all 7 attack classes', () => {
     const spoofResults = evaluationResults.filter((r) => r.groundTruth === 'spoof');
@@ -61,8 +66,8 @@ describe('Milestone A4: Real-Provider Adversarial Validation & Release Security 
     console.log('              REAL VISION ADVERSARIAL VALIDATION SECURITY GATE');
     console.log('================================================================================');
     console.log('Model:       MoveNet-Lightning (v1.0.0)');
-    console.log('Provider:    TfjsVisionProvider (TFJS Node / TFLite)');
-    console.log('Sample Rate: 10 FPS (Sampled to 5 FPS)');
+    console.log('Provider:    MoveNetVisionProvider / TfjsVisionProvider (TFJS CPU / TFLite)');
+    console.log('Evaluation:  Real Pixel Frame Buffers Through Real Pose Estimator');
     console.log('--------------------------------------------------------------------------------');
     console.log('Fixture ID                          | GroundTruth | Uniqueness | Replay | Decision');
     console.log('--------------------------------------------------------------------------------');

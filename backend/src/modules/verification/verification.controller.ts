@@ -23,6 +23,63 @@ verificationController.post('/challenge', (req: Request, res: Response) => {
   }
 });
 
+// POST /api/v1/verification/verify-media - Authoritative Server-Side Vision Verification on Raw Media
+verificationController.post('/verify-media', async (req: Request, res: Response) => {
+  try {
+    const { missionId, proofId, sessionId, sessionNonce, taskSlug, frames, startedAt, endedAt, policy } = req.body;
+
+    if (!missionId || !sessionId || !sessionNonce || !frames || !Array.isArray(frames)) {
+      res.status(400).json({
+        success: false,
+        error: 'missionId, sessionId, sessionNonce, and frames array are required'
+      });
+      return;
+    }
+
+    // Convert frame data if passed as base64 or arrays to Uint8Array
+    const formattedFrames = frames.map((f: any) => {
+      let data: Uint8Array;
+      if (typeof f.data === 'string') {
+        data = Buffer.from(f.data, 'base64');
+      } else if (Array.isArray(f.data)) {
+        data = new Uint8Array(f.data);
+      } else if (f.data instanceof Uint8Array || Buffer.isBuffer(f.data)) {
+        data = f.data;
+      } else {
+        data = new Uint8Array(192 * 192 * 3);
+      }
+      return {
+        timestampMs: Number(f.timestampMs || 0),
+        frameIndex: Number(f.frameIndex || 0),
+        frameHash: String(f.frameHash || ''),
+        width: Number(f.width || 192),
+        height: Number(f.height || 192),
+        data
+      };
+    });
+
+    const result = await VerificationTruthService.evaluateMediaProof({
+      missionId: String(missionId),
+      proofId: proofId ? String(proofId) : undefined,
+      sessionId: String(sessionId),
+      sessionNonce: String(sessionNonce),
+      taskSlug: taskSlug ? String(taskSlug) : 'tpl-pushups-10',
+      frames: formattedFrames,
+      startedAt: startedAt ? Number(startedAt) : undefined,
+      endedAt: endedAt ? Number(endedAt) : undefined,
+      policy
+    });
+
+    const statusCode = result.verification.decision === 'ACCEPT' ? 200 : 422;
+    res.status(statusCode).json({
+      success: result.verification.decision === 'ACCEPT',
+      data: result
+    });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 // POST /api/v1/verification/verify-evidence-v2 - Authoritative Phase 14 Evidence Verification
 verificationController.post('/verify-evidence-v2', (req: Request, res: Response) => {
   try {

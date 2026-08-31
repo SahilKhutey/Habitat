@@ -29,11 +29,11 @@ describe('Vision Provider Factory (A3)', () => {
     expect(provider.modelName).toBe('MoveNet-Lightning');
   });
 
-  it('A3.3: returns TfjsVisionProvider when VISION_PROVIDER=movenet', () => {
+  it('A3.3: returns MoveNetVisionProvider when VISION_PROVIDER=movenet', () => {
     process.env.VISION_PROVIDER = 'movenet';
     const provider = createVisionProvider();
-    expect(provider instanceof TfjsVisionProvider).toBe(true);
     expect(provider.modelName).toBe('MoveNet-Lightning');
+    expect(provider.providerId).toBe('movenet-lightning-v1');
   });
 
   it('A3.4: defaults to MockVisionProvider when VISION_PROVIDER is unset (fast CI / unit tests)', () => {
