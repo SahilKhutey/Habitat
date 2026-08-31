@@ -9,6 +9,8 @@ import { ProofRules } from './domain/proof.rules';
 
 import { StorageFactory } from '../storage/storage.factory';
 import { proofRepository } from '../../repositories/proof.repository';
+import { PoseExtractionService } from '../verification/services/pose-extraction.service';
+import { VerificationEngine } from '../verification/verification.engine';
 
 export class ProofsService {
   // 1. Create Direct S3 / MinIO / Local Upload Session
@@ -253,6 +255,79 @@ export class ProofsService {
     };
   }
 
+  // 4. Verify Proof with Authoritative Real Vision Pipeline from Storage
+  public static async verifyWithRealVision(
+    proofId: string,
+    policy: { minRepetitions?: number; minLivenessScore?: number; skipNonceValidation?: boolean } = {}
+  ) {
+    const db = DatabaseService.getDb();
+    const proof = db.prepare('SELECT * FROM proofs WHERE id = ?').get(proofId) as any;
+    if (!proof) throw new Error('PROOF_NOT_FOUND: Proof not found');
+
+    const mission = MissionsService.getById(proof.mission_id);
+    if (!mission) throw new Error('MISSION_NOT_FOUND: Mission not found');
+
+    const taskRow = db.prepare('SELECT * FROM tasks WHERE id = ?').get(mission.taskId) as any;
+    const taskSlug = taskRow?.slug || 'tpl-pushups-10';
+    const objectKey = proof.object_key || proof.storage_key;
+
+    if (!objectKey) {
+      throw new Error('STORAGE_KEY_MISSING: Proof has no objectKey');
+    }
+
+    // 1. Run PoseExtractionService to read from storage and run MoveNet inference
+    const extractor = new PoseExtractionService();
+    const { evidence } = await extractor.extractPoseFromStorage(objectKey, {
+      missionId: proof.mission_id,
+      taskSlug,
+      sessionId: `session_${proofId}`
+    });
+
+    // 2. Run VerificationEngine (skipNonceValidation: true by default on real vision direct upload)
+    let minReps = 1;
+    if (policy.minRepetitions !== undefined) {
+      minReps = policy.minRepetitions;
+    } else if (taskRow?.validation_rules) {
+      try {
+        const rules = JSON.parse(taskRow.validation_rules);
+        minReps = rules.minRepetitions ?? 1;
+      } catch {
+        minReps = 1;
+      }
+    }
+
+    const verificationPolicy = {
+      minRepetitions: minReps,
+      skipNonceValidation: policy.skipNonceValidation ?? true
+    };
+
+    const verificationResult = VerificationEngine.verifyEvidence(evidence, verificationPolicy);
+    const isValid = verificationResult.decision === 'ACCEPT';
+    const now = new Date().toISOString();
+
+    if (isValid) {
+      db.prepare("UPDATE proofs SET verification_status = 'ACCEPTED', rejection_reason = NULL, updated_at = ? WHERE id = ?").run(now, proofId);
+      MissionsService.completeMission(proof.mission_id);
+    } else {
+      db.prepare("UPDATE proofs SET verification_status = 'REJECTED', rejection_reason = ?, updated_at = ? WHERE id = ?").run(
+        verificationResult.rejectionReason || 'Failed verification',
+        now,
+        proofId
+      );
+    }
+
+    return {
+      proofId,
+      isValid,
+      decision: verificationResult.decision,
+      truthScore: verificationResult.truthScore,
+      repsVerified: verificationResult.repsVerified,
+      rejectionReason: verificationResult.rejectionReason,
+      flags: verificationResult.flags,
+      evidence
+    };
+  }
+
   // Legacy / Helper: Upload Presigned URL Generator
   public static generateUploadUrl(params: {
     userId: string;
@@ -482,6 +557,17 @@ proofsController.post('/:id/submit', (req: Request, res: Response) => {
       userId
     });
     res.json({ success: true, data: result });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/v1/proofs/:id/verify-real-vision
+proofsController.post('/:id/verify-real-vision', async (req: Request, res: Response) => {
+  try {
+    const result = await ProofsService.verifyWithRealVision(String(req.params.id), req.body?.policy);
+    const statusCode = result.isValid ? 200 : 422;
+    res.status(statusCode).json({ success: result.isValid, data: result });
   } catch (e: any) {
     res.status(400).json({ success: false, error: e.message });
   }

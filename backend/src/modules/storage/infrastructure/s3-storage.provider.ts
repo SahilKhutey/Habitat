@@ -115,6 +115,19 @@ export class S3StorageProvider implements IStorageProvider {
     await this.client.send(command);
   }
 
+  public async getObjectBuffer(objectKey: string): Promise<Buffer> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: objectKey
+    });
+    const response = await this.client.send(command);
+    if (!response.Body) {
+      throw new Error(`Empty body for object: ${objectKey}`);
+    }
+    const bytes = await response.Body.transformToByteArray();
+    return Buffer.from(bytes);
+  }
+
   private getExtension(contentType: string, mediaType: 'PHOTO' | 'VIDEO'): string {
     if (contentType.includes('jpeg') || contentType.includes('jpg')) return 'jpg';
     if (contentType.includes('png')) return 'png';

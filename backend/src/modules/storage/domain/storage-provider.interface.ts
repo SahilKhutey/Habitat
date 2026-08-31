@@ -36,4 +36,5 @@ export interface IStorageProvider {
   verifyObject(objectKey: string): Promise<ObjectMetadata>;
   deleteObject(objectKey: string): Promise<void>;
   saveBuffer?(objectKey: string, buffer: Buffer, contentType: string): Promise<ObjectMetadata>;
+  getObjectBuffer(objectKey: string): Promise<Buffer>;
 }

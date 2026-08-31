@@ -36,18 +36,19 @@ export class PoseGeometryCalculator {
     const rightAnkle = kpMap.get('right_ankle');
 
     // 1. Calculate Left & Right Elbow Angles
-    let leftElbowAngle = 180;
+    let leftElbowAngle: number | null = null;
     if (leftShoulder && leftElbow && leftWrist && leftElbow.score >= 0.3) {
       leftElbowAngle = this.calculateAngle(leftShoulder, leftElbow, leftWrist);
     }
 
-    let rightElbowAngle = 180;
+    let rightElbowAngle: number | null = null;
     if (rightShoulder && rightElbow && rightWrist && rightElbow.score >= 0.3) {
       rightElbowAngle = this.calculateAngle(rightShoulder, rightElbow, rightWrist);
     }
 
-    // Use whichever arm has higher confidence or average if both are visible
-    const meanElbowAngle = (leftElbowAngle + rightElbowAngle) / 2;
+    const lAngle = leftElbowAngle ?? rightElbowAngle ?? 180;
+    const rAngle = rightElbowAngle ?? leftElbowAngle ?? 180;
+    const meanElbowAngle = (lAngle + rAngle) / 2;
 
     // 2. Calculate Body Alignment (Plank angle from Shoulder -> Hip -> Ankle)
     let bodyAlignmentAngle = 180;

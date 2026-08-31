@@ -101,6 +101,15 @@ export class LocalStorageProvider implements IStorageProvider {
     }
   }
 
+  public async getObjectBuffer(objectKey: string): Promise<Buffer> {
+    const safeKey = this.sanitizeKey(objectKey);
+    const filePath = path.resolve(this.baseDir, safeKey);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Object not found: ${objectKey}`);
+    }
+    return fs.readFileSync(filePath);
+  }
+
   public getFilePath(objectKey: string): string {
     const safeKey = this.sanitizeKey(objectKey);
     return path.resolve(this.baseDir, safeKey);
