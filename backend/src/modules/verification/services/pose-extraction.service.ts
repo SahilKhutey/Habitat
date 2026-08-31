@@ -1,13 +1,13 @@
-// Pose Extraction Service: Extracts video/photo frames from storage and runs MoveNet pose estimation
+// Pose Extraction Service: Reads proof media from storage and runs the canonical vision pipeline
+// This service's ONE unique responsibility: storage retrieval + frame decoding.
+// All pose inference, geometry, state machine, and liveness logic is delegated
+// to TfjsVisionProvider.generateVerificationEvidence() — the single authoritative pipeline.
 import { IStorageProvider } from '../../storage/domain/storage-provider.interface';
 import { StorageFactory } from '../../storage/storage.factory';
 import { IVisionProvider, VisionFrame, VisionInput } from '../domain/vision-provider.interface';
 import { VisionProviderFactory } from '../vision.factory';
 import { IVideoFrameExtractor, FFmpegFrameExtractor } from '../infrastructure/video-frame-extractor';
 import { FramePoseRecord, VerificationEvidence } from '../domain/evidence.types';
-import { PoseGeometryCalculator } from '../engine/pose-geometry.calculator';
-import { PushupStateMachine } from '../domain/pushup-state-machine';
-import { LivenessAnalyzer } from '../engine/liveness-analyzer';
 
 export interface PoseExtractionOptions {
   storageProvider?: IStorageProvider;
@@ -27,8 +27,9 @@ export class PoseExtractionService {
   }
 
   /**
-   * Reads raw media bytes from storage by objectKey, extracts 192x192 RGB frames,
-   * executes MoveNet pose estimation, and computes trajectories & verification evidence.
+   * Reads raw media bytes from storage by objectKey, decodes frames,
+   * and delegates to the vision provider's generateVerificationEvidence pipeline
+   * for authoritative server-side pose inference, geometry, repetition counting, and liveness.
    */
   public async extractPoseFromStorage(
     objectKey: string,
@@ -48,7 +49,7 @@ export class PoseExtractionService {
     // 1. Fetch raw media bytes from storage
     const mediaBuffer = await this.storageProvider.getObjectBuffer(objectKey);
 
-    // 2. Extract 192x192 RGB24 frames from media buffer
+    // 2. Decode into 192×192 RGB frames — image via direct pass-through, video via FFmpeg demux
     const extractedFrames = await this.videoExtractor.extract(mediaBuffer, {
       maxFrames: 60,
       fps: 5
@@ -77,71 +78,31 @@ export class PoseExtractionService {
       endedAt
     };
 
-    // 3. Execute vision provider pose detection or end-to-end evidence generation
-    let evidence: VerificationEvidence;
-    let frameTrajectory: FramePoseRecord[] = [];
+    // 3. Delegate pose inference → geometry → state machine → liveness → evidence assembly
+    // to the canonical vision provider pipeline. All providers returned by VisionProviderFactory
+    // implement generateVerificationEvidence (enforced at factory level).
+    const providerWithEvidence = this.visionProvider as any;
+    if (typeof providerWithEvidence.generateVerificationEvidence !== 'function') {
+      throw new Error(
+        `Vision provider "${this.visionProvider.providerId}" does not implement generateVerificationEvidence. ` +
+        `Use VISION_PROVIDER=tfjs, movenet, or tflite.`
+      );
+    }
 
-    if (typeof (this.visionProvider as any).generateVerificationEvidence === 'function') {
-      evidence = await (this.visionProvider as any).generateVerificationEvidence(visionInput, sessionNonce);
-      frameTrajectory = evidence.pose.frameTrajectory;
-    } else {
-      const poseResult = await this.visionProvider.detectPose(visionInput);
+    const evidence: VerificationEvidence = await providerWithEvidence.generateVerificationEvidence(
+      visionInput,
+      sessionNonce
+    );
 
-      for (const detection of poseResult.detections) {
-        const geometry = PoseGeometryCalculator.calculateMetrics(detection.keypoints);
-        frameTrajectory.push({
-          timestampMs: detection.timestampMs,
-          frameIndex: detection.frameIndex,
-          frameHash: detection.frameHash,
-          keypoints: detection.keypoints,
-          leftElbowAngleDeg: geometry.leftElbowAngleDeg,
-          rightElbowAngleDeg: geometry.rightElbowAngleDeg,
-          bodyAlignmentAngleDeg: geometry.bodyAlignmentAngleDeg
-        });
-      }
-
-      const sm = new PushupStateMachine();
-      const repStats = sm.feedTrajectory(frameTrajectory);
-      const livenessResult = LivenessAnalyzer.analyze(frameTrajectory);
-
-      evidence = {
-        sessionId,
-        sessionNonce,
-        missionId: context.missionId || `mission_${sessionId}`,
-        taskSlug,
-        startedAt: new Date(startedAt).toISOString(),
-        completedAt: new Date(endedAt).toISOString(),
-        durationMs: endedAt - startedAt,
-        pose: {
-          model: this.visionProvider.modelName,
-          modelVersion: this.visionProvider.modelVersion,
-          totalFramesSampled: frames.length,
-          meanPoseConfidence: poseResult.meanPoseConfidence,
-          frameTrajectory,
-          repsCalculated: repStats.validReps,
-          shallowRepsCalculated: repStats.shallowReps,
-          stateTransitions: repStats.stateTransitions
-        },
-        liveness: {
-          livenessScore: livenessResult.livenessScore,
-          temporalContinuityScore: livenessResult.temporalContinuityScore,
-          frameUniquenessScore: livenessResult.frameUniquenessScore,
-          trajectoryConsistencyScore: livenessResult.trajectoryConsistencyScore,
-          motionContinuityScore: livenessResult.motionContinuityScore,
-          replayRiskScore: livenessResult.replayRiskScore,
-          challengePassed: livenessResult.isLivenessValid
-        },
-        integrity: {
-          clientAppVersion: '1.0.0',
-          evidencePayloadHash: `sha256_${sessionId}_${frameTrajectory.length}`
-        }
-      };
+    // Override missionId from context if provided
+    if (context.missionId) {
+      (evidence as any).missionId = context.missionId;
     }
 
     return {
       evidence,
       frames,
-      frameTrajectory
+      frameTrajectory: evidence.pose.frameTrajectory
     };
   }
 }

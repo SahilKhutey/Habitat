@@ -29,11 +29,20 @@ describe('Vision Provider Factory (A3)', () => {
     expect(provider.modelName).toBe('MoveNet-Lightning');
   });
 
-  it('A3.3: returns MoveNetVisionProvider when VISION_PROVIDER=movenet', () => {
+  it('A3.3: returns TfjsVisionProvider when VISION_PROVIDER=movenet (complete pipeline with generateVerificationEvidence)', () => {
     process.env.VISION_PROVIDER = 'movenet';
     const provider = createVisionProvider();
+    expect(provider instanceof TfjsVisionProvider).toBe(true);
     expect(provider.modelName).toBe('MoveNet-Lightning');
-    expect(provider.providerId).toBe('movenet-lightning-v1');
+    // Must have the full evidence pipeline — not just detectPose
+    expect(typeof (provider as any).generateVerificationEvidence).toBe('function');
+  });
+
+  it('A3.3b: returns TfjsVisionProvider when VISION_PROVIDER=tflite', () => {
+    process.env.VISION_PROVIDER = 'tflite';
+    const provider = createVisionProvider();
+    expect(provider instanceof TfjsVisionProvider).toBe(true);
+    expect(provider.modelName).toBe('MoveNet-Lightning');
   });
 
   it('A3.4: defaults to MockVisionProvider when VISION_PROVIDER is unset (fast CI / unit tests)', () => {
@@ -46,12 +55,12 @@ describe('Vision Provider Factory (A3)', () => {
   it('A3.5: throws explicit error on invalid or typo provider configuration (fails safe)', () => {
     process.env.VISION_PROVIDER = 'tfj';
     expect(() => createVisionProvider()).toThrowError(
-      'Unsupported VISION_PROVIDER: "tfj". Expected "mock" or "tfjs".'
+      'Unsupported VISION_PROVIDER: "tfj". Valid options: "mock", "tfjs", "movenet", "tflite".'
     );
 
     process.env.VISION_PROVIDER = 'unknown_cloud_provider';
     expect(() => createVisionProvider()).toThrowError(
-      'Unsupported VISION_PROVIDER: "unknown_cloud_provider". Expected "mock" or "tfjs".'
+      'Unsupported VISION_PROVIDER: "unknown_cloud_provider". Valid options: "mock", "tfjs", "movenet", "tflite".'
     );
   });
 
@@ -62,8 +71,11 @@ describe('Vision Provider Factory (A3)', () => {
     const tfjsOverride = createVisionProvider('tfjs');
     expect(tfjsOverride instanceof TfjsVisionProvider).toBe(true);
 
+    const movenetOverride = createVisionProvider('movenet');
+    expect(movenetOverride instanceof TfjsVisionProvider).toBe(true);
+
     expect(() => createVisionProvider('bad_val')).toThrowError(
-      'Unsupported VISION_PROVIDER: "bad_val". Expected "mock" or "tfjs".'
+      'Unsupported VISION_PROVIDER: "bad_val". Valid options: "mock", "tfjs", "movenet", "tflite".'
     );
   });
 });

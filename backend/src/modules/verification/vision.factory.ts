@@ -1,7 +1,6 @@
 // Canonical Vision Provider Factory for Runtime Environment Selection
 import { IVisionProvider } from './domain/vision-provider.interface';
 import { MockVisionProvider } from './infrastructure/mock-vision.provider';
-import { MoveNetVisionProvider } from './infrastructure/movenet-vision.provider';
 import { TfjsVisionProvider } from './infrastructure/tfjs-vision.provider';
 
 export function createVisionProvider(overrideType?: string): IVisionProvider {
@@ -14,10 +13,11 @@ export function createVisionProvider(overrideType?: string): IVisionProvider {
     .toLowerCase();
 
   switch (providerType) {
+    // All real-vision aliases resolve to TfjsVisionProvider, which is the only
+    // complete implementation — it has detectPose AND generateVerificationEvidence,
+    // delegating inference through MoveNetPoseAdapter -> MoveNetLightningEngine.
     case 'movenet':
     case 'tflite':
-      return new MoveNetVisionProvider();
-
     case 'tfjs':
       return new TfjsVisionProvider();
 
@@ -26,7 +26,7 @@ export function createVisionProvider(overrideType?: string): IVisionProvider {
 
     default:
       throw new Error(
-        `Unsupported VISION_PROVIDER: "${providerType}". Expected "mock" or "tfjs".`
+        `Unsupported VISION_PROVIDER: "${providerType}". Valid options: "mock", "tfjs", "movenet", "tflite".`
       );
   }
 }

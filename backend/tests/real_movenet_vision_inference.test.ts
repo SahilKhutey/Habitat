@@ -1,6 +1,6 @@
 // Real MoveNet Lightning Computer Vision Inference & Complete Pipeline Test Suite
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
-import { TFLiteVisionProvider } from '../src/modules/verification/infrastructure/tflite-vision.provider';
+import { TfjsVisionProvider } from '../src/modules/verification/infrastructure/tfjs-vision.provider';
 import { MockVisionProvider } from '../src/modules/verification/infrastructure/mock-vision.provider';
 import { VisionInput, VisionFrame } from '../src/modules/verification/domain/vision-provider.interface';
 import { VerificationEngine } from '../src/modules/verification/verification.engine';
@@ -11,7 +11,7 @@ import { MoveNetLightningEngine } from '../src/modules/verification/engine/moven
 const INFERENCE_TIMEOUT = 60_000;
 
 describe('Real MoveNet Lightning Computer Vision Inference Pipeline', () => {
-  let provider: TFLiteVisionProvider;
+  let provider: TfjsVisionProvider;
   let modelAvailable = false;
 
   beforeAll(async () => {
@@ -23,11 +23,11 @@ describe('Real MoveNet Lightning Computer Vision Inference Pipeline', () => {
   }, INFERENCE_TIMEOUT);
 
   beforeEach(() => {
-    provider = new TFLiteVisionProvider();
+    provider = new TfjsVisionProvider();
     SessionChallengeService.resetForTesting();
   });
 
-  it('proves TFLiteVisionProvider is the production provider and differs from MockVisionProvider', () => {
+  it('proves TfjsVisionProvider is the canonical production provider and differs from MockVisionProvider', () => {
     const mock = new MockVisionProvider();
     expect(provider.providerType).toBe('TFLITE');
     expect(provider.modelName).toBe('MoveNet-Lightning');

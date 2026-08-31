@@ -75,8 +75,8 @@ export class PoseGeometryCalculator {
       criticalScores.reduce((acc, val) => acc + val, 0) / criticalScores.length;
 
     return {
-      leftElbowAngleDeg: Math.round(leftElbowAngle * 10) / 10,
-      rightElbowAngleDeg: Math.round(rightElbowAngle * 10) / 10,
+      leftElbowAngleDeg: Math.round(lAngle * 10) / 10,
+      rightElbowAngleDeg: Math.round(rAngle * 10) / 10,
       meanElbowAngleDeg: Math.round(meanElbowAngle * 10) / 10,
       bodyAlignmentAngleDeg: Math.round(bodyAlignmentAngle * 10) / 10,
       isLockout: meanElbowAngle >= 155,

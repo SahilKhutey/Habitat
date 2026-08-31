@@ -164,12 +164,12 @@ describe('Track A1: Real MoveNet Pose Inference Integration & Provider Factory',
     await expect(provider.classifyScene(input)).rejects.toThrow(UnsupportedVisionCapabilityError);
   }, INFERENCE_TIMEOUT);
 
-  it('A1.4: VisionProviderFactory correctly resolves MoveNetVisionProvider vs MockVisionProvider', () => {
+  it('A1.4: VisionProviderFactory resolves complete-pipeline provider for movenet key and MockVisionProvider for mock', () => {
     process.env.VISION_PROVIDER = 'movenet';
     const prodProvider = VisionProviderFactory.getProvider();
-    expect(prodProvider.providerId).toBe('movenet-lightning-v1');
+    // Factory returns TfjsVisionProvider for 'movenet' — the only provider with generateVerificationEvidence
     expect(prodProvider.modelName).toBe('MoveNet-Lightning');
-    expect(prodProvider instanceof MoveNetVisionProvider).toBe(true);
+    expect(typeof (prodProvider as any).generateVerificationEvidence).toBe('function');
 
     process.env.VISION_PROVIDER = 'mock';
     const devProvider = VisionProviderFactory.getProvider();
