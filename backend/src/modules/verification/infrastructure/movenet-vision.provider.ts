@@ -36,7 +36,7 @@ export class MoveNetVisionProvider implements IVisionProvider {
     let totalConfidence = 0;
 
     for (const frame of input.frames) {
-      const inference = MoveNetLightningEngine.inferPose(
+      const inference = await MoveNetLightningEngine.inferPose(
         frame.data,
         frame.width || 192,
         frame.height || 192

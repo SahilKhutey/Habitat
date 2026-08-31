@@ -18,31 +18,28 @@ export class MoveNetPoseAdapter implements IPoseAdapter {
   public readonly modelVersion = MoveNetLightningEngine.MODEL_VERSION;
 
   /**
-   * Executes MoveNet inference on a single frame and maps internal representation to Keypoint[]
+   * Executes real MoveNet Lightning inference on a single frame.
+   * Frame must carry an imageBuffer with raw RGB (or RGBA) pixel data.
    */
   public async inferPose(frame: FrameInput | VisionFrame): Promise<{
     keypoints: Keypoint[];
     meanConfidence: number;
     latencyMs: number;
   }> {
-    const rawData = (frame as any).data || (frame as any).imageBuffer || new Uint8Array(0);
-    const width = (frame as any).width || 192;
-    const height = (frame as any).height || 192;
+    const rawData: Uint8Array | Buffer =
+      (frame as any).imageBuffer ||
+      (frame as any).data ||
+      new Uint8Array(0);
 
-    const inference = MoveNetLightningEngine.inferPose(rawData, width, height);
+    const width: number = (frame as any).width || 192;
+    const height: number = (frame as any).height || 192;
 
-    // Map internal MoveNet points strictly to canonical Habitat Keypoint[] format
-    const keypoints: Keypoint[] = inference.keypoints.map((pt) => ({
-      name: pt.name,
-      x: Math.round(pt.x * 10000) / 10000,
-      y: Math.round(pt.y * 10000) / 10000,
-      score: Math.round(pt.score * 100) / 100
-    }));
+    const inference = await MoveNetLightningEngine.inferPose(rawData, width, height);
 
     return {
-      keypoints,
+      keypoints: inference.keypoints,
       meanConfidence: inference.meanConfidence,
-      latencyMs: inference.inferenceLatencyMs
+      latencyMs: inference.inferenceLatencyMs,
     };
   }
 }

@@ -1,20 +1,32 @@
-// Video Frame Extractor Abstraction & Bounded FFmpeg Architecture
+// Real Video Frame Extractor using fluent-ffmpeg + ffmpeg-static
+// Replaces the synthetic buffer-slicing stub with actual video demuxing.
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
+import * as crypto from 'crypto';
+import ffmpegStatic from 'ffmpeg-static';
+import ffmpeg from 'fluent-ffmpeg';
 import { FrameInput } from '../domain/vision-provider.interface';
 
+// Wire fluent-ffmpeg to the bundled static binary
+if (ffmpegStatic) {
+  ffmpeg.setFfmpegPath(ffmpegStatic);
+}
+
 export interface FrameExtractionOptions {
-  fps: number; // Target extraction rate (e.g. 10 FPS)
+  fps: number;               // Target extraction rate (e.g. 10 FPS)
   maxDurationSeconds: number; // Hard upper limit on duration (e.g. 30s)
-  maxFrames: number; // Hard upper limit on total extracted frames (e.g. 300)
-  maxWidth: number; // Max frame width (e.g. 640)
-  maxHeight: number; // Max frame height (e.g. 480)
+  maxFrames: number;          // Hard upper limit on total extracted frames
+  maxWidth: number;           // Resize width for inference
+  maxHeight: number;          // Resize height for inference
 }
 
 export const DEFAULT_EXTRACTION_OPTIONS: FrameExtractionOptions = {
   fps: 10,
   maxDurationSeconds: 30,
   maxFrames: 300,
-  maxWidth: 640,
-  maxHeight: 480
+  maxWidth: 192,
+  maxHeight: 192,
 };
 
 export interface IVideoFrameExtractor {
@@ -32,7 +44,8 @@ export class FFmpegFrameExtractor implements IVideoFrameExtractor {
   }
 
   /**
-   * Extracts bounded sequence of frames from an MP4/video buffer
+   * Extracts a bounded sequence of RGB frames from a video buffer or file path.
+   * Each frame is a raw 192×192×3 RGB Buffer suitable for MoveNet inference.
    */
   public async extract(
     input: Buffer | Uint8Array | string,
@@ -40,47 +53,86 @@ export class FFmpegFrameExtractor implements IVideoFrameExtractor {
   ): Promise<FrameInput[]> {
     const opts: FrameExtractionOptions = { ...this.defaultOptions, ...options };
 
-    if (!input || (typeof input !== 'string' && input.length === 0)) {
-      throw new Error('VideoFrameExtractor: Empty or invalid video input buffer.');
+    if (!input || (typeof input !== 'string' && (input as any).length === 0)) {
+      throw new Error('FFmpegFrameExtractor: Empty or invalid video input.');
     }
 
-    // Determine total frames based on bounded duration and fps limits
-    const maxAllowedFrames = Math.min(opts.maxFrames, opts.fps * opts.maxDurationSeconds);
-    const intervalMs = Math.round(1000 / opts.fps);
+    // Write buffer to a temp file so ffmpeg can read it
+    const tmpDir = os.tmpdir();
+    const inputPath =
+      typeof input === 'string'
+        ? input
+        : path.join(tmpDir, `habitat_video_${Date.now()}.mp4`);
 
-    // If input is a raw video buffer or synthetic test container
-    const isBuffer = Buffer.isBuffer(input) || input instanceof Uint8Array;
-    const bufferLength = isBuffer ? (input as any).length : 10000;
+    let wroteTemp = false;
+    if (typeof input !== 'string') {
+      fs.writeFileSync(inputPath, Buffer.from(input as Uint8Array));
+      wroteTemp = true;
+    }
 
-    // Estimate duration: assume ~100KB/s if raw video payload
-    const estimatedDurationSec = Math.min(
-      opts.maxDurationSeconds,
-      Math.max(1, Math.floor(bufferLength / 100000))
-    );
-    const frameCount = Math.min(maxAllowedFrames, estimatedDurationSec * opts.fps);
+    const outputDir = path.join(tmpDir, `habitat_frames_${Date.now()}`);
+    fs.mkdirSync(outputDir, { recursive: true });
 
-    const frames: FrameInput[] = [];
+    try {
+      await this._runFfmpeg(inputPath, outputDir, opts);
 
-    for (let i = 0; i < frameCount; i++) {
-      const timestampMs = i * intervalMs;
-      // Synthesize bounded 192x192 frame buffer slice for inference
-      const frameSlice = new Uint8Array(192 * 192 * 3);
-      if (isBuffer && (input as any).length >= 100) {
-        // Copy chunk of video payload for deterministic hash calculation
-        const offset = (i * 100) % Math.max(1, (input as any).length - 100);
-        for (let b = 0; b < 100; b++) {
-          frameSlice[b] = (input as any)[offset + b];
-        }
+      const frameFiles = fs
+        .readdirSync(outputDir)
+        .filter((f) => f.endsWith('.rgb'))
+        .sort();
+
+      const maxFrames = Math.min(frameFiles.length, opts.maxFrames);
+      const intervalMs = Math.round(1000 / opts.fps);
+      const frames: FrameInput[] = [];
+
+      for (let i = 0; i < maxFrames; i++) {
+        const filePath = path.join(outputDir, frameFiles[i]);
+        const imageBuffer = fs.readFileSync(filePath);
+        const frameHash = crypto
+          .createHash('sha256')
+          .update(imageBuffer)
+          .digest('hex')
+          .slice(0, 32);
+
+        frames.push({
+          frameIndex: i,
+          timestampMs: i * intervalMs,
+          frameHash,
+          imageBuffer,
+          width: opts.maxWidth,
+          height: opts.maxHeight,
+        } as any);
       }
 
-      frames.push({
-        timestampMs,
-        frameIndex: i,
-        frameHash: `extracted_frame_${i}_hash_${timestampMs}`,
-        imageBuffer: Buffer.from(frameSlice)
-      });
+      return frames;
+    } finally {
+      // Cleanup temp files
+      try {
+        if (wroteTemp) fs.unlinkSync(inputPath);
+        fs.rmSync(outputDir, { recursive: true, force: true });
+      } catch (_) { /* best-effort cleanup */ }
     }
+  }
 
-    return frames;
+  /** Runs ffmpeg to extract frames as raw RGB files */
+  private _runFfmpeg(
+    inputPath: string,
+    outputDir: string,
+    opts: FrameExtractionOptions
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      ffmpeg(inputPath)
+        .outputOptions([
+          `-vf`, `fps=${opts.fps},scale=${opts.maxWidth}:${opts.maxHeight}`,
+          `-t`, String(opts.maxDurationSeconds),
+          `-frames:v`, String(opts.maxFrames),
+          `-f`, `rawvideo`,
+          `-pix_fmt`, `rgb24`,
+        ])
+        .output(path.join(outputDir, 'frame%06d.rgb'))
+        .on('end', () => resolve())
+        .on('error', (err) => reject(new Error(`FFmpegFrameExtractor: ${err.message}`)))
+        .run();
+    });
   }
 }
