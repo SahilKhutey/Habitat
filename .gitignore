@@ -36,8 +36,10 @@ Phase*/
 !.env.example
 
 # Databases & Local Media
-data/
-uploads/
+/data/
+/uploads/
+/backend/data/
+/backend/uploads/
 *.db
 *.db-journal
 *.db-wal
