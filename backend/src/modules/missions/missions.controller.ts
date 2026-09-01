@@ -227,40 +227,43 @@ export class MissionsService {
   }
 }
 
+import { authGuard, AuthenticatedRequest } from '../../common/guards/auth.guard';
+
 export const missionsController = Router();
 
 // GET /api/v1/missions/current
-missionsController.get('/current', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+missionsController.get('/current', authGuard, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.userId;
   const active = MissionsService.getActive(userId);
   res.json({ success: true, mission: active });
 });
 
 // GET /api/v1/missions/today
-missionsController.get('/today', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+missionsController.get('/today', authGuard, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.userId;
   const missions = MissionsService.getToday(userId);
   res.json({ success: true, count: missions.length, data: missions });
 });
 
 // GET /api/v1/missions/active
-missionsController.get('/active', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+missionsController.get('/active', authGuard, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.userId;
   const active = MissionsService.getActive(userId);
   res.json({ success: true, data: active });
 });
 
 // POST /api/v1/missions/trigger
-missionsController.post('/trigger', (req: Request, res: Response) => {
+missionsController.post('/trigger', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { userId, alarmId, taskId, disciplineMode, scheduledAt, idempotencyKey } = req.body;
+    const userId = req.user!.userId;
+    const { alarmId, taskId, disciplineMode, scheduledAt, idempotencyKey } = req.body;
     if (!taskId) {
       res.status(400).json({ success: false, error: 'taskId is required' });
       return;
     }
 
     const mission = MissionsService.triggerMission({
-      userId: userId || 'default-user',
+      userId,
       alarmId,
       taskId,
       disciplineMode,
@@ -275,8 +278,19 @@ missionsController.post('/trigger', (req: Request, res: Response) => {
 });
 
 // POST /api/v1/missions/:id/start
-missionsController.post('/:id/start', (req: Request, res: Response) => {
+missionsController.post('/:id/start', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
+    const userId = req.user!.userId;
+    const existing = MissionsService.getById(String(req.params.id));
+    if (!existing) {
+      res.status(404).json({ success: false, error: 'Mission not found' });
+      return;
+    }
+    if (existing.userId && existing.userId !== userId) {
+      res.status(403).json({ success: false, error: 'FORBIDDEN_IDOR_VIOLATION: Cannot start mission belonging to another user' });
+      return;
+    }
+
     const mission = MissionsService.startMission(String(req.params.id));
     res.json({ success: true, data: mission });
   } catch (e: any) {
@@ -285,9 +299,10 @@ missionsController.post('/:id/start', (req: Request, res: Response) => {
 });
 
 // POST /api/v1/missions/:id/submit
-missionsController.post('/:id/submit', (req: Request, res: Response) => {
+missionsController.post('/:id/submit', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { proofId, attemptId, userId } = req.body;
+    const userId = req.user!.userId;
+    const { proofId, attemptId } = req.body;
     if (proofId) {
       const result = ProofsService.submitProofToMission({
         missionId: String(req.params.id),
@@ -300,13 +315,25 @@ missionsController.post('/:id/submit', (req: Request, res: Response) => {
       res.json({ success: true, data: { missionId: String(req.params.id), status: 'VERIFYING' } });
     }
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // POST /api/v1/missions/:id/retry
-missionsController.post('/:id/retry', (req: Request, res: Response) => {
+missionsController.post('/:id/retry', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
+    const userId = req.user!.userId;
+    const existing = MissionsService.getById(String(req.params.id));
+    if (!existing) {
+      res.status(404).json({ success: false, error: 'Mission not found' });
+      return;
+    }
+    if (existing.userId && existing.userId !== userId) {
+      res.status(403).json({ success: false, error: 'FORBIDDEN_IDOR_VIOLATION: Cannot retry mission belonging to another user' });
+      return;
+    }
+
     const mission = MissionsService.retryMission(String(req.params.id));
     res.json({ success: true, data: mission });
   } catch (e: any) {
@@ -315,8 +342,19 @@ missionsController.post('/:id/retry', (req: Request, res: Response) => {
 });
 
 // POST /api/v1/missions/:id/complete
-missionsController.post('/:id/complete', (req: Request, res: Response) => {
+missionsController.post('/:id/complete', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
+    const userId = req.user!.userId;
+    const existing = MissionsService.getById(String(req.params.id));
+    if (!existing) {
+      res.status(404).json({ success: false, error: 'Mission not found' });
+      return;
+    }
+    if (existing.userId && existing.userId !== userId) {
+      res.status(403).json({ success: false, error: 'FORBIDDEN_IDOR_VIOLATION: Cannot complete mission belonging to another user' });
+      return;
+    }
+
     const mission = MissionsService.completeMission(String(req.params.id));
     res.json({ success: true, data: mission });
   } catch (e: any) {
@@ -325,16 +363,32 @@ missionsController.post('/:id/complete', (req: Request, res: Response) => {
 });
 
 // GET /api/v1/missions/:id/attempts
-missionsController.get('/:id/attempts', (req: Request, res: Response) => {
+missionsController.get('/:id/attempts', authGuard, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.userId;
+  const existing = MissionsService.getById(String(req.params.id));
+  if (!existing) {
+    res.status(404).json({ success: false, error: 'Mission not found' });
+    return;
+  }
+  if (existing.userId && existing.userId !== userId) {
+    res.status(403).json({ success: false, error: 'FORBIDDEN_IDOR_VIOLATION: Cannot access attempts for mission belonging to another user' });
+    return;
+  }
+
   const attempts = MissionsService.getAttempts(String(req.params.id));
   res.json({ success: true, count: attempts.length, data: attempts });
 });
 
 // GET /api/v1/missions/:id
-missionsController.get('/:id', (req: Request, res: Response) => {
+missionsController.get('/:id', authGuard, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.userId;
   const mission = MissionsService.getById(String(req.params.id));
   if (!mission) {
     res.status(404).json({ success: false, error: 'Mission not found' });
+    return;
+  }
+  if (mission.userId && mission.userId !== userId) {
+    res.status(403).json({ success: false, error: 'FORBIDDEN_IDOR_VIOLATION: Cannot access mission belonging to another user' });
     return;
   }
   res.json({ success: true, data: mission });

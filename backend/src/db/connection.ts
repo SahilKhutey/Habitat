@@ -457,6 +457,8 @@ export class DatabaseService {
         device_telemetry TEXT NOT NULL DEFAULT '{}',
         verification_status TEXT NOT NULL DEFAULT 'PENDING',
         rejection_reason TEXT,
+        proof_session_id TEXT,
+        proof_session_nonce TEXT,
         created_at TEXT NOT NULL,
         updated_at TEXT,
         FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE
@@ -879,5 +881,18 @@ export class DatabaseService {
     `;
 
     this.instance.exec(schema);
+
+    // Additive column migrations — safe to run repeatedly (SQLite throws on duplicate, caught below)
+    const columnMigrations = [
+      `ALTER TABLE proofs ADD COLUMN proof_session_id TEXT`,
+      `ALTER TABLE proofs ADD COLUMN proof_session_nonce TEXT`,
+    ];
+    for (const migration of columnMigrations) {
+      try {
+        this.instance.exec(migration);
+      } catch {
+        // Column already exists — expected on re-init; no action needed
+      }
+    }
   }
 }

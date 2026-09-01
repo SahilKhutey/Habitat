@@ -11,6 +11,8 @@ import { StorageFactory } from '../storage/storage.factory';
 import { proofRepository } from '../../repositories/proof.repository';
 import { PoseExtractionService } from '../verification/services/pose-extraction.service';
 import { VerificationEngine } from '../verification/verification.engine';
+import { authGuard, AuthenticatedRequest } from '../../common/guards/auth.guard';
+import { SecurityService } from '../security/security.service';
 
 export class ProofsService {
   // 1. Create Direct S3 / MinIO / Local Upload Session
@@ -24,6 +26,10 @@ export class ProofsService {
     durationSeconds?: number;
     width?: number;
     height?: number;
+    /** Optional: pre-issued challenge sessionId for nonce binding */
+    sessionId?: string;
+    /** Optional: corresponding session nonce for cryptographic binding */
+    sessionNonce?: string;
   }) {
     // Validate size and MIME rules synchronously first
     ProofRules.validateUploadSession({
@@ -35,6 +41,10 @@ export class ProofsService {
 
     const mission = MissionsService.getById(params.missionId);
     if (!mission) throw new Error('MISSION_NOT_FOUND: Mission not found');
+
+    if (params.userId && mission.userId && mission.userId !== params.userId) {
+      throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${params.userId} is not authorized to create upload session for mission owned by ${mission.userId}`);
+    }
 
     const proofId = uuidv4();
     const isVideo = params.type === 'VIDEO' || params.mimeType.startsWith('video/');
@@ -53,8 +63,8 @@ export class ProofsService {
       INSERT INTO proofs (
         id, mission_id, user_id, attempt_id, upload_id, media_type, storage_key, object_key, thumbnail_key,
         mime_type, size_bytes, duration_ms, width, height, captured_at, device_telemetry,
-        verification_status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', 'UPLOADING', ?, ?)
+        verification_status, proof_session_id, proof_session_nonce, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', 'UPLOADING', ?, ?, ?, ?)
     `).run(
       proofId,
       params.missionId,
@@ -71,6 +81,8 @@ export class ProofsService {
       params.width || null,
       params.height || null,
       now,
+      params.sessionId || null,
+      params.sessionNonce || null,
       now,
       now
     );
@@ -112,9 +124,17 @@ export class ProofsService {
   }
 
   // 3. Get Signed Download URL
-  public static async getDownloadUrl(proofId: string): Promise<string> {
+  public static async getDownloadUrl(proofId: string, requestingUserId?: string): Promise<string> {
     const proof = proofRepository.findById(proofId);
     if (!proof) throw new Error('PROOF_NOT_FOUND: Proof not found');
+
+    if (requestingUserId) {
+      const mission = MissionsService.getById(proof.missionId);
+      const ownerId = proof.userId || mission?.userId;
+      if (ownerId && ownerId !== requestingUserId) {
+        throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${requestingUserId} is not authorized to download proof owned by ${ownerId}`);
+      }
+    }
 
     const provider = StorageFactory.getProvider();
     return provider.getDownloadUrl(proof.objectKey || proof.storageKey);
@@ -135,7 +155,7 @@ export class ProofsService {
     if (!mission) throw new Error('MISSION_NOT_FOUND: Mission not found');
 
     if (params.userId && mission.userId !== params.userId) {
-      throw new Error('UNAUTHORIZED: Cannot submit proof to another user mission');
+      throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${params.userId} is not authorized to submit proof to mission owned by ${mission.userId}`);
     }
 
     if (mission.status === 'COMPLETED') {
@@ -216,12 +236,13 @@ export class ProofsService {
 
     db.prepare(`
       INSERT INTO proofs (
-        id, mission_id, media_type, storage_key, object_key, mime_type,
+        id, mission_id, user_id, media_type, storage_key, object_key, mime_type,
         captured_at, device_telemetry, verification_status, rejection_reason, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       proofId,
       params.missionId,
+      mission.userId,
       params.mediaType,
       params.storageKey,
       params.storageKey,
@@ -258,7 +279,8 @@ export class ProofsService {
   // 4. Verify Proof with Authoritative Real Vision Pipeline from Storage
   public static async verifyWithRealVision(
     proofId: string,
-    policy: { minRepetitions?: number; minLivenessScore?: number; skipNonceValidation?: boolean } = {}
+    policy: { minRepetitions?: number; minLivenessScore?: number; skipNonceValidation?: boolean } = {},
+    requestingUserId?: string
   ) {
     const db = DatabaseService.getDb();
     const proof = db.prepare('SELECT * FROM proofs WHERE id = ?').get(proofId) as any;
@@ -266,6 +288,13 @@ export class ProofsService {
 
     const mission = MissionsService.getById(proof.mission_id);
     if (!mission) throw new Error('MISSION_NOT_FOUND: Mission not found');
+
+    if (requestingUserId) {
+      const ownerId = proof.user_id || mission.userId;
+      if (ownerId && ownerId !== requestingUserId) {
+        throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${requestingUserId} is not authorized to verify proof owned by ${ownerId}`);
+      }
+    }
 
     const taskRow = db.prepare('SELECT * FROM tasks WHERE id = ?').get(mission.taskId) as any;
     const taskSlug = taskRow?.slug || 'tpl-pushups-10';
@@ -275,15 +304,22 @@ export class ProofsService {
       throw new Error('STORAGE_KEY_MISSING: Proof has no objectKey');
     }
 
+    // Determine session binding: use the real proof_session_id/nonce stored at upload time
+    const boundSessionId: string | null = proof.proof_session_id || null;
+    const boundSessionNonce: string | null = proof.proof_session_nonce || null;
+    const hasChallenge = !!(boundSessionId && boundSessionNonce);
+
     // 1. Run PoseExtractionService to read from storage and run MoveNet inference
     const extractor = new PoseExtractionService();
     const { evidence } = await extractor.extractPoseFromStorage(objectKey, {
       missionId: proof.mission_id,
       taskSlug,
-      sessionId: `session_${proofId}`
+      // Pass the real session binding so evidence carries the correct sessionId/nonce
+      sessionId: boundSessionId || `session_${proofId}`,
+      sessionNonce: boundSessionNonce || undefined
     });
 
-    // 2. Run VerificationEngine (skipNonceValidation: true by default on real vision direct upload)
+    // 2. Determine min repetitions from task rules
     let minReps = 1;
     if (policy.minRepetitions !== undefined) {
       minReps = policy.minRepetitions;
@@ -296,9 +332,16 @@ export class ProofsService {
       }
     }
 
+    // 3. Nonce validation:
+    //    - If the proof was uploaded with a challenge binding, validate it (replay-prevention is ON)
+    //    - If no challenge binding present (legacy or non-pose tasks), skip nonce validation with visible flag
+    const skipNonce = policy.skipNonceValidation !== undefined
+      ? policy.skipNonceValidation
+      : !hasChallenge;
+
     const verificationPolicy = {
       minRepetitions: minReps,
-      skipNonceValidation: policy.skipNonceValidation ?? true
+      skipNonceValidation: skipNonce
     };
 
     const verificationResult = VerificationEngine.verifyEvidence(evidence, verificationPolicy);
@@ -324,6 +367,7 @@ export class ProofsService {
       repsVerified: verificationResult.repsVerified,
       rejectionReason: verificationResult.rejectionReason,
       flags: verificationResult.flags,
+      nonceValidated: hasChallenge && !skipNonce,
       evidence
     };
   }
@@ -356,15 +400,20 @@ export class ProofsService {
     const mission = MissionsService.getById(missionId);
     if (!mission) throw new Error('Mission not found');
 
+    if (userId && mission.userId && mission.userId !== userId) {
+      throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${userId} is not authorized to create proof for mission owned by ${mission.userId}`);
+    }
+
     const proofId = uuidv4();
     const now = new Date().toISOString();
 
     db.prepare(`
-      INSERT INTO proofs (id, mission_id, media_type, storage_key, object_key, captured_at, device_telemetry, verification_status, rejection_reason, created_at, updated_at)
-      VALUES (?, ?, ?, '', '', ?, '{}', 'CAPTURED', NULL, ?, ?)
+      INSERT INTO proofs (id, mission_id, user_id, media_type, storage_key, object_key, captured_at, device_telemetry, verification_status, rejection_reason, created_at, updated_at)
+      VALUES (?, ?, ?, ?, '', '', ?, '{}', 'CAPTURED', NULL, ?, ?)
     `).run(
       proofId,
       missionId,
+      userId,
       type === 'VIDEO' ? 'video/mp4' : 'image/jpeg',
       now,
       now,
@@ -416,10 +465,18 @@ export class ProofsService {
   }
 
   // 5. Get Proof by ID
-  public static getById(proofId: string) {
+  public static getById(proofId: string, requestingUserId?: string) {
     const db = DatabaseService.getDb();
     const row = db.prepare('SELECT * FROM proofs WHERE id = ?').get(proofId) as any;
     if (!row) return null;
+
+    if (requestingUserId) {
+      const mission = MissionsService.getById(row.mission_id);
+      const ownerId = row.user_id || mission?.userId;
+      if (ownerId && ownerId !== requestingUserId) {
+        throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${requestingUserId} is not authorized to access proof owned by ${ownerId}`);
+      }
+    }
 
     const storageEndpoint = process.env.STORAGE_ENDPOINT || 'http://localhost:9000';
     const bucket = process.env.STORAGE_BUCKET || 'habitat-proofs';
@@ -458,7 +515,7 @@ export class ProofsService {
 
     const mission = MissionsService.getById(proof.mission_id);
     if (userId && mission && mission.userId !== userId) {
-      throw new Error('UNAUTHORIZED: Cannot delete proof belonging to another user');
+      throw new Error(`UNAUTHORIZED: FORBIDDEN_IDOR_VIOLATION: User ${userId} is not authorized to delete proof owned by ${mission.userId}`);
     }
 
     db.prepare("UPDATE proofs SET verification_status = 'DELETED', updated_at = ? WHERE id = ?").run(
@@ -473,16 +530,17 @@ export class ProofsService {
 export const proofsController = Router();
 
 // POST /api/v1/proofs/upload-session
-proofsController.post('/upload-session', async (req: Request, res: Response) => {
+proofsController.post('/upload-session', authGuard, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { missionId, attemptId, type, mimeType, sizeBytes, durationSeconds, width, height, userId } = req.body;
+    const userId = req.user!.userId;
+    const { missionId, attemptId, type, mimeType, sizeBytes, durationSeconds, width, height, sessionId, sessionNonce } = req.body;
     if (!missionId || !mimeType || !sizeBytes) {
       res.status(400).json({ success: false, error: 'missionId, mimeType, and sizeBytes are required' });
       return;
     }
 
     const session = await ProofsService.createUploadSession({
-      userId: userId || 'default-user',
+      userId,
       missionId,
       attemptId,
       type: type || 'PHOTO',
@@ -490,21 +548,26 @@ proofsController.post('/upload-session', async (req: Request, res: Response) => 
       sizeBytes,
       durationSeconds,
       width,
-      height
+      height,
+      // Bind the challenge sessionId/nonce to this proof at creation time
+      sessionId,
+      sessionNonce
     });
 
     res.status(201).json({ success: true, data: session });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // POST /api/v1/proofs/upload-url (Legacy alias)
-proofsController.post('/upload-url', async (req: Request, res: Response) => {
+proofsController.post('/upload-url', authGuard, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { userId, missionId, mediaType, extension } = req.body;
+    const userId = req.user!.userId;
+    const { missionId, mediaType } = req.body;
     const session = await ProofsService.createUploadSession({
-      userId: userId || 'default-user',
+      userId,
       missionId,
       type: mediaType?.includes('video') ? 'VIDEO' : 'PHOTO',
       mimeType: mediaType || 'image/jpeg',
@@ -512,44 +575,52 @@ proofsController.post('/upload-url', async (req: Request, res: Response) => {
     });
     res.json({ success: true, data: session });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // POST /api/v1/proofs/:id/complete
-proofsController.post('/:id/complete', async (req: Request, res: Response) => {
+proofsController.post('/:id/complete', authGuard, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const proof = await ProofsService.completeUpload(String(req.params.id), req.body?.userId);
+    const userId = req.user!.userId;
+    const proof = await ProofsService.completeUpload(String(req.params.id), userId);
     res.json({ success: true, data: proof });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('UNAUTHORIZED') || e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // POST /api/v1/proofs/:id/complete-upload (Legacy alias)
-proofsController.post('/:id/complete-upload', async (req: Request, res: Response) => {
+proofsController.post('/:id/complete-upload', authGuard, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const proof = await ProofsService.completeUpload(String(req.params.id), req.body?.userId);
+    const userId = req.user!.userId;
+    const proof = await ProofsService.completeUpload(String(req.params.id), userId);
     res.json({ success: true, data: proof });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('UNAUTHORIZED') || e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // GET /api/v1/proofs/:id/download-url
-proofsController.get('/:id/download-url', async (req: Request, res: Response) => {
+proofsController.get('/:id/download-url', authGuard, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const downloadUrl = await ProofsService.getDownloadUrl(String(req.params.id));
+    const userId = req.user!.userId;
+    const downloadUrl = await ProofsService.getDownloadUrl(String(req.params.id), userId);
     res.json({ success: true, data: { downloadUrl } });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // POST /api/v1/proofs/:id/submit
-proofsController.post('/:id/submit', (req: Request, res: Response) => {
+proofsController.post('/:id/submit', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { missionId, attemptId, userId } = req.body;
+    const userId = req.user!.userId;
+    const { missionId, attemptId } = req.body;
     const result = ProofsService.submitProofToMission({
       missionId: missionId || req.body.missionId,
       proofId: String(req.params.id),
@@ -558,37 +629,59 @@ proofsController.post('/:id/submit', (req: Request, res: Response) => {
     });
     res.json({ success: true, data: result });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // POST /api/v1/proofs/:id/verify-real-vision
-proofsController.post('/:id/verify-real-vision', async (req: Request, res: Response) => {
+proofsController.post('/:id/verify-real-vision', authGuard, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await ProofsService.verifyWithRealVision(String(req.params.id), req.body?.policy);
+    const userId = req.user!.userId;
+
+    // Rate limiting: 10 verification requests per minute per user
+    const rateCheck = SecurityService.checkRateLimit(`verify_vision_${userId}`, 10, 60);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        success: false,
+        error: 'Too many verification requests. Rate limit exceeded. Please wait before retrying.'
+      });
+      return;
+    }
+
+    const result = await ProofsService.verifyWithRealVision(String(req.params.id), req.body?.policy, userId);
     const statusCode = result.isValid ? 200 : 422;
     res.status(statusCode).json({ success: result.isValid, data: result });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
 
 // GET /api/v1/proofs/:id
-proofsController.get('/:id', (req: Request, res: Response) => {
-  const proof = ProofsService.getById(String(req.params.id));
-  if (!proof) {
-    res.status(404).json({ success: false, error: 'Proof not found' });
-    return;
+proofsController.get('/:id', authGuard, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+    const proof = ProofsService.getById(String(req.params.id), userId);
+    if (!proof) {
+      res.status(404).json({ success: false, error: 'Proof not found' });
+      return;
+    }
+    res.json({ success: true, data: proof });
+  } catch (e: any) {
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
-  res.json({ success: true, data: proof });
 });
 
 // DELETE /api/v1/proofs/:id
-proofsController.delete('/:id', (req: Request, res: Response) => {
+proofsController.delete('/:id', authGuard, (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = ProofsService.deleteProof(String(req.params.id), req.query?.userId as string);
+    const userId = req.user!.userId;
+    const result = ProofsService.deleteProof(String(req.params.id), userId);
     res.json({ success: true, data: result });
   } catch (e: any) {
-    res.status(400).json({ success: false, error: e.message });
+    const statusCode = e.message?.includes('FORBIDDEN_IDOR_VIOLATION') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: e.message });
   }
 });
