@@ -97,7 +97,10 @@ class ExecutionServiceMockVerification extends VerificationService {
     required String taskId,
     required dynamic verificationType,
     required String proofPath,
+    int durationSeconds = 0,
     int resistanceSeconds = 0,
+    String? missionId,
+    List<int>? mediaBytes,
   }) async {
     final isSpeedBonus = resistanceSeconds > 0 && resistanceSeconds <= 120;
     if (shouldSucceed) {
@@ -110,8 +113,8 @@ class ExecutionServiceMockVerification extends VerificationService {
     } else {
       return const VerificationResult(
         isSuccess: false,
-        message: 'Pose form rejected',
-        score: 40,
+        message: 'Failed',
+        score: 0,
         bonusXp: 0,
       );
     }

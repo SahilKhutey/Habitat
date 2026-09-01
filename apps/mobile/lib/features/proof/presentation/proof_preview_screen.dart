@@ -1,49 +1,63 @@
 // Proof Preview & Submission Screen (Retake vs Submit)
 import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
+import '../../tasks/domain/models/action_model.dart';
+import '../../tasks/domain/services/verification_service.dart';
 
 class ProofPreviewScreen extends StatefulWidget {
   final Map<String, dynamic> proofData;
+  final VerificationService? verificationService;
 
-  const ProofPreviewScreen({super.key, required this.proofData});
+  const ProofPreviewScreen({
+    super.key,
+    required this.proofData,
+    this.verificationService,
+  });
 
   @override
   State<ProofPreviewScreen> createState() => _ProofPreviewScreenState();
 }
 
 class _ProofPreviewScreenState extends State<ProofPreviewScreen> {
+  late final VerificationService _verificationService;
   bool _isSubmitting = false;
 
-  void _submitProof() {
+  @override
+  void initState() {
+    super.initState();
+    _verificationService = widget.verificationService ?? VerificationService();
+  }
+
+  Future<void> _submitProof() async {
     setState(() => _isSubmitting = true);
 
-    // Simulate upload and verification pipeline
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        final duration = widget.proofData['durationSeconds'] as int? ?? 12;
-        final minDuration = widget.proofData['minDurationSeconds'] as int? ?? 10;
+    final isVideo = widget.proofData['proofType'] == 'VIDEO';
+    final duration = widget.proofData['durationSeconds'] as int? ?? (isVideo ? 12 : 0);
+    final taskId = widget.proofData['taskId'] as String? ?? 'task-1';
+    final missionId = widget.proofData['missionId'] as String? ?? taskId;
+    final proofPath = widget.proofData['proofPath'] as String? ?? 'proof.jpg';
 
-        if (duration < minDuration) {
-          Navigator.of(context).pushReplacementNamed(
-            '/proof/result',
-            arguments: {
-              'isAccepted': false,
-              'reason': 'Video needs to be at least $minDuration seconds.',
-              'missionId': widget.proofData['missionId'],
-            },
-          );
-        } else {
-          Navigator.of(context).pushReplacementNamed(
-            '/proof/result',
-            arguments: {
-              'isAccepted': true,
-              'taskName': widget.proofData['taskName'],
-              'missionId': widget.proofData['missionId'],
-            },
-          );
-        }
-      }
-    });
+    final result = await _verificationService.verifyProof(
+      taskId: taskId,
+      missionId: missionId,
+      verificationType: isVideo ? VerificationType.videoProof : VerificationType.photoProof,
+      proofPath: proofPath,
+      durationSeconds: duration,
+    );
+
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed(
+        '/proof/result',
+        arguments: {
+          'isAccepted': result.isSuccess,
+          'reason': result.isSuccess ? null : result.message,
+          'taskName': widget.proofData['taskName'] ?? 'Discipline Task',
+          'missionId': missionId,
+          'repsVerified': result.repsVerified,
+          'isOffline': result.isOfflineFallback,
+        },
+      );
+    }
   }
 
   @override

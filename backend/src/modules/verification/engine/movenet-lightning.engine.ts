@@ -5,6 +5,9 @@
 import * as tf from '@tensorflow/tfjs';
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import { Keypoint } from '../domain/evidence.types';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as url from 'url';
 
 export const MOVENET_KEYPOINT_NAMES = [
   'nose',
@@ -35,6 +38,50 @@ export interface MoveNetInferenceOutput {
   inputTensorShape: [number, number, number]; // [height, width, 3]
 }
 
+export interface MoveNetModelResolution {
+  modelUrl?: string;
+  isLocalCache: boolean;
+  resolvedPath?: string;
+}
+
+/**
+ * Resolves MoveNet model location:
+ * 1. Explicit MOVENET_MODEL_URL
+ * 2. Explicit MOVENET_MODEL_DIR or local candidate directory with model.json
+ * 3. Default live TF Hub CDN
+ */
+export function resolveMoveNetModelConfig(): MoveNetModelResolution {
+  if (process.env.MOVENET_MODEL_URL) {
+    return {
+      modelUrl: process.env.MOVENET_MODEL_URL,
+      isLocalCache: process.env.MOVENET_MODEL_URL.startsWith('file://'),
+      resolvedPath: process.env.MOVENET_MODEL_URL
+    };
+  }
+
+  const candidateDirs = [
+    process.env.MOVENET_MODEL_DIR,
+    path.resolve(process.cwd(), 'models', 'movenet'),
+    path.resolve(process.cwd(), 'backend', 'models', 'movenet')
+  ].filter(Boolean) as string[];
+
+  for (const dir of candidateDirs) {
+    const modelJson = path.join(dir, 'model.json');
+    if (fs.existsSync(modelJson)) {
+      const fileUrl = url.pathToFileURL(modelJson).href;
+      return {
+        modelUrl: fileUrl,
+        isLocalCache: true,
+        resolvedPath: modelJson
+      };
+    }
+  }
+
+  return {
+    isLocalCache: false
+  };
+}
+
 // Module-level singleton — detector is expensive to load, load once.
 let _detector: poseDetection.PoseDetector | null = null;
 let _backendInitialized = false;
@@ -57,13 +104,20 @@ async function getDetector(): Promise<poseDetection.PoseDetector | null> {
       _backendInitialized = true;
     }
 
+    const modelResolution = resolveMoveNetModelConfig();
+    const detectorConfig: any = {
+      modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      enableSmoothing: false,    // deterministic output for anti-cheat
+      minPoseScore: 0.25,
+    };
+
+    if (modelResolution.modelUrl) {
+      detectorConfig.modelUrl = modelResolution.modelUrl;
+    }
+
     _detector = await poseDetection.createDetector(
       poseDetection.SupportedModels.MoveNet,
-      {
-        modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
-        enableSmoothing: false,    // deterministic output for anti-cheat
-        minPoseScore: 0.25,
-      }
+      detectorConfig
     );
 
     _modelAvailable = true;
@@ -84,6 +138,23 @@ export class MoveNetLightningEngine {
   /** True after a successful model download. False if network was unreachable. */
   public static get isAvailable(): boolean { return _modelAvailable; }
 
+  /** Resolves model resolution config from environment/filesystem */
+  public static resolveModelConfig(): MoveNetModelResolution {
+    return resolveMoveNetModelConfig();
+  }
+
+  /** Reset singleton state for testing */
+  public static resetForTesting(): void {
+    if (_detector) {
+      try {
+        _detector.dispose();
+      } catch {}
+      _detector = null;
+    }
+    _modelAvailable = false;
+    _initReason = undefined;
+  }
+
   /**
    * Initialises the TF.js detector. Call once during service startup.
    * Never throws — returns {available, reason} to support graceful degradation.
@@ -94,6 +165,7 @@ export class MoveNetLightningEngine {
       ? { available: true }
       : { available: false, reason: _initReason };
   }
+
 
   /**
    * Executes real MoveNet Lightning pose estimation on an RGB pixel buffer.
