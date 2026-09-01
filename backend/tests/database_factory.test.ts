@@ -1,6 +1,7 @@
 // Automated Test Suite for Milestone B4: Environment-driven Database Factory & Provider Selection
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { DatabaseFactory } from '../src/db/database.factory';
+import { PrismaService } from '../src/db/prisma';
 import { SqliteUserRepository, PrismaUserRepository } from '../src/repositories/user.repository';
 import { SqliteTaskRepository, PrismaTaskRepository } from '../src/repositories/task.repository';
 import { SqliteAlarmRepository, PrismaAlarmRepository } from '../src/repositories/alarm.repository';
@@ -12,11 +13,21 @@ describe('Milestone B4: Environment-Driven Database Factory', () => {
 
   beforeEach(() => {
     DatabaseFactory.resetCacheForTesting();
+    // Provide offline mock Prisma client for factory instantiation tests
+    PrismaService.setClientForTesting({
+      user: {},
+      task: {},
+      alarm: {},
+      mission: {},
+      proof: {},
+      $disconnect: async () => {},
+    } as any);
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
     DatabaseFactory.resetCacheForTesting();
+    PrismaService.setClientForTesting(null as any);
   });
 
   it('B4.1: NODE_ENV=test strictly forces SQLite provider by default', () => {

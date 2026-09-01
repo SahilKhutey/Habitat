@@ -2,8 +2,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 
-const prisma = new PrismaClient();
-
 export const STARTER_TEMPLATES = [
   {
     id: 'tpl-make-bed',
@@ -141,8 +139,9 @@ export function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-export async function main(): Promise<{ defaultUserId: string }> {
+export async function main(client?: PrismaClient): Promise<{ defaultUserId: string }> {
   console.log('[Prisma Seed] Starting idempotent database seed...');
+  const prisma = client ?? new PrismaClient();
 
   const defaultPasswordHash = hashPassword('Discipline2026!');
   const defaultUserId = 'usr_seed_alex_mercer';
@@ -367,7 +366,8 @@ export async function main(): Promise<{ defaultUserId: string }> {
 }
 
 if (require.main === module) {
-  main()
+  const prisma = new PrismaClient();
+  main(prisma)
     .catch((e) => {
       console.error(e);
       process.exit(1);
