@@ -1,7 +1,7 @@
 // Automated Flutter Test Suite for Alarm Reliability & Exact Alarm Capabilities (Milestone C2/C3)
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habitat/features/alarms/domain/alarm_health_models.dart';
-import 'package:habitat/services/alarm_reliability_service.dart';
+import 'package:habitat_mobile/features/alarms/domain/alarm_health_models.dart';
+import 'package:habitat_mobile/services/alarm_reliability_service.dart';
 
 void main() {
   group('Milestone C2 / C3: Alarm Reliability & Exact Alarm Capabilities', () {
