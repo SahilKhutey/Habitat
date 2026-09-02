@@ -1,7 +1,7 @@
 // Widget Tests for Design System Components
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 void main() {
   testWidgets('AppButton renders label and handles tap callback', (tester) async {

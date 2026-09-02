@@ -1,7 +1,7 @@
 // Unit Tests for Design Tokens & Themes
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/design_system.dart';
+import 'package:design_system/design_system.dart';
 
 void main() {
   test('AppColors contains valid semantic colors for light and dark themes', () {
