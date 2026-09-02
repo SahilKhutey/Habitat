@@ -72,6 +72,16 @@ class NativeAlarmService {
     }
   }
 
+  /// Retrieves the initial intent route if Habitat was cold-started by an alarm or notification
+  static Future<String?> getInitialRoute() async {
+    try {
+      final route = await _channel.invokeMethod<String>('getInitialRoute');
+      return route;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Schedules next 5-minute escalation retry
   static Future<void> arm5MinuteRetry({
     required String missionId,
