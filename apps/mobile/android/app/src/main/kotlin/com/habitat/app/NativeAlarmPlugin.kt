@@ -8,15 +8,22 @@ import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class NativeAlarmPlugin(private val context: Context) : MethodChannel.MethodCallHandler {
 
+    companion object {
+        private const val TAG = "HabitatAlarm"
+    }
+
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "canScheduleExactAlarms" -> {
-                result.success(checkCanScheduleExactAlarms())
+                val canExact = checkCanScheduleExactAlarms()
+                Log.d(TAG, "ALARM_PERMISSION_CHECK: canScheduleExact=$canExact")
+                result.success(canExact)
             }
             "openExactAlarmSettings" -> {
                 openExactAlarmSettings()
@@ -39,11 +46,13 @@ class NativeAlarmPlugin(private val context: Context) : MethodChannel.MethodCall
                 val sirenVolume = call.argument<Int>("sirenVolume") ?: 70
                 val attemptIndex = call.argument<Int>("attemptIndex") ?: 1
 
+                Log.i(TAG, "ALARM_SCHEDULE_REQUEST: missionId=$missionId triggerAt=$triggerEpochMs volume=$sirenVolume attempt=$attemptIndex")
                 val scheduleResult = scheduleAlarmWithFallback(missionId, taskTitle, triggerEpochMs, sirenVolume, attemptIndex)
                 result.success(scheduleResult)
             }
             "cancelAlarm" -> {
                 val missionId = call.argument<String>("missionId") ?: ""
+                Log.i(TAG, "ALARM_CANCELLED: missionId=$missionId")
                 cancelAlarm(missionId)
                 result.success(true)
             }
@@ -130,9 +139,10 @@ class NativeAlarmPlugin(private val context: Context) : MethodChannel.MethodCall
             putExtra("attempt_index", attemptIndex)
         }
 
+        val requestCode = missionId.hashCode()
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            missionId.hashCode(),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -149,9 +159,11 @@ class NativeAlarmPlugin(private val context: Context) : MethodChannel.MethodCall
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerEpochMs, pendingIntent)
                 }
                 isExact = true
+                Log.i(TAG, "ALARM_SCHEDULED: missionId=$missionId requestCode=$requestCode triggerAt=$triggerEpochMs exact=true")
             } catch (e: SecurityException) {
                 // Exact alarm permission was revoked after runtime check; fallback gracefully
                 failureReason = "EXACT_ALARM_SECURITY_EXCEPTION"
+                Log.w(TAG, "ALARM_SCHEDULED: missionId=$missionId exact=false fallback=SecurityException")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerEpochMs, pendingIntent)
                 } else {
@@ -159,9 +171,11 @@ class NativeAlarmPlugin(private val context: Context) : MethodChannel.MethodCall
                 }
             } catch (e: Exception) {
                 failureReason = e.message
+                Log.e(TAG, "ALARM_SCHEDULED: failed with exception: ${e.message}")
             }
         } else {
             failureReason = "EXACT_ALARM_PERMISSION_NOT_GRANTED"
+            Log.w(TAG, "ALARM_SCHEDULED: missionId=$missionId exact=false fallback=EXACT_ALARM_PERMISSION_NOT_GRANTED")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerEpochMs, pendingIntent)
             } else {
@@ -181,12 +195,15 @@ class NativeAlarmPlugin(private val context: Context) : MethodChannel.MethodCall
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             action = "com.habitat.app.ACTION_TRIGGER_MISSION"
         }
+        val requestCode = missionId.hashCode()
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            missionId.hashCode(),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(pendingIntent)
+        Log.i(TAG, "ALARM_CANCELLED: cancelled requestCode=$requestCode missionId=$missionId")
     }
 }
+
