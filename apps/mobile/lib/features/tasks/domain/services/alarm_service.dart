@@ -93,6 +93,45 @@ class AlarmService {
     );
   }
 
+  /// Startup reconciliation pass: compares enabled alarms in LocalDatabase
+  /// with OS schedules and reschedules missing / repairs differences idempotently.
+  Future<int> reconcilePersistedAlarmsOnStartup() async {
+    final alarms = _database.getAllAlarms();
+    int reconciled = 0;
+    final now = DateTime.now();
+
+    for (final alarm in alarms) {
+      if (alarm.enabled) {
+        final task = _database.getTask(alarm.taskId);
+        final parts = alarm.scheduledTime.split(':');
+        final hour = parts.isNotEmpty ? int.tryParse(parts[0]) ?? 7 : 7;
+        final min = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+        var trigger = DateTime(now.year, now.month, now.day, hour, min);
+        if (trigger.isBefore(now)) {
+          trigger = trigger.add(const Duration(days: 1));
+        }
+
+        await NativeAlarmService.scheduleExactAlarm(
+          missionId: alarm.id,
+          taskTitle: task?.title ?? 'Discipline Commitment',
+          triggerTime: trigger,
+          sirenVolume: 70,
+        );
+
+        await _persistAlarm(
+          missionId: alarm.id,
+          taskTitle: task?.title ?? 'Discipline Commitment',
+          triggerEpochMs: trigger.millisecondsSinceEpoch,
+        );
+        reconciled++;
+      } else {
+        await NativeAlarmService.cancelAlarm(alarm.id);
+        await _removeFromPersisted(alarm.id);
+      }
+    }
+    return reconciled;
+  }
+
   // ── Boot-restore persistence helpers ──────────────────────────────────────
 
   /// Upserts an alarm entry in SharedPreferences so [BootReceiver] can
@@ -143,3 +182,4 @@ class AlarmService {
     }
   }
 }
+
