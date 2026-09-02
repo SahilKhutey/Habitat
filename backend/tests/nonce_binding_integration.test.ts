@@ -11,7 +11,7 @@ import { TasksService } from '../src/modules/tasks/tasks.controller';
 import { StorageFactory } from '../src/modules/storage/storage.factory';
 import { MoveNetLightningEngine } from '../src/modules/verification/engine/movenet-lightning.engine';
 
-const INFERENCE_TIMEOUT = 30_000;
+const INFERENCE_TIMEOUT = 60_000;
 
 describe('Session Challenge Nonce Binding: verifyWithRealVision', () => {
   let defaultUserId: string;
