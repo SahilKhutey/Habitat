@@ -1,8 +1,78 @@
-// Habitat Production Telemetry & Crash Reporting Coordinator (Track C)
+// Habitat Production Telemetry & Crash Reporting Coordinator (Phase S)
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 enum TelemetryLevel { debug, info, warning, error, fatal }
+
+enum DiagnosticEventType {
+  // Alarm Lifecycle (S7)
+  alarmScheduleRequested,
+  alarmScheduleAccepted,
+  alarmScheduleRejected,
+  alarmTriggered,
+  notificationShown,
+  notificationFailure,
+  missionOpened,
+  missionOpenFailure,
+  retryScheduled,
+  staleCallbackDropped,
+  duplicateCallbackIgnored,
+
+  // Camera & Proof Lifecycle (S9)
+  cameraPermissionDenied,
+  cameraInitFailed,
+  captureStarted,
+  captureFailed,
+  fileWriteFailed,
+  fileEmpty,
+  hashFailed,
+  proofBindingFailed,
+  proofReused,
+  proofVerified,
+
+  // Mission & Gamification
+  missionCompleted,
+  xpAwarded,
+  streakIncremented,
+
+  // Persistence Lifecycle (S8)
+  persistenceLoadStarted,
+  persistenceLoadSuccess,
+  persistenceLoadFailed,
+  backupRecoveryStarted,
+  backupRecoverySuccess,
+  backupRecoveryFailed,
+  corruptionDetected,
+  migrationStarted,
+  migrationSuccess,
+}
+
+class DiagnosticContext {
+  final String appVersion;
+  final String buildNumber;
+  final String gitCommit;
+  final String platform;
+  final String osVersion;
+  final String deviceModel;
+
+  const DiagnosticContext({
+    this.appVersion = '1.0.5',
+    this.buildNumber = '6',
+    this.gitCommit = 'b83d3e4',
+    this.platform = 'android',
+    this.osVersion = 'Android 14 (API 34)',
+    this.deviceModel = 'Pixel 8 / OEM Generic',
+  });
+
+  Map<String, String> toJson() => {
+        'appVersion': appVersion,
+        'buildNumber': buildNumber,
+        'gitCommit': gitCommit,
+        'platform': platform,
+        'osVersion': osVersion,
+        'deviceModel': deviceModel,
+      };
+}
 
 class TelemetryBreadcrumb {
   final String category;
@@ -27,7 +97,7 @@ class TelemetryBreadcrumb {
         if (data != null) 'data': data!.map((k, v) => MapEntry(k, _sanitize(v.toString()))),
       };
 
-  /// Redacts potential PII, file paths with user names, and biometric keypoints
+  /// Redacts potential PII, email addresses, IP addresses, and file paths containing user identity
   static String _sanitize(String input) {
     return input
         .replaceAll(RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'), '[REDACTED_EMAIL]')
@@ -38,6 +108,7 @@ class TelemetryBreadcrumb {
 abstract class ITelemetryClient {
   Future<void> recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false});
   Future<void> recordBreadcrumb(TelemetryBreadcrumb breadcrumb);
+  Future<void> recordDiagnosticEvent(DiagnosticEventType event, {Map<String, dynamic>? metadata});
   Future<void> setCustomTag(String key, String value);
 }
 
@@ -56,6 +127,11 @@ class LocalConsoleTelemetryClient implements ITelemetryClient {
   }
 
   @override
+  Future<void> recordDiagnosticEvent(DiagnosticEventType event, {Map<String, dynamic>? metadata}) async {
+    debugPrint('[Diagnostic Event][${event.name}] metadata: $metadata');
+  }
+
+  @override
   Future<void> setCustomTag(String key, String value) async {
     debugPrint('[Telemetry Tag] $key: $value');
   }
@@ -66,14 +142,24 @@ class TelemetryService {
   TelemetryService._internal();
 
   final List<TelemetryBreadcrumb> _breadcrumbs = [];
+  final List<DiagnosticEventType> _eventLog = [];
   static const int _maxBreadcrumbs = 100;
 
+  DiagnosticContext _context = const DiagnosticContext();
   ITelemetryClient _client = LocalConsoleTelemetryClient();
   bool _isInitialized = false;
 
-  void initialize({ITelemetryClient? client}) {
+  DiagnosticContext get context => _context;
+  bool get isInitialized => _isInitialized;
+  List<TelemetryBreadcrumb> get breadcrumbs => List.unmodifiable(_breadcrumbs);
+  List<DiagnosticEventType> get eventLog => List.unmodifiable(_eventLog);
+
+  void initialize({ITelemetryClient? client, DiagnosticContext? context}) {
     if (client != null) {
       _client = client;
+    }
+    if (context != null) {
+      _context = context;
     }
     _isInitialized = true;
     _installFlutterErrorHooks();
@@ -109,14 +195,24 @@ class TelemetryService {
       _breadcrumbs.removeAt(0);
     }
     _breadcrumbs.add(crumb);
-
     _client.recordBreadcrumb(crumb);
   }
 
-  Future<void> recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false}) async {
-    await _client.recordError(error, stackTrace, reason: reason, fatal: fatal);
+  void recordDiagnosticEvent(DiagnosticEventType event, {Map<String, dynamic>? metadata}) {
+    _eventLog.add(event);
+    _client.recordDiagnosticEvent(event, metadata: metadata);
   }
 
-  List<TelemetryBreadcrumb> get breadcrumbs => List.unmodifiable(_breadcrumbs);
-  bool get isInitialized => _isInitialized;
+  void recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false}) {
+    _client.recordError(error, stackTrace, reason: reason, fatal: fatal);
+  }
+
+  void setCustomTag(String key, String value) {
+    _client.setCustomTag(key, value);
+  }
+
+  void clearBreadcrumbs() {
+    _breadcrumbs.clear();
+    _eventLog.clear();
+  }
 }
