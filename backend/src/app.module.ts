@@ -1,4 +1,4 @@
-// NestJS/Express Modular Application Routing Root with Scheduling & Alarms
+// Express Modular Application Routing Root with Scheduling & Alarms
 import { Router } from 'express';
 import { authController } from './modules/auth/auth.controller';
 import { usersController } from './modules/users/users.controller';

@@ -31,7 +31,7 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
-    engine: 'Habitat Modular Backend Engine (v0.1)',
+    engine: 'Habitat Modular Backend Engine (v1.0.5)',
     timestamp: new Date().toISOString()
   });
 });
@@ -66,6 +66,10 @@ NotificationGateway.initialize(server);
 import { createVisionProvider } from './modules/verification/vision.factory';
 
 export function bootstrap() {
+  if (process.env.NODE_ENV === 'production' && process.env.VISION_PROVIDER === 'mock') {
+    throw new Error('[FATAL] Production startup rejected: VISION_PROVIDER cannot be "mock" in production environment.');
+  }
+
   DatabaseService.getDb();
   const { defaultUserId } = seedDatabase();
   console.log(`[DB] Database initialized & seeded. Default User ID: ${defaultUserId}`);
@@ -82,7 +86,7 @@ export function bootstrap() {
 
   server.listen(PORT, () => {
     console.log(`=======================================================`);
-    console.log(`🚀 HABITAT BACKEND ENGINE (v0.1) ACTIVE`);
+    console.log(`🚀 HABITAT BACKEND ENGINE (v1.0.5) ACTIVE`);
     console.log(`📡 REST API: http://localhost:${PORT}/api/v1`);
     console.log(`⚡ WebSocket: ws://localhost:${PORT}/ws`);
     console.log(`=======================================================`);

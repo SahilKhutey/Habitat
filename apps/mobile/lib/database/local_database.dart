@@ -1050,19 +1050,18 @@ class LocalDatabase {
 
   String exportAllDataAsJson() {
     final user = getOrCreateProfile();
-    final buffer = StringBuffer();
-    buffer.writeln('{');
-    buffer.writeln('  "version": "1.0.0",');
-    buffer.writeln('  "exportedAt": "${DateTime.now().toIso8601String()}",');
-    buffer.writeln('  "user": {"displayName": "${user.displayName}", "bio": "${user.bio}"},');
-    buffer.writeln('  "tasksCount": ${_tasks.length},');
-    buffer.writeln('  "attemptsCount": ${_attempts.length},');
-    buffer.writeln('  "waterEntriesCount": ${_waterEntries.length},');
-    buffer.writeln('  "mealEntriesCount": ${_mealEntries.length},');
-    buffer.writeln('  "napEntriesCount": ${_napEntries.length},');
-    buffer.writeln('  "streak": {"current": ${_streak.currentStreak}, "longest": ${_streak.longestStreak}}');
-    buffer.writeln('}');
-    return buffer.toString();
+    final data = {
+      'version': '1.0.5',
+      'exportedAt': DateTime.now().toIso8601String(),
+      'user': {'displayName': user.displayName, 'bio': user.bio},
+      'tasksCount': _tasks.length,
+      'attemptsCount': _attempts.length,
+      'waterEntriesCount': _waterEntries.length,
+      'mealEntriesCount': _mealEntries.length,
+      'napEntriesCount': _napEntries.length,
+      'streak': {'current': _streak.currentStreak, 'longest': _streak.longestStreak}
+    };
+    return jsonEncode(data);
   }
 
   String exportCompleteStateJson() {
