@@ -87,6 +87,24 @@ class MissionExecutionService {
     final task = _database.getTask(attempt.taskId);
     if (task == null) throw ArgumentError('Task not found: ${attempt.taskId}');
 
+    // Proof checksum validation (must be 64-character SHA-256)
+    if (submission.sha256Checksum.trim().length != 64) {
+      throw ArgumentError('Invalid proof SHA-256 checksum: ${submission.sha256Checksum}');
+    }
+
+    if (submission.filePath.trim().isEmpty) {
+      throw ArgumentError('Proof media file path cannot be empty');
+    }
+
+    // Prevent proof reuse across distinct tasks
+    final existingProofs = _database.getProofsForTask(attempt.taskId);
+    final alreadyUsed = existingProofs.any(
+      (p) => p.localPath == submission.filePath && p.attemptId != attemptId,
+    );
+    if (alreadyUsed) {
+      throw StateError('Proof media has already been submitted for another attempt.');
+    }
+
     _database.updateAttemptStatus(attemptId: attemptId, status: 'VERIFYING');
 
     final capture = CaptureResult(
@@ -135,6 +153,29 @@ class MissionExecutionService {
     final attempt = _database.getAttempt(attemptId);
     if (attempt == null) throw ArgumentError('Attempt not found: $attemptId');
 
+    // Strict Idempotency: if already completed, return existing success state without re-awarding
+    if (attempt.status == 'COMPLETED') {
+      final streak = _database.getStreak();
+      return MissionCompletionResult(
+        isSuccess: true,
+        earnedXp: 0,
+        currentStreak: streak.currentStreak,
+        message: 'Mission already completed.',
+      );
+    }
+
+    final task = _database.getTask(attempt.taskId);
+    if (task == null) throw ArgumentError('Task not found: ${attempt.taskId}');
+
+    // Proof requirement guard: must have verified proof attached
+    if (task.requiresPhoto || task.requiresVideo) {
+      final attemptProofs = _database.getProofsForAttempt(attemptId);
+      final hasVerifiedProof = attemptProofs.any((p) => p.isVerified && p.taskId == task.id);
+      if (!hasVerifiedProof) {
+        throw StateError('Cannot complete mission: valid verified proof is required.');
+      }
+    }
+
     // 1. Mark Attempt as Completed
     _database.updateAttemptStatus(
       attemptId: attemptId,
@@ -145,7 +186,7 @@ class MissionExecutionService {
     // 2. Mark Task as Completed in Database
     _database.completeTask(attempt.taskId);
 
-    // 3. Award XP (+20 XP standard mission bonus)
+    // 3. Award XP (+20 XP standard mission bonus, idempotent)
     const missionXp = 20;
     _database.awardXP(
       taskId: attempt.taskId,
@@ -154,10 +195,10 @@ class MissionExecutionService {
       eventType: 'MISSION_COMPLETED',
     );
 
-    // 4. Advance Streak
+    // 4. Advance Streak (idempotent per calendar day)
     _database.updateStreak();
 
-    // 5. Silence / Cancel Native Siren & Alarm
+    // 5. Silence / Cancel Native Siren, Alarm, and Pending 5-Minute Retry Timers
     if (attempt.alarmId.isNotEmpty) {
       await _alarmService.cancel(attempt.alarmId);
     }

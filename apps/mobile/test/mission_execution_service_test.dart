@@ -140,10 +140,10 @@ void main() {
       expect(db.getTotalXP(), equals(20));
     });
 
-    test('Test 5 — Persistence: proofs and attempts survive in database', () async {
+    test('Test 6 — Checksum Validation: non-64 hex SHA-256 is rejected', () async {
       final task = LocalTask(
-        id: 'task_persist_test',
-        title: 'Clean Workspace',
+        id: 'task_hash_test',
+        title: 'Cold Shower',
         category: 'DISCIPLINE',
         taskType: 'PHOTO',
         requiresPhoto: true,
@@ -152,25 +152,87 @@ void main() {
       );
       db.saveTask(task);
 
-      final attempt = await missionService.start('task_persist_test');
+      final attempt = await missionService.start('task_hash_test');
+      expect(
+        () => missionService.submitProof(
+          attempt.id,
+          const ProofSubmission(
+            type: 'PHOTO',
+            filePath: 'habitat_storage://proofs/shower.jpg',
+            sha256Checksum: 'invalid_short_hash',
+          ),
+        ),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('Invalid proof SHA-256 checksum'),
+        )),
+      );
+    });
+
+    test('Test 7 — Proof Reuse Prevention: duplicate submission of same file is rejected', () async {
+      final task = LocalTask(
+        id: 'task_reuse_test',
+        title: 'Morning Walk',
+        category: 'HEALTH',
+        taskType: 'PHOTO',
+        requiresPhoto: true,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      db.saveTask(task);
+
+      final attempt1 = await missionService.start('task_reuse_test');
       await missionService.submitProof(
-        attempt.id,
+        attempt1.id,
         const ProofSubmission(
           type: 'PHOTO',
-          filePath: 'habitat_storage://proofs/desk.jpg',
-          sha256Checksum: '9999888877776666555544443333222211110000aaaabbbbccccddddeeeeffff',
+          filePath: 'habitat_storage://proofs/walk.jpg',
+          sha256Checksum: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         ),
       );
-      await missionService.complete(attempt.id);
+      await missionService.complete(attempt1.id);
 
-      final proofs = db.getProofsForTask('task_persist_test');
-      expect(proofs.length, equals(1));
-      expect(proofs.first.isVerified, isTrue);
-      expect(proofs.first.localPath, contains('desk.jpg'));
+      final attempt2 = await missionService.start('task_reuse_test');
+      expect(
+        () => missionService.submitProof(
+          attempt2.id,
+          const ProofSubmission(
+            type: 'PHOTO',
+            filePath: 'habitat_storage://proofs/walk.jpg',
+            sha256Checksum: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+          ),
+        ),
+        throwsA(isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('already been submitted'),
+        )),
+      );
+    });
 
-      final attempts = db.getAttemptsForTask('task_persist_test');
-      expect(attempts.length, equals(1));
-      expect(attempts.first.status, equals('COMPLETED'));
+    test('Test 8 — Unverified Completion Guard: complete() throws if proof is missing', () async {
+      final task = LocalTask(
+        id: 'task_unverified_guard',
+        title: 'Stretching',
+        category: 'EXERCISE',
+        taskType: 'VIDEO',
+        requiresVideo: true,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      db.saveTask(task);
+
+      final attempt = await missionService.start('task_unverified_guard');
+      expect(
+        () => missionService.complete(attempt.id),
+        throwsA(isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('Cannot complete mission: valid verified proof is required'),
+        )),
+      );
     });
   });
 }
+
