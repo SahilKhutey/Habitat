@@ -51,5 +51,20 @@ void main() {
       expect(result.isPassed, isFalse);
       expect(result.failureReason, contains('empty checksum or zero bytes'));
     });
+
+    test('verifyProof() marks local integrity valid with serverVerificationPending', () async {
+      final validFile = CapturedProofFile(
+        filePath: 'test.jpg',
+        mimeType: 'image/jpeg',
+        byteSize: 1024 * 100,
+        sha256Checksum: 'a' * 64,
+        capturedAt: DateTime.now(),
+      );
+
+      final result = await engine.verifyProof(validFile, requiredType: 'PHOTO');
+      expect(result.isPassed, isTrue);
+      expect(result.details['localFormatValid'], isTrue);
+      expect(result.details['serverVerificationPending'], isTrue);
+    });
   });
 }

@@ -1,6 +1,7 @@
 // Habitat Native Camera, Media, SHA-256 Checksum & Verification Pipeline
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import '../../../features/proof/data/camera_service.dart';
 
 @immutable
 class CapturedProofFile {
@@ -63,23 +64,29 @@ abstract interface class ICameraProofPipeline {
 }
 
 class NativeCameraProofPipeline implements ICameraProofPipeline {
+  final ICameraService _cameraService;
+
+  NativeCameraProofPipeline({ICameraService? cameraService})
+      : _cameraService = cameraService ?? CameraService();
+
   @override
   Future<CapturedProofFile> capturePhotoProof({
     required String taskId,
     required String attemptId,
   }) async {
-    final timestamp = DateTime.now();
-    final mockBytes = utf8.encode('PHOTO_PROOF:$taskId:$attemptId:${timestamp.toIso8601String()}');
-    // Simulated SHA-256 hash
-    final hash = mockBytes.fold<int>(0, (prev, elem) => prev + elem).toRadixString(16).padLeft(64, 'a');
+    final result = await _cameraService.takePhoto(
+      taskId: taskId,
+      attemptId: attemptId,
+    );
 
     return CapturedProofFile(
-      filePath: 'habitat_storage://proofs/${taskId}_${attemptId}_photo.jpg',
-      mimeType: 'image/jpeg',
-      byteSize: mockBytes.length * 1024,
-      sha256Checksum: hash,
-      capturedAt: timestamp,
-      metadata: {'width': 1920, 'height': 1080, 'orientation': 'portrait'},
+      filePath: result.filePath,
+      mimeType: result.mimeType,
+      byteSize: result.byteSize,
+      sha256Checksum: result.sha256Checksum,
+      durationSeconds: result.durationSeconds,
+      capturedAt: result.capturedAt,
+      metadata: result.metadata,
     );
   }
 
@@ -89,22 +96,30 @@ class NativeCameraProofPipeline implements ICameraProofPipeline {
     required String attemptId,
     required int durationSeconds,
   }) async {
-    final timestamp = DateTime.now();
-    final mockBytes = utf8.encode('VIDEO_PROOF:$taskId:$attemptId:$durationSeconds:${timestamp.toIso8601String()}');
-    final hash = mockBytes.fold<int>(0, (prev, elem) => prev + elem).toRadixString(16).padLeft(64, 'b');
+    await _cameraService.startVideoRecording();
+    final result = await _cameraService.stopVideoRecording(
+      taskId: taskId,
+      attemptId: attemptId,
+    );
 
     return CapturedProofFile(
-      filePath: 'habitat_storage://proofs/${taskId}_${attemptId}_video.mp4',
-      mimeType: 'video/mp4',
-      byteSize: mockBytes.length * 4096,
-      sha256Checksum: hash,
-      durationSeconds: durationSeconds,
-      capturedAt: timestamp,
-      metadata: {'fps': 30, 'codec': 'h264', 'targetReps': 10},
+      filePath: result.filePath,
+      mimeType: result.mimeType,
+      byteSize: result.byteSize,
+      sha256Checksum: result.sha256Checksum,
+      durationSeconds: result.durationSeconds > 0 ? result.durationSeconds : durationSeconds,
+      capturedAt: result.capturedAt,
+      metadata: result.metadata,
     );
   }
 }
 
+/// Client-side proof format & integrity validator.
+///
+/// NOTE: MediaVerificationEngine validates local file format, size bounds,
+/// and SHA-256 integrity only. It does NOT perform neural anti-cheat, liveness,
+/// or repetition counting. Authoritative verification occurs server-side
+/// via POST /api/v1/proofs/:id/verify-real-vision.
 class MediaVerificationEngine {
   Future<VerificationResult> verifyProof(
     CapturedProofFile proofFile, {
@@ -122,16 +137,25 @@ class MediaVerificationEngine {
       }
       return const VerificationResult(
         isPassed: true,
-        confidenceScore: 0.94,
-        details: {'livenessScore': 0.96, 'repsVerified': true},
+        confidenceScore: 1.0,
+        details: {
+          'localFormatValid': true,
+          'serverVerificationPending': true,
+          'mediaType': 'VIDEO',
+        },
       );
     } else {
       // Photo verification
       return const VerificationResult(
         isPassed: true,
-        confidenceScore: 0.98,
-        details: {'livenessConfidence': 0.99, 'tamperDetected': false},
+        confidenceScore: 1.0,
+        details: {
+          'localFormatValid': true,
+          'serverVerificationPending': true,
+          'mediaType': 'PHOTO',
+        },
       );
     }
   }
 }
+
