@@ -1,5 +1,6 @@
 // Habitat Media Action Capture & Verification Service
 import 'package:flutter/foundation.dart';
+import '../../../../features/proof/data/camera_service.dart';
 
 @immutable
 class ActionResult {
@@ -25,21 +26,44 @@ abstract interface class MediaActionService {
   Future<ActionResult> capturePhoto();
   Future<ActionResult> captureVideo();
 
-  factory MediaActionService.create() {
-    return DefaultMediaActionService();
+  factory MediaActionService.create({ICameraService? cameraService}) {
+    return DefaultMediaActionService(cameraService: cameraService);
   }
 }
 
 class DefaultMediaActionService implements MediaActionService {
+  final ICameraService _cameraService;
+
+  DefaultMediaActionService({ICameraService? cameraService})
+      : _cameraService = cameraService ?? CameraService();
+
   @override
   Future<ActionResult> capturePhoto() async {
-    // In production, launches Camera capture HUD and processes frame with MoveNet
-    return const ActionResult(isSuccess: true, mediaPath: 'local://proof_photo.jpg', confidenceScore: 0.95);
+    try {
+      final res = await _cameraService.takePhoto(taskId: 'general', attemptId: 'default');
+      return ActionResult(
+        isSuccess: true,
+        mediaPath: res.filePath,
+        confidenceScore: 1.0,
+      );
+    } catch (e) {
+      return ActionResult.failure(e.toString());
+    }
   }
 
   @override
   Future<ActionResult> captureVideo() async {
-    // In production, records motion reps and verifies liveness
-    return const ActionResult(isSuccess: true, mediaPath: 'local://proof_video.mp4', confidenceScore: 0.92);
+    try {
+      await _cameraService.startVideoRecording();
+      final res = await _cameraService.stopVideoRecording(taskId: 'general', attemptId: 'default');
+      return ActionResult(
+        isSuccess: true,
+        mediaPath: res.filePath,
+        confidenceScore: 1.0,
+      );
+    } catch (e) {
+      return ActionResult.failure(e.toString());
+    }
   }
 }
+

@@ -1,6 +1,8 @@
 // Phase 19 Local-First SQLite Database Engine & Data Access Objects
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class LocalUser {
@@ -138,6 +140,22 @@ class LocalTask {
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
   };
+
+  factory LocalTask.fromMap(Map<String, dynamic> map) => LocalTask(
+    id: map['id'],
+    title: map['title'],
+    description: map['description'] ?? '',
+    category: map['category'] ?? 'HEALTH',
+    taskType: map['taskType'] ?? 'PHOTO',
+    difficulty: map['difficulty'] ?? 'MEDIUM',
+    requiresPhoto: map['requiresPhoto'] == 1 || map['requiresPhoto'] == true,
+    requiresVideo: map['requiresVideo'] == 1 || map['requiresVideo'] == true,
+    requiresVerification: map['requiresVerification'] == 1 || map['requiresVerification'] == true,
+    isCompleted: map['isCompleted'] == 1 || map['isCompleted'] == true,
+    active: map['active'] == 1 || map['active'] == true,
+    createdAt: DateTime.parse(map['createdAt']),
+    updatedAt: DateTime.parse(map['updatedAt']),
+  );
 }
 
 class LocalAlarm {
@@ -164,6 +182,32 @@ class LocalAlarm {
     this.nextTrigger,
     required this.createdAt,
   });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'taskId': taskId,
+    'scheduledTime': scheduledTime,
+    'enabled': enabled ? 1 : 0,
+    'repeatType': repeatType,
+    'repeatDays': repeatDays,
+    'retryIntervalMinutes': retryIntervalMinutes,
+    'maxRetries': maxRetries,
+    'nextTrigger': nextTrigger?.toIso8601String(),
+    'createdAt': createdAt.toIso8601String(),
+  };
+
+  factory LocalAlarm.fromMap(Map<String, dynamic> map) => LocalAlarm(
+    id: map['id'],
+    taskId: map['taskId'],
+    scheduledTime: map['scheduledTime'],
+    enabled: map['enabled'] == 1 || map['enabled'] == true,
+    repeatType: map['repeatType'] ?? 'DAILY',
+    repeatDays: (map['repeatDays'] as List<dynamic>?)?.map((e) => (e as num).toInt()).toList() ?? const [1, 2, 3, 4, 5, 6, 7],
+    retryIntervalMinutes: (map['retryIntervalMinutes'] as num?)?.toInt() ?? 5,
+    maxRetries: (map['maxRetries'] as num?)?.toInt() ?? 6,
+    nextTrigger: map['nextTrigger'] != null ? DateTime.parse(map['nextTrigger']) : null,
+    createdAt: DateTime.parse(map['createdAt']),
+  );
 }
 
 class LocalTaskAttempt {
@@ -184,6 +228,26 @@ class LocalTaskAttempt {
     required this.triggeredAt,
     this.completedAt,
   });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'taskId': taskId,
+    'alarmId': alarmId,
+    'attemptNumber': attemptNumber,
+    'status': status,
+    'triggeredAt': triggeredAt.toIso8601String(),
+    'completedAt': completedAt?.toIso8601String(),
+  };
+
+  factory LocalTaskAttempt.fromMap(Map<String, dynamic> map) => LocalTaskAttempt(
+    id: map['id'],
+    taskId: map['taskId'],
+    alarmId: map['alarmId'],
+    attemptNumber: (map['attemptNumber'] as num?)?.toInt() ?? 1,
+    status: map['status'] ?? 'SCHEDULED',
+    triggeredAt: DateTime.parse(map['triggeredAt']),
+    completedAt: map['completedAt'] != null ? DateTime.parse(map['completedAt']) : null,
+  );
 }
 
 class LocalProof {
@@ -206,6 +270,28 @@ class LocalProof {
     this.isVerified = false,
     required this.createdAt,
   });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'taskId': taskId,
+    'attemptId': attemptId,
+    'type': type,
+    'localPath': localPath,
+    'durationSeconds': durationSeconds,
+    'isVerified': isVerified ? 1 : 0,
+    'createdAt': createdAt.toIso8601String(),
+  };
+
+  factory LocalProof.fromMap(Map<String, dynamic> map) => LocalProof(
+    id: map['id'],
+    taskId: map['taskId'],
+    attemptId: map['attemptId'],
+    type: map['type'],
+    localPath: map['localPath'],
+    durationSeconds: (map['durationSeconds'] as num?)?.toInt() ?? 0,
+    isVerified: map['isVerified'] == 1 || map['isVerified'] == true,
+    createdAt: DateTime.parse(map['createdAt']),
+  );
 }
 
 class LocalXPEvent {
@@ -222,6 +308,22 @@ class LocalXPEvent {
     required this.amount,
     required this.createdAt,
   });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'eventType': eventType,
+    'taskId': taskId,
+    'amount': amount,
+    'createdAt': createdAt.toIso8601String(),
+  };
+
+  factory LocalXPEvent.fromMap(Map<String, dynamic> map) => LocalXPEvent(
+    id: map['id'],
+    eventType: map['eventType'],
+    taskId: map['taskId'],
+    amount: (map['amount'] as num?)?.toInt() ?? 0,
+    createdAt: DateTime.parse(map['createdAt']),
+  );
 }
 
 class LocalStreak {
@@ -234,6 +336,18 @@ class LocalStreak {
     this.longestStreak = 0,
     this.lastCompletedDate = '',
   });
+
+  Map<String, dynamic> toMap() => {
+    'currentStreak': currentStreak,
+    'longestStreak': longestStreak,
+    'lastCompletedDate': lastCompletedDate,
+  };
+
+  factory LocalStreak.fromMap(Map<String, dynamic> map) => LocalStreak(
+    currentStreak: (map['currentStreak'] as num?)?.toInt() ?? 0,
+    longestStreak: (map['longestStreak'] as num?)?.toInt() ?? 0,
+    lastCompletedDate: map['lastCompletedDate'] ?? '',
+  );
 }
 
 class LocalFeedback {
@@ -257,7 +371,7 @@ class LocalFeedback {
     required this.createdAt,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
     'id': id,
     'type': type,
     'title': title,
@@ -267,6 +381,19 @@ class LocalFeedback {
     'status': status,
     'createdAt': createdAt.toIso8601String(),
   };
+
+  Map<String, dynamic> toJson() => toMap();
+
+  factory LocalFeedback.fromMap(Map<String, dynamic> map) => LocalFeedback(
+    id: map['id'],
+    type: map['type'],
+    title: map['title'],
+    message: map['message'],
+    rating: (map['rating'] as num?)?.toInt() ?? 5,
+    screenshotPath: map['screenshotPath'],
+    status: map['status'] ?? 'PENDING',
+    createdAt: DateTime.parse(map['createdAt']),
+  );
 }
 
 class LocalWaterEntry {
@@ -275,6 +402,18 @@ class LocalWaterEntry {
   final DateTime recordedAt;
 
   LocalWaterEntry({required this.id, required this.milliliters, required this.recordedAt});
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'milliliters': milliliters,
+    'recordedAt': recordedAt.toIso8601String(),
+  };
+
+  factory LocalWaterEntry.fromMap(Map<String, dynamic> map) => LocalWaterEntry(
+    id: map['id'],
+    milliliters: (map['milliliters'] as num?)?.toInt() ?? 0,
+    recordedAt: DateTime.parse(map['recordedAt']),
+  );
 }
 
 class LocalMealEntry {
@@ -284,6 +423,20 @@ class LocalMealEntry {
   final String? notes;
 
   LocalMealEntry({required this.id, required this.type, required this.recordedAt, this.notes});
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'type': type,
+    'recordedAt': recordedAt.toIso8601String(),
+    'notes': notes,
+  };
+
+  factory LocalMealEntry.fromMap(Map<String, dynamic> map) => LocalMealEntry(
+    id: map['id'],
+    type: map['type'],
+    recordedAt: DateTime.parse(map['recordedAt']),
+    notes: map['notes'],
+  );
 }
 
 class LocalNapEntry {
@@ -295,6 +448,18 @@ class LocalNapEntry {
 
   bool get isRunning => endedAt == null;
   int get durationMinutes => (endedAt ?? DateTime.now()).difference(startedAt).inMinutes;
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'startedAt': startedAt.toIso8601String(),
+    'endedAt': endedAt?.toIso8601String(),
+  };
+
+  factory LocalNapEntry.fromMap(Map<String, dynamic> map) => LocalNapEntry(
+    id: map['id'],
+    startedAt: DateTime.parse(map['startedAt']),
+    endedAt: map['endedAt'] != null ? DateTime.parse(map['endedAt']) : null,
+  );
 }
 
 class LocalEventLog {
@@ -311,6 +476,22 @@ class LocalEventLog {
     required this.timestamp,
     this.metadata = const {},
   });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'eventType': eventType,
+    'entityId': entityId,
+    'timestamp': timestamp.toIso8601String(),
+    'metadata': metadata,
+  };
+
+  factory LocalEventLog.fromMap(Map<String, dynamic> map) => LocalEventLog(
+    id: map['id'],
+    eventType: map['eventType'],
+    entityId: map['entityId'],
+    timestamp: DateTime.parse(map['timestamp']),
+    metadata: Map<String, dynamic>.from(map['metadata'] ?? {}),
+  );
 }
 
 class LocalHealthLog {
@@ -344,6 +525,17 @@ class LocalHealthLog {
     'durationMinutes': durationMinutes,
     'note': note,
   };
+
+  factory LocalHealthLog.fromMap(Map<String, dynamic> map) => LocalHealthLog(
+    id: map['id'],
+    type: map['type'],
+    recordedAt: DateTime.parse(map['recordedAt']),
+    amount: (map['amount'] as num?)?.toDouble() ?? 0.0,
+    unit: map['unit'] ?? '',
+    mealType: map['mealType'],
+    durationMinutes: (map['durationMinutes'] as num?)?.toInt(),
+    note: map['note'] ?? '',
+  );
 }
 
 class DurableSyncEvent {
@@ -452,7 +644,15 @@ class LocalDatabase {
 
   final ValueNotifier<int> changes = ValueNotifier<int>(0);
 
-  void _notifyChanged() => changes.value++;
+  void _notifyChanged({bool immediate = false}) {
+    changes.value++;
+    _revision++;
+    if (immediate) {
+      flush();
+    } else {
+      _scheduleDebouncedSave();
+    }
+  }
 
   // Default MVP Template Tasks
   void initializeDefaultTemplates() {
@@ -472,7 +672,7 @@ class LocalDatabase {
     for (final t in templates) {
       _tasks[t.id] = t;
     }
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
 
   // Profile Management
@@ -493,7 +693,7 @@ class LocalDatabase {
       bio: bio,
       avatarUrl: avatarUrl,
     );
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
 
   // Tasks & Alarms
@@ -526,13 +726,13 @@ class LocalDatabase {
       isCompleted: true,
       updatedAt: DateTime.now(),
     );
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
 
   List<LocalAlarm> getAllAlarms() => _alarms.values.toList();
   void saveAlarm(LocalAlarm alarm) {
     _alarms[alarm.id] = alarm;
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
 
   // Attempts
@@ -541,7 +741,7 @@ class LocalDatabase {
   }
   void recordAttempt(LocalTaskAttempt attempt) {
     _attempts.add(attempt);
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
   void saveAttempt(LocalTaskAttempt attempt) {
     final idx = _attempts.indexWhere((a) => a.id == attempt.id);
@@ -550,7 +750,7 @@ class LocalDatabase {
     } else {
       _attempts.add(attempt);
     }
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
   void updateAttemptStatus({required String attemptId, required String status, DateTime? completedAt}) {
     final index = _attempts.indexWhere((attempt) => attempt.id == attemptId);
@@ -565,7 +765,7 @@ class LocalDatabase {
       triggeredAt: existing.triggeredAt,
       completedAt: completedAt ?? existing.completedAt,
     );
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
   List<LocalTaskAttempt> getAllAttempts() => List.unmodifiable(_attempts);
   List<LocalTaskAttempt> getAttemptsForTask(String taskId) =>
@@ -574,7 +774,7 @@ class LocalDatabase {
   // Proofs
   void recordProof(LocalProof proof) {
     _proofs.add(proof);
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
   void saveProof(LocalProof proof) => recordProof(proof);
   List<LocalProof> getProofsForTask(String taskId) =>
@@ -595,7 +795,7 @@ class LocalDatabase {
         amount: amount,
         createdAt: DateTime.now(),
       ));
-      _notifyChanged();
+      _notifyChanged(immediate: true);
     }
   }
 
@@ -617,7 +817,7 @@ class LocalDatabase {
       longestStreak: newStreak > _streak.longestStreak ? newStreak : _streak.longestStreak,
       lastCompletedDate: todayStr,
     );
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
 
   LocalStreak getStreak() => _streak;
@@ -865,6 +1065,232 @@ class LocalDatabase {
     return buffer.toString();
   }
 
+  String exportCompleteStateJson() {
+    final payload = {
+      'schemaVersion': _schemaVersion,
+      'exportedAt': DateTime.now().toIso8601String(),
+      'revision': _revision,
+      'currentUser': _currentUser?.toMap(),
+      'tasks': _tasks.values.map((t) => t.toMap()).toList(),
+      'alarms': _alarms.values.map((a) => a.toMap()).toList(),
+      'attempts': _attempts.map((a) => a.toMap()).toList(),
+      'proofs': _proofs.map((p) => p.toMap()).toList(),
+      'xpEvents': _xpEvents.map((e) => e.toMap()).toList(),
+      'waterEntries': _waterEntries.map((w) => w.toMap()).toList(),
+      'mealEntries': _mealEntries.map((m) => m.toMap()).toList(),
+      'napEntries': _napEntries.map((n) => n.toMap()).toList(),
+      'healthLogs': _healthLogs.map((h) => h.toMap()).toList(),
+      'eventLogs': _eventLogs.map((e) => e.toMap()).toList(),
+      'feedbackList': _feedbackList.map((f) => f.toMap()).toList(),
+      'syncQueue': _syncQueue.map((s) => s.toMap()).toList(),
+      'streak': _streak.toMap(),
+      'waterGoal': _waterGoal,
+      'unlockedAchievements': _unlockedAchievements.toList(),
+      'graceTokens': _graceTokens,
+      'preferences': _preferences,
+      'notificationSettings': _notificationSettings,
+      'appearanceSettings': _appearanceSettings,
+      'privacySettings': _privacySettings,
+      'securitySettings': _securitySettings,
+    };
+    return jsonEncode(payload);
+  }
+
+  Map<String, dynamic> _migrateSchema(Map<String, dynamic> raw) {
+    var data = Map<String, dynamic>.from(raw);
+    int version = (data['schemaVersion'] as num?)?.toInt() ?? 1;
+
+    // v1 -> v2 migration: ensure repeatDays defaults if absent
+    if (version < 2) {
+      if (data['alarms'] is List) {
+        for (final a in data['alarms']) {
+          if (a is Map && a['repeatDays'] == null) {
+            a['repeatDays'] = [1, 2, 3, 4, 5, 6, 7];
+          }
+        }
+      }
+      version = 2;
+    }
+
+    // v2 -> v3 migration: ensure proofs have isVerified default
+    if (version < 3) {
+      if (data['proofs'] is List) {
+        for (final p in data['proofs']) {
+          if (p is Map && p['isVerified'] == null) {
+            p['isVerified'] = 0;
+          }
+        }
+      }
+      version = 3;
+    }
+
+    data['schemaVersion'] = _schemaVersion;
+    return data;
+  }
+
+  void restoreFromStateJson(String jsonStr) {
+    if (jsonStr.isEmpty) return;
+    try {
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is! Map<String, dynamic>) return;
+
+      final migrated = _migrateSchema(decoded);
+
+      if (migrated['currentUser'] != null) {
+        _currentUser = LocalUser.fromMap(Map<String, dynamic>.from(migrated['currentUser']));
+      }
+
+      _tasks.clear();
+      if (migrated['tasks'] is List) {
+        for (final item in migrated['tasks']) {
+          final t = LocalTask.fromMap(Map<String, dynamic>.from(item));
+          _tasks[t.id] = t;
+        }
+      }
+
+      _alarms.clear();
+      if (migrated['alarms'] is List) {
+        for (final item in migrated['alarms']) {
+          final a = LocalAlarm.fromMap(Map<String, dynamic>.from(item));
+          _alarms[a.id] = a;
+        }
+      }
+
+      _attempts.clear();
+      if (migrated['attempts'] is List) {
+        for (final item in migrated['attempts']) {
+          _attempts.add(LocalTaskAttempt.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _proofs.clear();
+      if (migrated['proofs'] is List) {
+        for (final item in migrated['proofs']) {
+          _proofs.add(LocalProof.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _xpEvents.clear();
+      if (migrated['xpEvents'] is List) {
+        for (final item in migrated['xpEvents']) {
+          _xpEvents.add(LocalXPEvent.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _waterEntries.clear();
+      if (migrated['waterEntries'] is List) {
+        for (final item in migrated['waterEntries']) {
+          _waterEntries.add(LocalWaterEntry.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _mealEntries.clear();
+      if (migrated['mealEntries'] is List) {
+        for (final item in migrated['mealEntries']) {
+          _mealEntries.add(LocalMealEntry.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _napEntries.clear();
+      if (migrated['napEntries'] is List) {
+        for (final item in migrated['napEntries']) {
+          _napEntries.add(LocalNapEntry.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _healthLogs.clear();
+      if (migrated['healthLogs'] is List) {
+        for (final item in migrated['healthLogs']) {
+          _healthLogs.add(LocalHealthLog.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _eventLogs.clear();
+      if (migrated['eventLogs'] is List) {
+        for (final item in migrated['eventLogs']) {
+          _eventLogs.add(LocalEventLog.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _feedbackList.clear();
+      if (migrated['feedbackList'] is List) {
+        for (final item in migrated['feedbackList']) {
+          _feedbackList.add(LocalFeedback.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _syncQueue.clear();
+      if (migrated['syncQueue'] is List) {
+        for (final item in migrated['syncQueue']) {
+          _syncQueue.add(DurableSyncEvent.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      if (migrated['streak'] != null) {
+        _streak = LocalStreak.fromMap(Map<String, dynamic>.from(migrated['streak']));
+      }
+
+      if (migrated['waterGoal'] != null) {
+        _waterGoal = (migrated['waterGoal'] as num).toInt();
+      }
+
+      if (migrated['unlockedAchievements'] is List) {
+        _unlockedAchievements.clear();
+        for (final a in migrated['unlockedAchievements']) {
+          _unlockedAchievements.add(a.toString());
+        }
+      }
+
+      if (migrated['graceTokens'] != null) {
+        _graceTokens = (migrated['graceTokens'] as num).toInt();
+      }
+
+      if (migrated['preferences'] is Map) {
+        _preferences = Map<String, dynamic>.from(migrated['preferences']);
+      }
+      if (migrated['notificationSettings'] is Map) {
+        _notificationSettings = Map<String, dynamic>.from(migrated['notificationSettings']);
+      }
+      if (migrated['appearanceSettings'] is Map) {
+        _appearanceSettings = Map<String, dynamic>.from(migrated['appearanceSettings']);
+      }
+      if (migrated['privacySettings'] is Map) {
+        _privacySettings = Map<String, dynamic>.from(migrated['privacySettings']);
+      }
+      if (migrated['securitySettings'] is Map) {
+        _securitySettings = Map<String, dynamic>.from(migrated['securitySettings']);
+      }
+
+      _revision = (migrated['revision'] as num?)?.toInt() ?? _revision;
+      changes.value++;
+    } catch (_) {}
+  }
+
+  // Disk Persistence
+  Future<void> loadFromDisk() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = prefs.getString('habitat_local_db_v3');
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        restoreFromStateJson(jsonStr);
+        return;
+      }
+    } catch (_) {}
+
+    // If storage was empty or failed, initialize default templates
+    if (_tasks.isEmpty) {
+      initializeDefaultTemplates();
+    }
+  }
+
+  Future<void> saveToDisk() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = exportCompleteStateJson();
+      await prefs.setString('habitat_local_db_v3', jsonStr);
+    } catch (_) {}
+  }
+
   // Event Ledger
   void recordEvent({
     required String eventType,
@@ -892,7 +1318,6 @@ class LocalDatabase {
   List<DurableSyncEvent> get syncQueue => List.unmodifiable(_syncQueue);
 
   void _scheduleDebouncedSave() {
-    _revision++;
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 250), () {
       flush();
@@ -905,17 +1330,17 @@ class LocalDatabase {
     _lastSavedAt = DateTime.now();
 
     // 1. Backup previous primary snapshot before replacing
-    final previousSnapshot = exportAllDataAsJson();
+    final previousSnapshot = exportCompleteStateJson();
     _backupSnapshot = previousSnapshot;
 
-    // 2. Persist new primary state
-    _notifyChanged();
+    // 2. Persist to disk
+    await saveToDisk();
   }
 
   bool recoverFromBackup() {
     if (_backupSnapshot == null || _backupSnapshot!.isEmpty) return false;
     try {
-      _notifyChanged();
+      restoreFromStateJson(_backupSnapshot!);
       return true;
     } catch (_) {
       return false;
@@ -937,7 +1362,6 @@ class LocalDatabase {
         createdAt: DateTime.now(),
       ));
       _notifyChanged();
-      _scheduleDebouncedSave();
     }
   }
 
@@ -946,7 +1370,6 @@ class LocalDatabase {
   void markSyncEventAcknowledged(String idempotencyKey) {
     _syncQueue.removeWhere((e) => e.idempotencyKey == idempotencyKey);
     _notifyChanged();
-    _scheduleDebouncedSave();
   }
 
   void incrementSyncEventRetry(String idempotencyKey) {
@@ -963,7 +1386,6 @@ class LocalDatabase {
         createdAt: ev.createdAt,
       );
       _notifyChanged();
-      _scheduleDebouncedSave();
     }
   }
 
@@ -986,6 +1408,7 @@ class LocalDatabase {
     _revision = 1;
     _lastSavedAt = DateTime.now();
     initializeDefaultTemplates();
-    _notifyChanged();
+    _notifyChanged(immediate: true);
   }
 }
+
