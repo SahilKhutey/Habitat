@@ -1,11 +1,23 @@
 // Native Alarm & Local 5-Minute Retry Service
 import 'package:flutter/services.dart';
 
+class ScheduleAlarmResult {
+  final bool isScheduled;
+  final bool isExact;
+  final String? failureReason;
+
+  const ScheduleAlarmResult({
+    required this.isScheduled,
+    required this.isExact,
+    this.failureReason,
+  });
+}
+
 class NativeAlarmService {
   static const MethodChannel _channel = MethodChannel('habitat/native_alarm');
 
-  /// Schedules an exact OS wake-up alarm
-  static Future<bool> scheduleExactAlarm({
+  /// Schedules an exact OS wake-up alarm with native result status
+  static Future<ScheduleAlarmResult> scheduleExactAlarm({
     required String missionId,
     required String taskTitle,
     required DateTime triggerTime,
@@ -13,18 +25,28 @@ class NativeAlarmService {
     int attemptIndex = 1,
   }) async {
     try {
-      final success = await _channel.invokeMethod<bool>('scheduleExactAlarm', {
+      final res = await _channel.invokeMapMethod<String, dynamic>('scheduleExactAlarm', {
         'missionId': missionId,
         'taskTitle': taskTitle,
         'triggerEpochMs': triggerTime.millisecondsSinceEpoch,
         'sirenVolume': sirenVolume,
         'attemptIndex': attemptIndex,
       });
-      return success ?? false;
+      final scheduled = res?['scheduled'] as bool? ?? true;
+      final exact = res?['exact'] as bool? ?? false;
+      final reason = res?['reason'] as String?;
+      return ScheduleAlarmResult(
+        isScheduled: scheduled,
+        isExact: exact,
+        failureReason: reason,
+      );
     } catch (e) {
       // Fallback for web or testing environments
-      print('[NativeAlarmService] Channel error (fallback active): $e');
-      return true;
+      return ScheduleAlarmResult(
+        isScheduled: true,
+        isExact: false,
+        failureReason: 'FALLBACK_ACTIVE: $e',
+      );
     }
   }
 
