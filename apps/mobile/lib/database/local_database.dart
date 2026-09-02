@@ -404,6 +404,7 @@ class LocalDatabase {
   final List<LocalEventLog> _eventLogs = [];
   final List<LocalFeedback> _feedbackList = [];
   final List<DurableSyncEvent> _syncQueue = [];
+  LocalStreak _streak = LocalStreak();
   int _waterGoal = 2000;
   final Set<String> _unlockedAchievements = {'FIRST_STEP'};
   int _graceTokens = 1;
