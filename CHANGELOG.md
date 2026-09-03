@@ -2,6 +2,33 @@
 
 All notable changes across development phases are documented in this file.
 
+## [1.1.0] - 2026-09-03
+
+### Phase 22: Mock-to-Real Migration & Production Hardening
+- Strictly eradicated all production mocks, fake mission data, simulated alarms, and placeholder XP.
+- Built fail-closed vision factory blocking bootstrap if `VISION_PROVIDER=mock` in production.
+- Created `npm run verify:no-production-mocks` validation script.
+
+### Phase 23: Core Mission Runtime Services
+- Implemented `TaskLifecycleService`, `EventLedger`, and `LocalDatabase` SQLite persistence layer.
+- Added append-only event ledger and durable sync queues for network-optional operation.
+
+### Phase 24: Real Verification Engine Pipeline
+- Implemented `ProofValidator` enforcing MIME, non-zero duration, file checksum, and cryptographic nonces.
+- Integrated bounded `FFmpegFrameExtractor` (10 FPS) and MoveNet Lightning 17-keypoint pose estimation.
+- Built biomechanical push-up rep counter FSM, multi-signal liveness analysis, and tri-state decision engine (`ACCEPT`/`REVIEW`/`REJECT`).
+
+### Phase 26: Real UI Integration & Zero-Mock Presentation Layer
+- Connected Home, Tasks, Health, Progress, and Profile screens to local SQLite database and live backend APIs.
+- Built real-time hydration logging with dynamic percentage goal calculation.
+- Eliminated all fake completion actions; enforced proof capture boundaries.
+
+### Phase 27: Virtual Android Emulator Testing (API 36)
+- Modernized Android Gradle 8 toolchain with NDK `25.1.8937393` and CMake `3.22.1`.
+- Built Habitat debug APK (156.5 MB) and executed on Android 16 (API 36) emulator.
+- Reverse-bridged host backend on port 4000 via ADB; verified touch inputs, reactive state writes, and screen flows.
+- 0 Flutter compilation/lint errors (`flutter analyze lib`); 23/23 Flutter integration tests passing.
+
 ---
 
 ## [1.0.0] - 2026-08-29
