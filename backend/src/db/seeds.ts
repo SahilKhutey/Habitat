@@ -136,6 +136,8 @@ export const STARTER_TEMPLATES = [
   }
 ];
 
+import { AuthSecurity } from '../modules/auth/auth.security';
+
 export function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
@@ -154,17 +156,17 @@ export function seedDatabase(): { defaultUserId: string } {
 
     db.prepare(`
       INSERT INTO users (id, email, password_hash, display_name, timezone, discipline_score, autonomy_level, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, 85, 2, ?, ?)
+      VALUES (?, ?, ?, ?, ?, 100, 1, ?, ?)
     `).run(defaultUserId, 'alex@habitat.discipline', defaultPasswordHash, 'Alex Mercer', 'America/New_York', now, now);
 
     db.prepare(`
       INSERT INTO streaks (user_id, current_streak, longest_streak, grace_tokens, updated_at)
-      VALUES (?, 12, 14, 1, ?)
+      VALUES (?, 1, 1, 1, ?)
     `).run(defaultUserId, now);
 
     db.prepare(`
       INSERT INTO xp_transactions (id, user_id, amount, reason, created_at)
-      VALUES (?, ?, 2450, 'INITIAL_SEEDED_XP', ?)
+      VALUES (?, ?, 100, 'NEW_RECRUIT_BONUS', ?)
     `).run(uuidv4(), defaultUserId, now);
   }
 
@@ -255,6 +257,38 @@ export function seedDatabase(): { defaultUserId: string } {
   insertAudio.run('audio-spartan', 'Spartan War Siren', 880, 40.0, 'EXPONENTIAL', 200, now);
   insertAudio.run('audio-gamma', 'Gamma 40Hz Prefrontal Ignition', 432, 40.0, 'STROBE_PULSE', 150, now);
   insertAudio.run('audio-shockwave', 'Sub-Bass Kinetic Shockwave', 120, 25.0, 'EXPONENTIAL', 300, now);
+
+  // 6. Seed Default Active Alarms & Hydration for Recruit (Runtime only, preserving clean state in unit tests)
+  if (defaultUserId && process.env.NODE_ENV !== 'test') {
+    const bedTask = db.prepare("SELECT id FROM tasks WHERE slug = 'make-bed' LIMIT 1").get() as { id: string } | undefined;
+    const pushupTask = db.prepare("SELECT id FROM tasks WHERE slug = 'pushups-10' LIMIT 1").get() as { id: string } | undefined;
+
+    const insertAlarm = db.prepare(`
+      INSERT OR IGNORE INTO alarms (id, user_id, task_id, time_of_day, timezone, repeat_days, discipline_mode, retry_interval_minutes, is_enabled, created_at, updated_at)
+      VALUES (?, ?, ?, ?, 'America/New_York', '[1,2,3,4,5]', 'DISCIPLINE', 5, 1, ?, ?)
+    `);
+
+    if (pushupTask) {
+      insertAlarm.run('alarm-morning-pushup', defaultUserId, pushupTask.id, '06:30:00', now, now);
+    }
+    if (bedTask) {
+      insertAlarm.run('alarm-morning-bed', defaultUserId, bedTask.id, '07:00:00', now, now);
+    }
+
+    // Seed Initial Morning Hydration
+    db.prepare(`
+      INSERT OR IGNORE INTO hydration_entries (id, user_id, amount_ml, timestamp, source, created_at)
+      VALUES (?, ?, 500, ?, 'APP', ?)
+    `).run('hydration-morning-water', defaultUserId, now, now);
+  }
+
+  // 7. Seed Initial Welcome Journal Entry
+  if (defaultUserId) {
+    db.prepare(`
+      INSERT OR IGNORE INTO journal_entries (id, user_id, title, content, rating, tags, created_at, updated_at)
+      VALUES (?, ?, 'Day 1: The Contract', 'Commitment established. Morning inertia will be confronted with physical action. No snooze button. No excuses.', 5, '["discipline","day1"]', ?, ?)
+    `).run('journal-welcome-entry', defaultUserId, now, now);
+  }
 
   return { defaultUserId };
 }

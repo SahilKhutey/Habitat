@@ -71,8 +71,8 @@ describe('Phase 13 Acceptance Gate: Health, Exercise & Wellness Discipline Layer
   });
 
   it('Gate 3: Sleep Session Duration & Normalization: Calculates sleep hours and validates timestamps', () => {
-    const start = new Date('2026-08-26T22:30:00.000Z');
-    const end = new Date('2026-08-27T06:30:00.000Z'); // 8 hours = 28,800 sec
+    const start = new Date(Date.now() - 10 * 3600 * 1000);
+    const end = new Date(Date.now() - 2 * 3600 * 1000); // 8 hours = 28,800 sec
 
     const session = SleepService.logSleep({
       userId,

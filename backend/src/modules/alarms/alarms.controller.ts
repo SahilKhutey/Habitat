@@ -230,7 +230,11 @@ alarmsController.get('/next', (req: Request, res: Response) => {
 
 // GET /api/v1/alarms - List user alarms
 alarmsController.get('/', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId && req.query.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const alarms = AlarmsService.getAll(userId);
   res.json({ success: true, count: alarms.length, data: alarms });
 });
@@ -254,8 +258,12 @@ alarmsController.post('/', (req: Request, res: Response) => {
       return;
     }
 
+    const db = DatabaseService.getDb();
+    const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+    const resolvedUserId = (userId && userId !== 'default-user') ? userId : (defaultUser?.id || 'default-user');
+
     const alarm = AlarmsService.create({
-      userId: userId || 'default-user',
+      userId: resolvedUserId,
       taskId,
       timeOfDay,
       timezone,

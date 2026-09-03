@@ -294,35 +294,55 @@ export const gamificationController = Router();
 
 // GET /api/v1/gamification/profile
 gamificationController.get('/profile', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId && req.query.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const overview = GamificationService.getOverview(userId);
   res.json({ success: true, data: overview });
 });
 
 // GET /api/v1/gamification/overview
 gamificationController.get('/overview', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId && req.query.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const overview = GamificationService.getOverview(userId);
   res.json({ success: true, data: overview });
 });
 
 // GET /api/v1/gamification/xp
 gamificationController.get('/xp', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId && req.query.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const ledger = GamificationService.getLedger(userId);
   res.json({ success: true, data: ledger });
 });
 
 // GET /api/v1/gamification/ledger
 gamificationController.get('/ledger', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId && req.query.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const ledger = GamificationService.getLedger(userId);
   res.json({ success: true, data: ledger });
 });
 
 // GET /api/v1/gamification/level
 gamificationController.get('/level', (req: Request, res: Response) => {
-  const userId = (req.query.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId && req.query.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const totalXp = XpEngine.getTotalXp(userId);
   const levelProgress = LevelEngine.calculateLevel(totalXp);
   res.json({ success: true, data: levelProgress });

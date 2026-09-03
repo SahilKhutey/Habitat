@@ -39,6 +39,8 @@ export class AuthSecurity {
    */
   public static verifyPassword(password: string, stored: string): boolean {
     if (!stored || !stored.includes(':')) {
+      const sha256 = crypto.createHash('sha256').update(password).digest('hex');
+      if (stored === sha256) return true;
       // In test mode only, allow legacy test hashes
       if (process.env.NODE_ENV === 'test') {
         return password === stored || stored === 'hashed_password_123';

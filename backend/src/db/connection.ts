@@ -851,6 +851,20 @@ export class DatabaseService {
         created_at TEXT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS journal_entries (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        title TEXT,
+        content TEXT NOT NULL,
+        rating INTEGER DEFAULT 5,
+        tags TEXT DEFAULT '[]',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_journal_user ON journal_entries(user_id, created_at);
+
       CREATE INDEX IF NOT EXISTS idx_behavior_events ON behavior_events(user_id, timestamp);
       CREATE INDEX IF NOT EXISTS idx_discipline_profiles_user ON discipline_profiles(user_id);
       CREATE INDEX IF NOT EXISTS idx_behavior_patterns_user ON behavior_patterns(user_id, pattern_type);

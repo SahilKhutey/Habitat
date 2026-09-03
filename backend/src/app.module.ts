@@ -26,6 +26,7 @@ import { verificationController } from './modules/verification/verification.cont
 import { intelligenceController } from './modules/intelligence/presentation/intelligence.controller';
 import { socialController } from './modules/social/social.controller';
 import { storageController } from './modules/storage/storage.controller';
+import { journalController } from './modules/journal/journal.controller';
 
 export const appRouter = Router();
 
@@ -61,3 +62,4 @@ appRouter.use('/lockdown', lockdownController);
 appRouter.use('/mesh', meshController);
 appRouter.use('/intelligence', intelligenceController);
 appRouter.use('/social', socialController);
+appRouter.use('/journal', journalController);

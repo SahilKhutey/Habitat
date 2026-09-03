@@ -1143,3 +1143,20 @@ model FeatureFlag {
 
   @@map("feature_flags")
 }
+
+model JournalEntry {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String?  @default("Daily Reflection")
+  content   String
+  rating    Int      @default(5)
+  tags      String?  @default("[]")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("journal_entries")
+}
+

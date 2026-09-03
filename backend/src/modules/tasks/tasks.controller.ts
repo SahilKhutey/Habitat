@@ -104,8 +104,8 @@ export class TasksService {
     const limit = Math.min(50, filters.limit || 20);
     const offset = ((filters.page || 1) - 1) * limit;
 
-    let query = 'SELECT * FROM tasks WHERE user_id = ?';
-    const params: any[] = [userId];
+    let query = userId ? 'SELECT * FROM tasks WHERE (user_id = ? OR user_id IS NULL)' : 'SELECT * FROM tasks WHERE 1=1';
+    const params: any[] = userId ? [userId] : [];
 
     if (filters.status && filters.status !== 'ALL') {
       query += ' AND status = ?';

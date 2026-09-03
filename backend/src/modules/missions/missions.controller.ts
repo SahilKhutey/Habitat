@@ -205,6 +205,27 @@ export class MissionsService {
     return this.mapToMission(row);
   }
 
+  public static getAll(userId?: string) {
+    const db = DatabaseService.getDb();
+    let query = `
+      SELECT 
+        m.id, m.user_id, m.alarm_id, m.task_id, m.scheduled_at, m.triggered_at, 
+        m.completed_at, m.status, m.attempt_count, m.resistance_seconds, m.discipline_mode,
+        t.title as task_title, t.category as task_category, t.proof_type as task_proof_type,
+        t.base_xp as task_base_xp, t.icon_name as task_icon_name
+      FROM missions m
+      LEFT JOIN tasks t ON m.task_id = t.id
+    `;
+    const params: any[] = [];
+    if (userId) {
+      query += ' WHERE m.user_id = ?';
+      params.push(userId);
+    }
+    query += ' ORDER BY m.created_at DESC LIMIT 50';
+    const rows = db.prepare(query).all(...params) as any[];
+    return rows.map(this.mapToMission);
+  }
+
   private static mapToMission(row: any) {
     return {
       id: row.id,
@@ -230,6 +251,42 @@ export class MissionsService {
 import { authGuard, AuthenticatedRequest } from '../../common/guards/auth.guard';
 
 export const missionsController = Router();
+
+// GET /api/v1/missions - List all missions (public or authenticated)
+missionsController.get('/', (req: Request, res: Response) => {
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query.userId as string) || (req as any).user?.userId || defaultUser?.id;
+  const missions = MissionsService.getAll(userId);
+  res.json({ success: true, count: missions.length, data: missions });
+});
+
+// POST /api/v1/missions - Trigger or schedule a mission directly
+missionsController.post('/', (req: Request, res: Response) => {
+  try {
+    const db = DatabaseService.getDb();
+    const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+    const userId = req.body.userId || (req as any).user?.userId || defaultUser?.id;
+    const { alarmId, taskId, disciplineMode, scheduledAt, idempotencyKey } = req.body;
+    if (!taskId) {
+      res.status(400).json({ success: false, error: 'taskId is required' });
+      return;
+    }
+
+    const mission = MissionsService.triggerMission({
+      userId,
+      alarmId,
+      taskId,
+      disciplineMode,
+      scheduledAt,
+      idempotencyKey
+    });
+
+    res.status(201).json({ success: true, data: mission });
+  } catch (e: any) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
 
 // GET /api/v1/missions/current
 missionsController.get('/current', authGuard, (req: AuthenticatedRequest, res: Response) => {

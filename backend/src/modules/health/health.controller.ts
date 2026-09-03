@@ -245,7 +245,11 @@ healthController.post('/exercise', (req: Request, res: Response) => {
 
 // GET /api/v1/health/hydration - Query hydration progress
 healthController.get('/hydration', (req: Request, res: Response) => {
-  const userId = (req.query?.userId as string) || 'default-user';
+  const db = DatabaseService.getDb();
+  const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+  const userId = (req.query?.userId && req.query?.userId !== 'default-user')
+    ? (req.query.userId as string)
+    : (defaultUser?.id || 'default-user');
   const targetMl = parseInt(String(req.query?.targetMl || '2500'), 10);
   const dateStr = req.query?.date as string | undefined;
   const hydration = HydrationService.getTodayHydration(userId, targetMl, dateStr);
@@ -255,7 +259,11 @@ healthController.get('/hydration', (req: Request, res: Response) => {
 // POST /api/v1/health/hydration - Log hydration
 healthController.post('/hydration', (req: Request, res: Response) => {
   try {
-    const userId = req.body?.userId || (req.query?.userId as string) || 'default-user';
+    const db = DatabaseService.getDb();
+    const defaultUser = db.prepare('SELECT id FROM users LIMIT 1').get() as any;
+    const userId = (req.body?.userId && req.body?.userId !== 'default-user')
+      ? req.body.userId
+      : (defaultUser?.id || 'default-user');
     const amountMl = Number(req.body?.amountMl || req.body?.amount);
     if (!amountMl || isNaN(amountMl)) {
       return res.status(400).json({ success: false, error: 'INVALID_AMOUNT: amountMl is required' });

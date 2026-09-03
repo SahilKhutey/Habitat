@@ -1,5 +1,5 @@
 // User Profile, Preferences & Device Token Controller
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import { DatabaseService } from '../../db/connection';
 import { authGuard, AuthenticatedRequest } from '../../common/guards/auth.guard';
 import { v4 as uuidv4 } from 'uuid';
@@ -103,6 +103,13 @@ export class UserService {
 }
 
 export const usersController = Router();
+
+// GET /api/v1/users/current
+usersController.get('/current', (req: Request, res: Response) => {
+  const db = DatabaseService.getDb();
+  const user = db.prepare('SELECT id, email, display_name, timezone, discipline_score, autonomy_level FROM users LIMIT 1').get();
+  res.json({ success: true, data: user });
+});
 
 // GET /api/v1/users/profile
 usersController.get('/profile', authGuard, (req: AuthenticatedRequest, res: Response) => {
