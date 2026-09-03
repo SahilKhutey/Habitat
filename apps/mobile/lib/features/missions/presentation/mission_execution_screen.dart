@@ -183,7 +183,7 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
                           ),
                           Text(
                             'Required Proof: ${isVideo ? "Motion Video (>=3s)" : "Photo Evidence"}',
-                            style: HabitatTypography.bodySmall.copyWith(
+                            style: HabitatTypography.bodySmallStyle.copyWith(
                               color: HabitatColors.darkTextSecondary,
                             ),
                           ),

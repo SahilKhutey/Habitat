@@ -29,7 +29,7 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
   @override
   void initState() {
     super.initState();
-    _cameraService.initialize(preferredCamera: 'FRONT');
+    _cameraService.initialize();
   }
 
   @override
@@ -41,7 +41,7 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
 
   void _toggleRecording() async {
     if (!_isRecording) {
-      await _cameraService.startRecording();
+      await _cameraService.startVideoRecording();
       setState(() {
         _isRecording = true;
         _secondsRecorded = 0;
@@ -53,7 +53,8 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
       });
     } else {
       _timer?.cancel();
-      final path = await _cameraService.stopRecording();
+      final result = await _cameraService.stopVideoRecording(taskId: widget.missionId, attemptId: widget.missionId);
+      final path = result.filePath;
       setState(() => _isRecording = false);
 
       if (mounted) {

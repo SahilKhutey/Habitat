@@ -4,7 +4,7 @@ import '../../tokens/colors.dart';
 import '../../tokens/spacing.dart';
 import '../../tokens/radii.dart';
 
-enum AppButtonVariant { primary, secondary, tertiary, danger, success, outline, icon, text }
+enum AppButtonVariant { primary, secondary, tertiary, danger, success, outline, icon, text, critical }
 
 class AppButton extends StatelessWidget {
   final String label;
@@ -98,6 +98,7 @@ class AppButton extends StatelessWidget {
         fg = Colors.black;
         break;
       case AppButtonVariant.danger:
+      case AppButtonVariant.critical:
         bg = AppColors.crimsonAlert;
         fg = Colors.white;
         break;

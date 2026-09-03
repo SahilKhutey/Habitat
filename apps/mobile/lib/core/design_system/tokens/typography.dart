@@ -36,6 +36,7 @@ abstract final class HabitatTypography {
     fontSize: title,
     fontWeight: FontWeight.w700,
   );
+  static const TextStyle titleMedium = titleStyle;
 
   static const TextStyle subtitleStyle = TextStyle(
     fontFamily: fontHeading,

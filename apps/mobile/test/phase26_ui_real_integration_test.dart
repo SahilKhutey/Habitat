@@ -9,6 +9,8 @@ import 'package:habitat_mobile/features/journal/application/journal_controller.d
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late LocalDatabase db;
   late TaskRepository taskRepo;
   late TaskService taskService;
@@ -20,7 +22,7 @@ void main() {
     db = LocalDatabase.instance;
     db.resetAllData();
     taskRepo = TaskRepository(db);
-    taskService = TaskService(taskRepo);
+    taskService = TaskService(db);
     taskController = TaskController(taskService: taskService, database: db);
     progressionController = ProgressionController(database: db);
     journalController = JournalController(database: db);
@@ -38,9 +40,9 @@ void main() {
       expect(taskController.tasks.isNotEmpty, isTrue);
       final initialCount = taskController.tasks.length;
 
-      // Filter by EXERCISE
-      taskController.setFilter('EXERCISE');
-      expect(taskController.tasks.every((t) => t.category == 'EXERCISE'), isTrue);
+      // Filter by ACTIVE
+      taskController.setFilter('ACTIVE');
+      expect(taskController.tasks.every((t) => t.active), isTrue);
 
       // Back to ALL
       taskController.setFilter('ALL');
@@ -115,18 +117,19 @@ void main() {
   });
 
   group('Phase 26.4 - Mission Completion Boundary (No Synthetic Completion)', () {
-    test('mission cannot be marked completed without proof verification', async () {
+    test('mission cannot be marked completed without proof verification', () async {
       final executionService = MissionExecutionService(database: db);
       final tasks = taskService.getAllTasks();
       final task = tasks.first;
 
       final attempt = await executionService.start(task.id);
-      expect(attempt.status, equals('IN_PROGRESS'));
+      expect(attempt.status, equals('AWAITING_ACTION'));
 
       // Attempt cannot complete directly without proof verification
-      final res = await executionService.complete(attempt.id);
-      expect(res.isCompleted, isFalse);
-      expect(res.earnedXp, equals(0));
+      expect(
+        () => executionService.complete(attempt.id),
+        throwsA(isA<StateError>()),
+      );
 
       final attemptInDb = db.getAttempt(attempt.id);
       expect(attemptInDb?.status, isNot('COMPLETED'));

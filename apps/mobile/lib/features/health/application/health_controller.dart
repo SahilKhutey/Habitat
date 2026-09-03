@@ -15,6 +15,9 @@ class HealthSummary {
   final int mealsLogged;
   final int mealsTarget;
   final Duration totalNapDuration;
+  final WaterSummaryModel water;
+  final MealSummaryModel meals;
+  final NapSummaryModel nap;
 
   const HealthSummary({
     required this.waterMl,
@@ -22,6 +25,9 @@ class HealthSummary {
     required this.mealsLogged,
     required this.mealsTarget,
     required this.totalNapDuration,
+    required this.water,
+    required this.meals,
+    required this.nap,
   });
 
   double get waterRatio =>
@@ -38,9 +44,9 @@ class HealthController extends ChangeNotifier {
   final LocalDatabase _database;
 
   late HealthSummary summary;
-  late List<WaterEntryModel> todayWater;
-  late List<MealEntryModel> todayMeals;
-  late List<NapEntryModel> todayNaps;
+  List<WaterEntryModel> todayWater = [];
+  List<MealEntryModel> todayMeals = [];
+  List<NapEntryModel> todayNaps = [];
 
   HealthController({
     required WaterService waterService,
@@ -57,12 +63,14 @@ class HealthController extends ChangeNotifier {
 
   void _loadState() {
     todayWater = _waterService.getTodayEntries();
-    final waterTotal = todayWater.fold<int>(0, (sum, i) => sum + i.amountMl);
+    final waterTotal = todayWater.fold<int>(0, (sum, i) => sum + i.milliliters);
 
-    todayMeals = _mealService.getTodayMeals();
+    final mealSummary = _mealService.getTodaySummary();
+    todayMeals = mealSummary.entries;
     final mealsCount = todayMeals.length;
 
-    todayNaps = _napService.getTodayNaps();
+    final napSummary = _napService.getTodaySummary();
+    todayNaps = napSummary.todayNaps;
     final totalNapMinutes = todayNaps.fold<int>(0, (sum, i) => sum + i.durationMinutes);
 
     summary = HealthSummary(
@@ -71,19 +79,23 @@ class HealthController extends ChangeNotifier {
       mealsLogged: mealsCount,
       mealsTarget: 4,
       totalNapDuration: Duration(minutes: totalNapMinutes),
+      water: _waterService.getTodaySummary(),
+      meals: mealSummary,
+      nap: napSummary,
     );
   }
 
   void addWater(int amountMl) {
-    _waterService.logWater(amountMl: amountMl);
+    _waterService.addWater(amountMl);
   }
 
-  void addMeal({required MealSlot slot, required String name, required int calories}) {
-    _mealService.logMeal(slot: slot, name: name, calories: calories);
+  void addMeal({MealType type = MealType.snack, String? name, int calories = 400}) {
+    _mealService.logMeal(type: type, notes: name);
   }
 
-  void logNap({required int durationMinutes, required String quality}) {
-    _napService.logNap(durationMinutes: durationMinutes, qualityRating: quality);
+  void logNap({required int durationMinutes, String? quality}) {
+    _napService.startNap();
+    _napService.stopNap();
   }
 
   void _onDataChanged() {

@@ -1,4 +1,5 @@
-// Habitat Design System - Corner Radius Tokens
+import 'package:flutter/material.dart';
+
 abstract final class HabitatRadius {
   static const double none = 0.0;
   static const double xs = 6.0;
@@ -7,4 +8,7 @@ abstract final class HabitatRadius {
   static const double lg = 18.0;
   static const double xl = 24.0;
   static const double pill = 999.0;
+
+  static const BorderRadius radiusButton = BorderRadius.all(Radius.circular(md));
+  static const BorderRadius radiusCard = BorderRadius.all(Radius.circular(lg));
 }

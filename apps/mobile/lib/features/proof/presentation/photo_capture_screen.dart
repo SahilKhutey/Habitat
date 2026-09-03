@@ -24,7 +24,7 @@ class _PhotoCaptureScreenState extends State<PhotoCaptureScreen> {
   @override
   void initState() {
     super.initState();
-    _cameraService.initialize(preferredCamera: 'BACK');
+    _cameraService.initialize();
   }
 
   @override
@@ -35,7 +35,8 @@ class _PhotoCaptureScreenState extends State<PhotoCaptureScreen> {
 
   Future<void> _takePhoto() async {
     setState(() => _isCapturing = true);
-    final path = await _cameraService.takePhoto();
+    final result = await _cameraService.takePhoto(taskId: widget.missionId, attemptId: widget.missionId);
+    final path = result.filePath;
     setState(() => _isCapturing = false);
 
     if (mounted) {

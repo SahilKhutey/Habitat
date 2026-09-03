@@ -4,6 +4,8 @@ import 'meal_entry.dart';
 import 'nap_entry.dart';
 import 'water_entry.dart';
 
+typedef HealthSummary = HealthSummaryModel;
+
 @immutable
 class HealthSummaryModel {
   final DateTime date;

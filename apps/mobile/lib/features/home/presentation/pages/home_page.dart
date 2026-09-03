@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
           onOpenProgress: widget.onOpenProgress,
           onOpenProfile: widget.onOpenProfile,
           onOpenNotifications: widget.onOpenNotifications,
-          onLogWater: _controller.logWater,
+          onLogWater: () => _controller.logWater(250),
           onLogMeal: _controller.logMeal,
           onToggleNap: _controller.toggleNap,
           onCreateFirstTask: _controller.createFirstTask,

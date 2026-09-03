@@ -1,7 +1,6 @@
 // Tactical Full-Screen Alarm Ringing HUD
 import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
-import '../../../tasks/domain/services/alarm_service.dart';
 import '../../../../core/platform/alarm/platform_alarm_service.dart';
 import '../../../../core/alarm/native_alarm_service.dart';
 

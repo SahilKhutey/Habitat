@@ -771,8 +771,13 @@ class LocalDatabase {
   }
 
   List<LocalAlarm> getAllAlarms() => _alarms.values.toList();
+  LocalAlarm? getAlarm(String id) => _alarms[id];
   void saveAlarm(LocalAlarm alarm) {
     _alarms[alarm.id] = alarm;
+    _notifyChanged(immediate: true);
+  }
+  void deleteAlarm(String id) {
+    _alarms.remove(id);
     _notifyChanged(immediate: true);
   }
 
@@ -957,6 +962,7 @@ class LocalDatabase {
   }
 
   List<LocalWaterEntry> getWaterEntriesForDay(DateTime day) => _waterEntries.where((entry) => _sameDay(entry.recordedAt, day)).toList();
+  List<LocalWaterEntry> getWaterEntriesToday() => getWaterEntriesForDay(DateTime.now());
   List<LocalMealEntry> getMealEntriesForDay(DateTime day) => _mealEntries.where((entry) => _sameDay(entry.recordedAt, day)).toList();
   List<LocalNapEntry> getNapEntriesForDay(DateTime day) => _napEntries.where((entry) => _sameDay(entry.startedAt, day)).toList();
 

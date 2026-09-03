@@ -4,6 +4,7 @@ import '../../../../core/theme/habitat_theme.dart';
 import '../../../../database/local_database.dart';
 import '../../application/health_controller.dart';
 import '../../application/nap_controller.dart';
+import '../../domain/models/health_summary.dart';
 import '../../domain/models/meal_entry.dart';
 import '../../domain/repositories/health_repository.dart';
 import '../../domain/services/health_service.dart';
@@ -56,7 +57,9 @@ class _HealthPageState extends State<HealthPage> {
       _healthController = widget.controller!;
     } else {
       _healthController = HealthController(
-        healthService: healthService,
+        waterService: _waterService,
+        mealService: _mealService,
+        napService: _napService,
         database: db,
       );
       _internalController = true;
@@ -109,7 +112,12 @@ class _HealthPageState extends State<HealthPage> {
                 children: [
                   // 1. Master Health Snapshot Card
                   HealthSummaryCard(
-                    summary: summary,
+                    summary: HealthSummaryModel(
+                      date: DateTime.now(),
+                      water: summary.water,
+                      meals: summary.meals,
+                      nap: summary.nap,
+                    ),
                     onOpenWater: _openWaterPage,
                     onOpenMeals: _openMealsPage,
                     onOpenNap: _openNapPage,

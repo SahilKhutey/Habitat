@@ -1,6 +1,7 @@
 // Habitat 8-Point Spacing Scale (4, 8, 12, 16, 24, 32, 40, 48, 64)
 
 class AppSpacing {
+  static const double xxs = 4.0;   // 4px
   static const double xs = 4.0;    // 4px
   static const double sm = 8.0;    // 8px
   static const double md = 12.0;   // 12px

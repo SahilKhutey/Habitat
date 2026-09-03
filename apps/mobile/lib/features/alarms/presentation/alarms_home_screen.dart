@@ -147,3 +147,28 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
     );
   }
 }
+
+class DisciplineModeBadge extends StatelessWidget {
+  final String mode;
+
+  const DisciplineModeBadge({super.key, required this.mode});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.amberFocus.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        mode.toUpperCase(),
+        style: const TextStyle(
+          color: AppColors.amberFocus,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}

@@ -21,6 +21,7 @@ class AlarmForegroundService : Service() {
         const val MAX_RETRIES = 6
         const val RETRY_INTERVAL_MS = 5 * 60 * 1000L // 5 minutes
         var isRunning = false
+        @Volatile var currentMissionId: String? = null
     }
 
     override fun onCreate() {
@@ -229,11 +230,6 @@ class AlarmForegroundService : Service() {
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
-    }
-
-    // Companion mutablefield so onDestroy can cancel escalations
-    private companion object {
-        @Volatile var currentMissionId: String? = null
     }
 
     // Store missionId when service starts

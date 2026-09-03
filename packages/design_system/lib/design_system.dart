@@ -31,3 +31,19 @@ export 'components/habitat_components.dart';
 // Icons & Motion
 export 'icons/app_icons.dart';
 export 'motion/app_motion.dart';
+
+// Mission & State Components
+export 'src/components/mission_status_badge.dart';
+export 'src/components/state_views.dart';
+export 'src/components/discipline_button.dart';
+export 'src/components/resistance_counter.dart';
+export 'src/components/tactical_card.dart';
+export 'src/components/tactical_shutter_button.dart';
+
+// Botanical Palette & Geometry Tokens
+export 'src/colors.dart';
+export 'src/typography.dart';
+export 'src/spacing.dart';
+export 'src/motion.dart';
+export 'src/theme.dart';
+

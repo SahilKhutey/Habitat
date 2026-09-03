@@ -19,6 +19,7 @@ class HabitatTheme {
   static const Color surfacePrimary = HabitatColors.surfacePrimary;
   static const Color surfaceSecondary = HabitatColors.surfaceSecondary;
   static const Color surfaceBorder = HabitatColors.surfaceBorder;
+  static const Color borderSubtle = surfaceBorder;
 
   // Typography Tokens
   static const Color textPrimary = HabitatColors.textPrimary;
@@ -34,6 +35,12 @@ class HabitatTheme {
   static const Color forestGreen = habitatGreen;
   static const Color sageGreen = youngLeaf;
   static const Color offWhite = habitatCream;
+  static const Color amberFocus = HabitatColors.warning;
+  static const Color emeraldVictory = HabitatColors.success;
+  static const Color crimsonAlert = HabitatColors.danger;
+  static const Color cyanTelemetry = HabitatColors.info;
+  static const Color purpleGraceVault = HabitatColors.accentPurple;
+  static const Color primaryAction = HabitatColors.growthGreen;
 
   static ThemeData get darkTheme {
     return ThemeData(
@@ -74,7 +81,7 @@ class HabitatTheme {
         selectedLabelStyle: TextStyle(fontFamily: fontHeading, fontWeight: FontWeight.w600, fontSize: HabitatTypography.label),
         unselectedLabelStyle: TextStyle(fontFamily: fontBody, fontWeight: FontWeight.normal, fontSize: HabitatTypography.label),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: surfacePrimary,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -139,7 +146,7 @@ class HabitatTheme {
         selectedLabelStyle: TextStyle(fontFamily: fontHeading, fontWeight: FontWeight.w600, fontSize: HabitatTypography.label),
         unselectedLabelStyle: TextStyle(fontFamily: fontBody, fontWeight: FontWeight.normal, fontSize: HabitatTypography.label),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(

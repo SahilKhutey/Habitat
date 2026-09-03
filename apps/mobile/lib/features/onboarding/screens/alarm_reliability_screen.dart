@@ -74,12 +74,10 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
 
     final targetEpochMs = DateTime.now().millisecondsSinceEpoch + 15000;
 
-    await NativeAlarmScheduler.instance.schedule(
-      missionId: 'test_alarm_${DateTime.now().millisecondsSinceEpoch}',
-      taskTitle: 'Habitat Reliability Test',
-      triggerEpochMs: targetEpochMs,
-      sirenVolume: 85,
-      attemptIndex: 1,
+    NativeAlarmScheduler.instance.scheduleExactAlarm(
+      alarmId: 'test_alarm_${DateTime.now().millisecondsSinceEpoch}',
+      missionId: 'reliability_test',
+      scheduledAt: DateTime.fromMillisecondsSinceEpoch(targetEpochMs),
     );
 
     _countdownTimer?.cancel();

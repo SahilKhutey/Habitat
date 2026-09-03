@@ -55,10 +55,11 @@ class TaskLifecycleService {
     _database.saveAttempt(LocalTaskAttempt(
       id: 'attempt_${DateTime.now().millisecondsSinceEpoch}',
       taskId: taskId,
-      status: 'VERIFIED',
-      startedAt: DateTime.now().subtract(const Duration(minutes: 2)),
+      alarmId: 'adhoc',
+      attemptNumber: 1,
+      status: 'COMPLETED',
+      triggeredAt: DateTime.now().subtract(const Duration(minutes: 2)),
       completedAt: DateTime.now(),
-      score: 1.0,
     ));
 
     return true;

@@ -11,7 +11,9 @@ abstract final class HabitatColors {
 
   // Dark Environment Surfaces (#081C13)
   static const Color backgroundDark = Color(0xFF081C13);
+  static const Color darkBackground = backgroundDark;
   static const Color surfacePrimary = Color(0xFF10291E);
+  static const Color darkSurface = surfacePrimary;
   static const Color surfaceSecondary = Color(0xFF163525);
   static const Color surfaceBorder = Color(0xFF1E4230);
 
@@ -25,6 +27,10 @@ abstract final class HabitatColors {
   static const Color success = Color(0xFF4CAF50);
   static const Color warning = Color(0xFFFFB703);
   static const Color danger = Color(0xFFFF5252);
+  static const Color crimsonAlert = Color(0xFFFF5252);
+  static const Color growthSoft = Color(0xFF2E7D32);
+  static const Color darkTextSecondary = Color(0xFFB7C6BC);
+  static const Color darkBorder = Color(0xFF1E4230);
   static const Color info = Color(0xFF4CC9F0);
   static const Color accentPurple = Color(0xFF7209B7);
   static const Color accentPink = Color(0xFFF72585);
