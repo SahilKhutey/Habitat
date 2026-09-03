@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as crypto from 'crypto';
 import ffmpegStatic from 'ffmpeg-static';
 import ffmpeg from 'fluent-ffmpeg';
-import { FrameInput } from '../domain/vision-provider.interface';
+import { FrameInput, VisionFrame } from '../domain/vision-provider.interface';
 
 // Wire fluent-ffmpeg to the bundled static binary
 if (ffmpegStatic) {
@@ -162,4 +162,21 @@ export class FFmpegFrameExtractor implements IVideoFrameExtractor {
         .run();
     });
   }
+
+  public async extractVisionFrames(
+    input: Buffer | Uint8Array | string,
+    options: Partial<FrameExtractionOptions> = {}
+  ): Promise<VisionFrame[]> {
+    const frames = await this.extract(input, options);
+    return frames.map((f: any) => ({
+      frameIndex: f.frameIndex,
+      timestampMs: f.timestampMs,
+      frameHash: f.frameHash,
+      width: f.width || 192,
+      height: f.height || 192,
+      data: f.imageBuffer || Buffer.alloc(0)
+    }));
+  }
 }
+
+export { FFmpegFrameExtractor as FrameExtractor };
