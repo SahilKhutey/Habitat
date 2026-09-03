@@ -1,6 +1,7 @@
 // Social Discipline Squad Overview & Group Accountability Screen
 import 'package:flutter/material.dart';
 import '../../../core/theme/habitat_theme.dart';
+import '../../../database/local_database.dart';
 
 class SquadOverviewScreen extends StatefulWidget {
   const SquadOverviewScreen({super.key});
@@ -10,42 +11,45 @@ class SquadOverviewScreen extends StatefulWidget {
 }
 
 class _SquadOverviewScreenState extends State<SquadOverviewScreen> {
-  final List<Map<String, dynamic>> _members = [
+  late final LocalDatabase _database;
+  late final LocalUser _user;
+  late final LocalStreak _streak;
+
+  @override
+  void initState() {
+    super.initState();
+    _database = LocalDatabase.instance;
+    _user = _database.getOrCreateProfile();
+    _streak = _database.getStreak();
+  }
+
+  List<Map<String, dynamic>> get _members => [
     {
-      'name': 'Alex Mercer (You)',
+      'name': '${_user.displayName} (You)',
       'role': 'CAPTAIN',
-      'status': 'COMPLETED',
-      'time': '07:02 AM (1.2m resistance)',
-      'streak': 12,
+      'status': 'ACTIVE',
+      'time': 'Tracking Discipline Protocol',
+      'streak': _streak.currentStreak,
     },
     {
-      'name': 'David Goggins',
+      'name': 'Squad Officer Alpha',
       'role': 'WARRIOR',
       'status': 'COMPLETED',
       'time': '06:00 AM (0.5m resistance)',
-      'streak': 48,
+      'streak': 14,
     },
     {
-      'name': 'Sarah Connor',
+      'name': 'Squad Officer Beta',
       'role': 'WARRIOR',
       'status': 'COMPLETED',
       'time': '07:15 AM (2.1m resistance)',
-      'streak': 19,
-    },
-    {
-      'name': 'Marcus Vance',
-      'role': 'WARRIOR',
-      'status': 'SIREN_ACTIVE',
-      'time': 'Alarm ringing for 4 mins',
-      'streak': 8,
+      'streak': 9,
     },
   ];
 
-  final List<String> _feed = [
-    '⚡ You sent an urgent Wakeup Nudge to Marcus Vance!',
-    '✅ Sarah Connor completed "Morning Sunlight" (+75 XP)',
-    '🔥 David Goggins completed "100 Push-Ups" in 45s (+120 XP)',
-    '✅ Alex Mercer completed "Make Your Bed" (+50 XP)',
+  late final List<String> _feed = [
+    '⚡ Collective streak alert monitoring enabled',
+    '✅ Squad protocol synchronized',
   ];
 
   void _nudgeMember(String name) {

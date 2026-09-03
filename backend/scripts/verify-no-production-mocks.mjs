@@ -18,6 +18,7 @@ const rootDir = path.resolve(__dirname, '../..');
 const scanDirectories = [
   path.join(rootDir, 'backend', 'src'),
   path.join(rootDir, 'apps', 'mobile', 'lib'),
+  path.join(rootDir, 'apps', 'web', 'lib'),
   path.join(rootDir, 'packages')
 ];
 
@@ -42,6 +43,22 @@ const forbiddenProductionPatterns = [
   {
     regex: /\bconst\s+demoTasks\s*=/i,
     description: 'Hardcoded demo tasks collection'
+  },
+  {
+    regex: /\b(?:FakeTaskService|DemoTaskRepository|fakeCompletion|dummyXP|sampleUser|mockAlarm)\b/i,
+    description: 'Forbidden mock service or demo entity in production'
+  },
+  {
+    regex: /['"](?:\/mock_proofs|mock_proofs)['"]/i,
+    description: 'Mock proofs storage directory path'
+  },
+  {
+    regex: /\bdummySession\b/i,
+    description: 'Dummy session object in production UI'
+  },
+  {
+    regex: /jwt\.mock\.token/i,
+    description: 'Hardcoded mock JWT token string'
   }
 ];
 

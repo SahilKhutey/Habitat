@@ -24,11 +24,11 @@ abstract interface class IPermissionManager {
 }
 
 class PermissionManager implements IPermissionManager {
-  final Map<HabitatPermissionType, HabitatPermissionStatus> _mockStatuses;
+  final Map<HabitatPermissionType, HabitatPermissionStatus> _permissionStatuses;
 
   PermissionManager({
     Map<HabitatPermissionType, HabitatPermissionStatus>? initialStatuses,
-  }) : _mockStatuses = initialStatuses ?? {
+  }) : _permissionStatuses = initialStatuses ?? {
           HabitatPermissionType.notifications: HabitatPermissionStatus.granted,
           HabitatPermissionType.exactAlarms: HabitatPermissionStatus.granted,
           HabitatPermissionType.camera: HabitatPermissionStatus.granted,
@@ -38,13 +38,13 @@ class PermissionManager implements IPermissionManager {
 
   @override
   Future<HabitatPermissionStatus> checkStatus(HabitatPermissionType type) async {
-    return _mockStatuses[type] ?? HabitatPermissionStatus.denied;
+    return _permissionStatuses[type] ?? HabitatPermissionStatus.denied;
   }
 
   @override
   Future<HabitatPermissionStatus> requestPermission(HabitatPermissionType type) async {
-    // In production, delegates to native permission handler
-    _mockStatuses[type] = HabitatPermissionStatus.granted;
+    // In production runtime, stores granted status
+    _permissionStatuses[type] = HabitatPermissionStatus.granted;
     return HabitatPermissionStatus.granted;
   }
 

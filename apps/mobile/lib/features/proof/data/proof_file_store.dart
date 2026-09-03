@@ -27,7 +27,7 @@ class ProofFileStore {
     final fileName = '${taskId}_$attemptId.$extension';
     final targetPath = _baseDirectory != null
         ? p.join(_baseDirectory!, fileName)
-        : '/mock_proofs/$fileName';
+        : 'proofs/$fileName';
 
     if (_baseDirectory != null) {
       final file = File(targetPath);

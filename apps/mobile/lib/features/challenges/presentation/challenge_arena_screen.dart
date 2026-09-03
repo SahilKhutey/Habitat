@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/habitat_theme.dart';
 
+import '../../../database/local_database.dart';
+
 class ChallengeArenaScreen extends StatefulWidget {
   const ChallengeArenaScreen({super.key});
 
@@ -10,39 +12,46 @@ class ChallengeArenaScreen extends StatefulWidget {
 }
 
 class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
-  int _completedDays = 9;
+  late final LocalDatabase _database;
+  late final LocalUser _user;
+  late final LocalStreak _streak;
+  late int _completedDays;
   final int _totalDays = 14;
 
-  final List<Map<String, dynamic>> _leaderboard = [
-    {
-      'rank': 1,
-      'name': 'David Goggins',
-      'days': '14/14',
-      'resistance': '0.4m',
-      'isPodium': true,
-    },
-    {
-      'rank': 2,
-      'name': 'Alex Mercer (You)',
-      'days': '9/14',
-      'resistance': '1.2m',
-      'isPodium': true,
-    },
-    {
-      'rank': 3,
-      'name': 'Sarah Connor',
-      'days': '9/14',
-      'resistance': '1.5m',
-      'isPodium': true,
-    },
-    {
-      'rank': 4,
-      'name': 'Marcus Vance',
-      'days': '7/14',
-      'resistance': '2.4m',
-      'isPodium': false,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _database = LocalDatabase.instance;
+    _user = _database.getOrCreateProfile();
+    _streak = _database.getStreak();
+    _completedDays = _streak.currentStreak > 14 ? 14 : _streak.currentStreak;
+  }
+
+  List<Map<String, dynamic>> _getLeaderboard() {
+    return [
+      {
+        'rank': 1,
+        'name': 'Squad Lead',
+        'days': '14/14',
+        'resistance': '0.4m',
+        'isPodium': true,
+      },
+      {
+        'rank': 2,
+        'name': '${_user.displayName} (You)',
+        'days': '$_completedDays/14',
+        'resistance': '1.2m',
+        'isPodium': true,
+      },
+      {
+        'rank': 3,
+        'name': 'Vanguard Officer',
+        'days': '9/14',
+        'resistance': '1.5m',
+        'isPodium': true,
+      },
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +140,7 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
             const Text('TOURNAMENT PODIUM & LEADERBOARD', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
             const SizedBox(height: 12),
 
-            ..._leaderboard.map((player) {
+            ..._getLeaderboard().map((player) {
               final rank = player['rank'] as int;
               Color rankColor = HabitatTheme.textMuted;
               if (rank == 1) rankColor = const Color(0xFFFFD700); // Gold

@@ -69,13 +69,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               AppTextField(
                 label: 'Display Name',
-                hintText: 'Alex Mercer',
+                hintText: 'Display Name',
                 controller: _nameController,
               ),
               const SizedBox(height: AppSpacing.lg),
               AppTextField(
                 label: 'Email Address',
-                hintText: 'alex.mercer@discipline.app',
+                hintText: 'user@example.com',
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
               ),

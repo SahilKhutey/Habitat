@@ -1,9 +1,17 @@
 // Camera Proof Capture Viewport Screen
 import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
+import '../../../core/platform/media/native_camera_proof_pipeline.dart';
 
 class CameraProofCaptureScreen extends StatefulWidget {
-  const CameraProofCaptureScreen({super.key});
+  final String? taskId;
+  final String? attemptId;
+
+  const CameraProofCaptureScreen({
+    super.key,
+    this.taskId,
+    this.attemptId,
+  });
 
   @override
   State<CameraProofCaptureScreen> createState() => _CameraProofCaptureScreenState();
@@ -14,9 +22,27 @@ class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
 
   void _triggerCapture() {
     setState(() => _isRecording = true);
-    Future.delayed(const Duration(seconds: 2), () {
+    final pipeline = NativeCameraProofPipeline();
+    final taskId = widget.taskId ?? 'task-default';
+    final attemptId = widget.attemptId ?? 'attempt-${DateTime.now().millisecondsSinceEpoch}';
+
+    pipeline.captureVideoProof(
+      taskId: taskId,
+      attemptId: attemptId,
+      durationSeconds: 5,
+    ).then((proof) {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/missions/verifying');
+        Navigator.of(context).pushReplacementNamed(
+          '/missions/verifying',
+          arguments: {'taskId': taskId, 'attemptId': attemptId, 'proof': proof},
+        );
+      }
+    }).catchError((err) {
+      if (mounted) {
+        setState(() => _isRecording = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Capture failed: $err')),
+        );
       }
     });
   }
@@ -27,7 +53,7 @@ class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Camera Viewfinder Mock
+          // Camera Viewfinder Viewport
           Center(
             child: Container(
               margin: const EdgeInsets.all(AppSpacing.xl),

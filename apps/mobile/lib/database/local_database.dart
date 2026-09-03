@@ -396,6 +396,46 @@ class LocalFeedback {
   );
 }
 
+class LocalJournalEntry {
+  final String id;
+  final DateTime date;
+  final String sentence;
+  final String emoji;
+  final int rating; // 1-5
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  LocalJournalEntry({
+    required this.id,
+    required this.date,
+    required this.sentence,
+    this.emoji = '⚡',
+    this.rating = 5,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'date': date.toIso8601String(),
+    'sentence': sentence,
+    'emoji': emoji,
+    'rating': rating,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+  };
+
+  factory LocalJournalEntry.fromMap(Map<String, dynamic> map) => LocalJournalEntry(
+    id: map['id'],
+    date: DateTime.parse(map['date']),
+    sentence: map['sentence'] ?? '',
+    emoji: map['emoji'] ?? '⚡',
+    rating: (map['rating'] as num?)?.toInt() ?? 5,
+    createdAt: DateTime.parse(map['createdAt']),
+    updatedAt: DateTime.parse(map['updatedAt']),
+  );
+}
+
 class LocalWaterEntry {
   final String id;
   final int milliliters;
@@ -596,6 +636,7 @@ class LocalDatabase {
   final List<LocalEventLog> _eventLogs = [];
   final List<LocalFeedback> _feedbackList = [];
   final List<DurableSyncEvent> _syncQueue = [];
+  final Map<String, LocalJournalEntry> _journalEntries = {};
   LocalStreak _streak = LocalStreak();
   int _waterGoal = 2000;
   final Set<String> _unlockedAchievements = {'FIRST_STEP'};
@@ -923,6 +964,29 @@ class LocalDatabase {
   List<LocalMealEntry> getAllMealEntries() => List.unmodifiable(_mealEntries);
   List<LocalNapEntry> getAllNapEntries() => List.unmodifiable(_napEntries);
 
+  // Journal Management
+  List<LocalJournalEntry> getAllJournalEntries() => _journalEntries.values.toList()
+    ..sort((a, b) => b.date.compareTo(a.date));
+
+  LocalJournalEntry? getJournalEntryForDay(DateTime day) {
+    for (final entry in _journalEntries.values) {
+      if (_sameDay(entry.date, day)) {
+        return entry;
+      }
+    }
+    return null;
+  }
+
+  void saveJournalEntry(LocalJournalEntry entry) {
+    _journalEntries[entry.id] = entry;
+    _notifyChanged();
+  }
+
+  void deleteJournalEntry(String id) {
+    _journalEntries.remove(id);
+    _notifyChanged();
+  }
+
   // Phase 16 Health Logs & 7-Day Visual Progress Aggregations
   void recordHealthLog(LocalHealthLog log) {
     _healthLogs.add(log);
@@ -1082,6 +1146,7 @@ class LocalDatabase {
       'eventLogs': _eventLogs.map((e) => e.toMap()).toList(),
       'feedbackList': _feedbackList.map((f) => f.toMap()).toList(),
       'syncQueue': _syncQueue.map((s) => s.toMap()).toList(),
+      'journalEntries': _journalEntries.values.map((j) => j.toMap()).toList(),
       'streak': _streak.toMap(),
       'waterGoal': _waterGoal,
       'unlockedAchievements': _unlockedAchievements.toList(),
@@ -1222,6 +1287,14 @@ class LocalDatabase {
       if (migrated['syncQueue'] is List) {
         for (final item in migrated['syncQueue']) {
           _syncQueue.add(DurableSyncEvent.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
+
+      _journalEntries.clear();
+      if (migrated['journalEntries'] is List) {
+        for (final item in migrated['journalEntries']) {
+          final j = LocalJournalEntry.fromMap(Map<String, dynamic>.from(item));
+          _journalEntries[j.id] = j;
         }
       }
 
@@ -1400,6 +1473,7 @@ class LocalDatabase {
     _mealEntries.clear();
     _napEntries.clear();
     _healthLogs.clear();
+    _journalEntries.clear();
     _syncQueue.clear();
     _eventLogs.clear();
     _streak = LocalStreak();

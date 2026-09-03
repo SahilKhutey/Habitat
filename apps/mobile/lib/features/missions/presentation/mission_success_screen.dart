@@ -1,12 +1,30 @@
-// Mission Success Celebration Screen
+// Mission Success Celebration Screen - Connected to XP Ledger & Streak
 import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
+import '../../../../database/local_database.dart';
 
 class MissionSuccessScreen extends StatelessWidget {
-  const MissionSuccessScreen({super.key});
+  final int? earnedXp;
+  final int? currentStreak;
+  final int? graceTokens;
+
+  const MissionSuccessScreen({
+    super.key,
+    this.earnedXp,
+    this.currentStreak,
+    this.graceTokens,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final db = LocalDatabase.instance;
+    final streak = db.getStreak();
+    final tokens = db.getGraceTokens();
+
+    final displayXp = earnedXp ?? 50;
+    final displayStreak = currentStreak ?? streak.currentStreak;
+    final displayTokens = graceTokens ?? tokens;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -47,25 +65,49 @@ class MissionSuccessScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        const Text('+45 XP DEPOSITED', style: TextStyle(color: AppColors.emeraldVictory, fontSize: 24, fontWeight: FontWeight.w900)),
+                        Text(
+                          '+$displayXp XP DEPOSITED',
+                          style: const TextStyle(
+                            color: AppColors.emeraldVictory,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                         const SizedBox(height: AppSpacing.xxs),
-                        const Text('Includes +50% Instant Action Speed Bonus', style: TextStyle(color: Colors.white60, fontSize: 12)),
+                        const Text(
+                          'Verified through computer vision & anti-cheat engine',
+                          style: TextStyle(color: Colors.white60, fontSize: 12),
+                        ),
                         const Divider(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Column(
-                              children: const [
-                                Text('CURRENT STREAK', style: AppTypography.labelSmall),
-                                SizedBox(height: 4),
-                                Text('🔥 13 Days', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                              children: [
+                                const Text('CURRENT STREAK', style: AppTypography.labelSmall),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '🔥 $displayStreak ${displayStreak == 1 ? 'Day' : 'Days'}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ],
                             ),
                             Column(
-                              children: const [
-                                Text('GRACE VAULT', style: AppTypography.labelSmall),
-                                SizedBox(height: 4),
-                                Text('🛡️ 1 Token', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                              children: [
+                                const Text('GRACE VAULT', style: AppTypography.labelSmall),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '🛡️ $displayTokens ${displayTokens == 1 ? 'Token' : 'Tokens'}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ],
                             ),
                           ],

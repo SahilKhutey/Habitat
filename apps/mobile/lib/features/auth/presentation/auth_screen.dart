@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/habitat_theme.dart';
 import '../domain/auth_models.dart';
 
+import '../../../../database/local_database.dart';
+
 class AuthScreen extends StatefulWidget {
   final Function(AuthSession session)? onAuthenticated;
 
@@ -17,9 +19,9 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  final _emailController = TextEditingController(text: 'alex@habitat.discipline');
-  final _passwordController = TextEditingController(text: 'Discipline2026!');
-  final _nameController = TextEditingController(text: 'Alex Mercer');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
 
   void _handleSubmit() async {
     setState(() {
@@ -27,10 +29,10 @@ class _AuthScreenState extends State<AuthScreen> {
       _errorMessage = null;
     });
 
-    // Simulate Network Auth Call
-    await Future.delayed(const Duration(milliseconds: 800));
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-    if (_emailController.text.trim().isEmpty || _passwordController.text.length < 6) {
+    if (email.isEmpty || !email.contains('@') || password.length < 6) {
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -40,23 +42,31 @@ class _AuthScreenState extends State<AuthScreen> {
       return;
     }
 
-    final dummySession = AuthSession(
+    final db = LocalDatabase.instance;
+    final profileName = _nameController.text.trim().isNotEmpty
+        ? _nameController.text.trim()
+        : email.split('@').first;
+    final localUser = db.getOrCreateProfile(name: profileName);
+    final streak = db.getStreak();
+    final totalXp = db.getTotalXP();
+
+    final session = AuthSession(
       user: UserProfile(
-        id: 'usr-101',
-        email: _emailController.text.trim(),
-        displayName: _isSignUp ? _nameController.text.trim() : 'Alex Mercer',
-        disciplineScore: 85,
-        autonomyLevel: 2,
-        currentStreak: 12,
-        longestStreak: 14,
-        totalXp: 2450,
+        id: localUser.id,
+        email: email,
+        displayName: localUser.displayName,
+        disciplineScore: 100,
+        autonomyLevel: 1,
+        currentStreak: streak.currentStreak,
+        longestStreak: streak.longestStreak,
+        totalXp: totalXp,
       ),
-      token: 'jwt.mock.token.2026',
+      token: 'habitat_session_${localUser.id}_${DateTime.now().millisecondsSinceEpoch}',
     );
 
     if (mounted) {
       setState(() => _isLoading = false);
-      widget.onAuthenticated?.call(dummySession);
+      widget.onAuthenticated?.call(session);
     }
   }
 
