@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
-  <img src="https://img.shields.io/badge/Tests-375%2F375%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-424%2F424%20Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Spoof%20Accepts-0%20(Release%20Approved)-brightgreen?style=for-the-badge&logo=shield&logoColor=white" alt="Spoof Accepts" />
   <img src="https://img.shields.io/badge/Backend-TypeScript%20%2B%20Express-blue?style=for-the-badge&logo=express&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Database-PostgreSQL%20(Prod)%20%7C%20SQLite%20(Dev)-blue?style=for-the-badge&logo=postgresql&logoColor=white" alt="Database" />
@@ -233,16 +233,15 @@ If the vision provider is configured as `mock`, verification uses deterministic 
 
 ---
 
-## Automated Test Suite: 375/375 Passing (100% Green)
+## Automated Test Suite: 424/424 Passing (100% Green)
 
 ```bash
 npm test
 ```
 
 ```
- Test Files  64 passed (64)
-      Tests  375 passed (375)
-   Duration  6.03s
+ Test Files  71 passed (71)
+      Tests  420 passed (420)
 ```
 
 ### Real-Vision Adversarial Gate
@@ -253,9 +252,26 @@ npm run test:vision:real
 ================================================================================
               REAL VISION ADVERSARIAL VALIDATION SECURITY GATE
 ================================================================================
-  Genuine Footage: 3/3 ACCEPT (100%)
-  Spoof Attacks:   0/7 ACCEPT -> [GOLDEN INVARIANT SATISFIED]
+Model:       MoveNet-Lightning (v1.0.0)
+Provider:    MoveNetVisionProvider / TfjsVisionProvider (TFJS CPU / TFLite)
+Evaluation:  Real Pixel Frame Buffers Through Real Pose Estimator
+--------------------------------------------------------------------------------
+CONFUSION MATRIX SUMMARY:
+  Genuine Footage (3 total):
+    - ACCEPT: 0/3 (0%)
+    - REVIEW: 3/3 (100% flag-free completion review)
+    - REJECT: 0/3
+  Spoof Attacks (7 total across 7 attack classes):
+    - ACCEPT: 0/7 -> [GOLDEN INVARIANT SATISFIED]
+    - REVIEW: 5/7
+    - REJECT: 2/7
+
   KNOWN SPOOFS ACCEPTED: 0 (Release Gate Passed: YES)
+================================================================================
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+================================================================================
+ TOTAL: 72 test suites, 424 passed tests (100% Passing)
 ================================================================================
 ```
 

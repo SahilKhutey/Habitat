@@ -72,6 +72,7 @@ model User {
   accountabilityLogs      AccountabilityLog[]
   sleepSessions           SleepSession[]
   coachInsights           CoachInsight[]
+  journalEntries          JournalEntry[]
 
   @@map("users")
 }
