@@ -36,6 +36,7 @@ export interface IMissionRepository {
   updateStatus(id: string, status: string, completedAt?: string, resistanceSeconds?: number): Promise<void> | void;
   transitionStatus(id: string, newStatus: string): Promise<MissionEntity> | MissionEntity;
   findPendingMissions(userId?: string): Promise<MissionEntity[]> | MissionEntity[];
+  findByUserId(userId: string, limit?: number): Promise<MissionEntity[]> | MissionEntity[];
 }
 
 /**
@@ -127,6 +128,12 @@ export class SqliteMissionRepository implements IMissionRepository {
       : 'SELECT * FROM missions WHERE status IN (\'SCHEDULED\', \'TRIGGERED\', \'ACTIVE\', \'PROOF_PENDING\', \'VERIFYING\')';
     
     const rows = (userId ? db.prepare(query).all(userId) : db.prepare(query).all()) as any[];
+    return rows.map((r) => this.mapRow(r));
+  }
+
+  public findByUserId(userId: string, limit: number = 50): MissionEntity[] {
+    const db = DatabaseService.getDb();
+    const rows = db.prepare('SELECT * FROM missions WHERE user_id = ? ORDER BY created_at DESC LIMIT ?').all(userId, limit) as any[];
     return rows.map((r) => this.mapRow(r));
   }
 
@@ -228,6 +235,15 @@ export class PrismaMissionRepository implements IMissionRepository {
     return missions.map(this.mapPrismaModel);
   }
 
+  public async findByUserId(userId: string, limit: number = 50): Promise<MissionEntity[]> {
+    const missions = await this.db.mission.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: limit
+    });
+    return missions.map(this.mapPrismaModel);
+  }
+
   private mapPrismaModel(m: any): MissionEntity {
     return {
       id: m.id,
@@ -276,5 +292,9 @@ export class MissionRepository {
 
   public static findPendingMissions(userId?: string): MissionEntity[] {
     return this.sqliteAdapter.findPendingMissions(userId);
+  }
+
+  public static findByUserId(userId: string, limit?: number): MissionEntity[] {
+    return this.sqliteAdapter.findByUserId(userId, limit);
   }
 }

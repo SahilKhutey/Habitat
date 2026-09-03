@@ -32,6 +32,9 @@ export interface IAlarmRepository {
   findByUserId(userId: string): Promise<AlarmEntity[]> | AlarmEntity[];
   findById(id: string): Promise<AlarmEntity | null> | (AlarmEntity | null);
   create(params: CreateAlarmInput): Promise<AlarmEntity> | AlarmEntity;
+  update(id: string, patch: Partial<AlarmEntity>): Promise<AlarmEntity | null> | (AlarmEntity | null);
+  delete(id: string): Promise<boolean> | boolean;
+  findEnabled(userId?: string): Promise<AlarmEntity[]> | AlarmEntity[];
 }
 
 /**
@@ -75,6 +78,50 @@ export class SqliteAlarmRepository implements IAlarmRepository {
     );
 
     return this.findById(id)!;
+  }
+
+  public update(id: string, patch: Partial<AlarmEntity>): AlarmEntity | null {
+    const db = DatabaseService.getDb();
+    const existing = this.findById(id);
+    if (!existing) return null;
+
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    if (patch.timeOfDay !== undefined) {
+      const formatted = patch.timeOfDay.length === 5 ? `${patch.timeOfDay}:00` : patch.timeOfDay;
+      fields.push('time_of_day = ?');
+      values.push(formatted);
+    }
+    if (patch.timezone !== undefined) { fields.push('timezone = ?'); values.push(patch.timezone); }
+    if (patch.repeatDays !== undefined) { fields.push('repeat_days = ?'); values.push(JSON.stringify(patch.repeatDays)); }
+    if (patch.disciplineMode !== undefined) { fields.push('discipline_mode = ?'); values.push(patch.disciplineMode); }
+    if (patch.retryIntervalMinutes !== undefined) { fields.push('retry_interval_minutes = ?'); values.push(patch.retryIntervalMinutes); }
+    if (patch.isEnabled !== undefined) { fields.push('is_enabled = ?'); values.push(patch.isEnabled ? 1 : 0); }
+
+    if (fields.length > 0) {
+      fields.push('updated_at = ?');
+      values.push(new Date().toISOString());
+      values.push(id);
+      db.prepare(`UPDATE alarms SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+    }
+
+    return this.findById(id);
+  }
+
+  public delete(id: string): boolean {
+    const db = DatabaseService.getDb();
+    const info = db.prepare('DELETE FROM alarms WHERE id = ?').run(id);
+    return info.changes > 0;
+  }
+
+  public findEnabled(userId?: string): AlarmEntity[] {
+    const db = DatabaseService.getDb();
+    const query = userId
+      ? 'SELECT * FROM alarms WHERE user_id = ? AND is_enabled = 1 ORDER BY time_of_day ASC'
+      : 'SELECT * FROM alarms WHERE is_enabled = 1 ORDER BY time_of_day ASC';
+    const rows = (userId ? db.prepare(query).all(userId) : db.prepare(query).all()) as any[];
+    return rows.map(this.mapRow);
   }
 
   private mapRow(row: any): AlarmEntity {
@@ -135,6 +182,48 @@ export class PrismaAlarmRepository implements IAlarmRepository {
     return this.mapPrismaModel(alarm);
   }
 
+  public async update(id: string, patch: Partial<AlarmEntity>): Promise<AlarmEntity | null> {
+    try {
+      const data: any = {};
+      if (patch.timeOfDay !== undefined) {
+        data.timeOfDay = patch.timeOfDay.length === 5 ? `${patch.timeOfDay}:00` : patch.timeOfDay;
+      }
+      if (patch.timezone !== undefined) data.timezone = patch.timezone;
+      if (patch.repeatDays !== undefined) data.repeatDays = JSON.stringify(patch.repeatDays);
+      if (patch.disciplineMode !== undefined) data.disciplineMode = patch.disciplineMode;
+      if (patch.retryIntervalMinutes !== undefined) data.retryIntervalMinutes = patch.retryIntervalMinutes;
+      if (patch.isEnabled !== undefined) data.isEnabled = patch.isEnabled;
+
+      const alarm = await this.db.alarm.update({
+        where: { id },
+        data
+      });
+      return this.mapPrismaModel(alarm);
+    } catch {
+      return null;
+    }
+  }
+
+  public async delete(id: string): Promise<boolean> {
+    try {
+      await this.db.alarm.delete({ where: { id } });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public async findEnabled(userId?: string): Promise<AlarmEntity[]> {
+    const alarms = await this.db.alarm.findMany({
+      where: {
+        userId: userId || undefined,
+        isEnabled: true
+      },
+      orderBy: { timeOfDay: 'asc' }
+    });
+    return alarms.map(this.mapPrismaModel);
+  }
+
   private mapPrismaModel(alarm: any): AlarmEntity {
     return {
       id: alarm.id,
@@ -169,5 +258,17 @@ export class AlarmRepository {
 
   public static create(params: CreateAlarmInput): AlarmEntity {
     return this.sqliteAdapter.create(params);
+  }
+
+  public static update(id: string, patch: Partial<AlarmEntity>): AlarmEntity | null {
+    return this.sqliteAdapter.update(id, patch);
+  }
+
+  public static delete(id: string): boolean {
+    return this.sqliteAdapter.delete(id);
+  }
+
+  public static findEnabled(userId?: string): AlarmEntity[] {
+    return this.sqliteAdapter.findEnabled(userId);
   }
 }

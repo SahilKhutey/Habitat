@@ -146,6 +146,14 @@ export class NativeAlarmScheduler {
     }
   }
 
+  public static cancelNativeAlarm(alarmId: string): void {
+    for (const [key, value] of this.registeredOSAlarms.entries()) {
+      if (key.includes(alarmId)) {
+        this.cancelAlarm(key);
+      }
+    }
+  }
+
   public static getRegisteredOSAlarmsCount(): number {
     let count = 0;
     for (const item of this.registeredOSAlarms.values()) {

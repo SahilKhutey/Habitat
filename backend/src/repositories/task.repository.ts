@@ -46,6 +46,9 @@ export interface ITaskRepository {
   findAll(): Promise<TaskEntity[]> | TaskEntity[];
   create(params: CreateTaskInput): Promise<TaskEntity> | TaskEntity;
   getUserTasks(userId: string): Promise<TaskEntity[]> | TaskEntity[];
+  update(id: string, patch: Partial<TaskEntity>): Promise<TaskEntity | null> | (TaskEntity | null);
+  delete(id: string): Promise<boolean> | boolean;
+  findActive(userId: string): Promise<TaskEntity[]> | TaskEntity[];
 }
 
 /**
@@ -111,6 +114,39 @@ export class SqliteTaskRepository implements ITaskRepository {
     `).all(userId) as any[];
 
     return rows.map(this.mapRow);
+  }
+
+  public update(id: string, patch: Partial<TaskEntity>): TaskEntity | null {
+    const db = DatabaseService.getDb();
+    const existing = this.findById(id);
+    if (!existing) return null;
+
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    if (patch.title !== undefined) { fields.push('title = ?'); values.push(patch.title); }
+    if (patch.description !== undefined) { fields.push('description = ?'); values.push(patch.description); }
+    if (patch.category !== undefined) { fields.push('category = ?'); values.push(patch.category); }
+    if (patch.difficulty !== undefined) { fields.push('difficulty = ?'); values.push(patch.difficulty); }
+    if (patch.baseXp !== undefined) { fields.push('base_xp = ?'); values.push(patch.baseXp); }
+    if (patch.instructions !== undefined) { fields.push('instructions = ?'); values.push(patch.instructions); }
+
+    if (fields.length > 0) {
+      values.push(id);
+      db.prepare(`UPDATE tasks SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+    }
+
+    return this.findById(id);
+  }
+
+  public delete(id: string): boolean {
+    const db = DatabaseService.getDb();
+    const info = db.prepare('DELETE FROM tasks WHERE id = ?').run(id);
+    return info.changes > 0;
+  }
+
+  public findActive(userId: string): TaskEntity[] {
+    return this.getUserTasks(userId);
   }
 
   private mapRow(row: any): TaskEntity {
@@ -199,6 +235,38 @@ export class PrismaTaskRepository implements ITaskRepository {
     });
 
     return tasks.map(this.mapPrismaModel);
+  }
+
+  public async update(id: string, patch: Partial<TaskEntity>): Promise<TaskEntity | null> {
+    try {
+      const data: any = {};
+      if (patch.title !== undefined) data.title = patch.title;
+      if (patch.description !== undefined) data.description = patch.description;
+      if (patch.category !== undefined) data.category = patch.category;
+      if (patch.baseXp !== undefined) data.baseXp = patch.baseXp;
+      if (patch.instructions !== undefined) data.instructions = patch.instructions;
+
+      const task = await this.db.task.update({
+        where: { id },
+        data
+      });
+      return this.mapPrismaModel(task);
+    } catch {
+      return null;
+    }
+  }
+
+  public async delete(id: string): Promise<boolean> {
+    try {
+      await this.db.task.delete({ where: { id } });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public async findActive(userId: string): Promise<TaskEntity[]> {
+    return this.getUserTasks(userId);
   }
 
   private mapPrismaModel(task: any): TaskEntity {

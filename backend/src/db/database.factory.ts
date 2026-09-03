@@ -98,6 +98,26 @@ export class DatabaseFactory {
     return this.resolveProvider();
   }
 
+  public static getTaskRepository(): ITaskRepository {
+    return this.getRepositories().tasks;
+  }
+
+  public static getMissionRepository(): IMissionRepository {
+    return this.getRepositories().missions;
+  }
+
+  public static getAlarmRepository(): IAlarmRepository {
+    return this.getRepositories().alarms;
+  }
+
+  public static getProofRepository(): IProofRepository {
+    return this.getRepositories().proofs;
+  }
+
+  public static getUserRepository(): IUserRepository {
+    return this.getRepositories().users;
+  }
+
   /**
    * Resets internal cache (for isolated unit/factory testing)
    */
