@@ -27,6 +27,9 @@ This document classifies every mock, fake, placeholder, and synthetic component 
 | `backend/public/index.html` | Hardcoded metrics & mock toggles | 🔴 Demo UI Data | Cleaned: Auto-authenticates recruit (`alex@habitat.discipline`), fetches real SQLite tasks/alarms/hydration/journal, and uploads actual binary proof files. |
 | `apps/mobile/lib/database/local_database.dart` | Default task templates | 🟡 Local Baseline | Provides starter discipline templates (`tpl-pushups`, `tpl-make-bed`) matching canonical backend seeds. |
 | `apps/mobile/lib/features/proof/data/proof_file_store.dart` | In-memory fallback | 🟢 Test Fallback | Memory fallback used only when `baseDirectory == null` (widget/unit tests); real filesystem used in app runtime. |
+| `apps/mobile/lib/features/home/application/home_controller.dart` | Hardcoded demo dashboard values | 🔴 Eliminated (Phase 26) | Replaced with reactive stream connected directly to `LocalDatabase` SQLite queries and real task lifecycle events. |
+| `apps/mobile/lib/features/health/application/health_controller.dart` | Static hydration/meal values | 🔴 Eliminated (Phase 26) | Wired to persistent SQLite `water_entries`, `meal_entries`, and `nap_entries` with atomic updates. |
+| `apps/mobile/lib/features/missions/domain/services/verification_service.dart` | Simulated proof acceptance | 🔴 Eliminated (Phase 24) | Replaced with `ProofValidator`, `FFmpegFrameExtractor`, and backend MoveNet verification engine; fails closed on missing hardware. |
 | `backend/tests/*` | Mocks in test files | 🟢 Unit-Test Mocks | Retained strictly within test suites for isolated coverage. |
 
 ---
