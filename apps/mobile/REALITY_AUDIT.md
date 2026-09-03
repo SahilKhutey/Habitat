@@ -27,10 +27,13 @@ This document tracks all previously-fake, hardcoded, or simulated paths across t
 
 ---
 
-## 3. Platform & Hardware Integration
+## 4. UI Layer Integration & Zero-Mock Wiring (Phase 26)
 
-| Area | Status | Verification Protocol |
-|---|---|---|
-| **Camera Hardware Controller** | Implemented (`camera: ^0.10.5+9`) | Requires physical camera viewfinder test on Android / iOS |
-| **Alarm Audio Hardware Engine** | Implemented (70 -> 85 -> 100 dB volume curve) | Physical device audio override test |
-| **Server Vision Verification API** | 100% Tested Backend (72/72 suites passing) | Client-server HTTP integration via `HabitatApiClient` |
+| UI Screen / Controller | Previous State | Resolved State | Authoritative Mechanism |
+|---|---|---|---|
+| **`HomeController`** | Demo strings and fake dashboard metrics | Real SQLite streams + `LocalDatabase` | Reactive query of active task attempts, today's schedule, and real daily progress |
+| **`HealthController`** | Static 0.0L hydration and fake meals | Real `water_entries`, `meal_entries`, `nap_entries` | `LocalDatabase.addWater`, `addMeal`, `startNap`, `stopNap` with persistent atomic updates |
+| **`TasksScreen`** | Hardcoded demo task models | Dynamically queried SQLite task catalog | Filters (`ALL`, `ACTIVE`, `SCHEDULED`, `COMPLETED`) over real persistent `LocalTask` records |
+| **`ProgressScreen`** | Static completion percentage & mock streak | Calculated from actual event ledger | 7-day completion trend, real streak counter, and dynamic Grace Token inventory |
+| **`DailyJournalScreen`** | In-memory temporary entries | Persistent `reflections` table | CRUD operations saved directly to local database across app sessions |
+| **`MissionExecutionScreen`** | Synthetic completion buttons | Strict proof verification boundary | Mission cannot be marked complete without valid media proof or verified telemetry |
