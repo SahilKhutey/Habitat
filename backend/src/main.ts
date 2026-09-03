@@ -66,8 +66,13 @@ NotificationGateway.initialize(server);
 import { createVisionProvider } from './modules/verification/vision.factory';
 
 export function bootstrap() {
-  if (process.env.NODE_ENV === 'production' && process.env.VISION_PROVIDER === 'mock') {
-    throw new Error('[FATAL] Production startup rejected: VISION_PROVIDER cannot be "mock" in production environment.');
+  const isProduction =
+    process.env.NODE_ENV === 'production' || process.env.HABITAT_ENV === 'production';
+
+  if (isProduction && (process.env.VISION_PROVIDER === 'mock' || !process.env.VISION_PROVIDER)) {
+    throw new Error(
+      '[FATAL] Production startup rejected: VISION_PROVIDER must be explicitly configured (e.g. "tfjs") and cannot be "mock" in production environment.'
+    );
   }
 
   DatabaseService.getDb();

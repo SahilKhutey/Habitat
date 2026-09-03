@@ -21,7 +21,7 @@ export interface AIProvider {
   generateResponse(request: AIRequest): Promise<AIResponse>;
 }
 
-export class MockAIProvider implements AIProvider {
+export class DeterministicRuleAIProvider implements AIProvider {
   public async generateResponse(request: AIRequest): Promise<AIResponse> {
     const cleanMessage = SafetyFilter.sanitizeInput(request.userMessage).toLowerCase();
 
@@ -96,3 +96,5 @@ export class MockAIProvider implements AIProvider {
     };
   }
 }
+
+export const MockAIProvider = DeterministicRuleAIProvider;

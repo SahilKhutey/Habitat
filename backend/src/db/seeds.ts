@@ -258,8 +258,11 @@ export function seedDatabase(): { defaultUserId: string } {
   insertAudio.run('audio-gamma', 'Gamma 40Hz Prefrontal Ignition', 432, 40.0, 'STROBE_PULSE', 150, now);
   insertAudio.run('audio-shockwave', 'Sub-Bass Kinetic Shockwave', 120, 25.0, 'EXPONENTIAL', 300, now);
 
-  // 6. Seed Default Active Alarms & Hydration for Recruit (Runtime only, preserving clean state in unit tests)
-  if (defaultUserId && process.env.NODE_ENV !== 'test') {
+  // 6. Seed Default Active Alarms & Hydration for Recruit (Development runtime only, preserving clean state in production & unit tests)
+  const isProduction =
+    process.env.NODE_ENV === 'production' || process.env.HABITAT_ENV === 'production';
+
+  if (defaultUserId && !isProduction && process.env.NODE_ENV !== 'test') {
     const bedTask = db.prepare("SELECT id FROM tasks WHERE slug = 'make-bed' LIMIT 1").get() as { id: string } | undefined;
     const pushupTask = db.prepare("SELECT id FROM tasks WHERE slug = 'pushups-10' LIMIT 1").get() as { id: string } | undefined;
 
@@ -280,10 +283,8 @@ export function seedDatabase(): { defaultUserId: string } {
       INSERT OR IGNORE INTO hydration_entries (id, user_id, amount_ml, timestamp, source, created_at)
       VALUES (?, ?, 500, ?, 'APP', ?)
     `).run('hydration-morning-water', defaultUserId, now, now);
-  }
 
-  // 7. Seed Initial Welcome Journal Entry
-  if (defaultUserId) {
+    // Seed Initial Welcome Journal Entry
     db.prepare(`
       INSERT OR IGNORE INTO journal_entries (id, user_id, title, content, rating, tags, created_at, updated_at)
       VALUES (?, ?, 'Day 1: The Contract', 'Commitment established. Morning inertia will be confronted with physical action. No snooze button. No excuses.', 5, '["discipline","day1"]', ?, ?)

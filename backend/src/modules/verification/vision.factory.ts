@@ -1,16 +1,26 @@
 // Canonical Vision Provider Factory for Runtime Environment Selection
 import { IVisionProvider } from './domain/vision-provider.interface';
-import { MockVisionProvider } from './infrastructure/mock-vision.provider';
 import { TfjsVisionProvider } from './infrastructure/tfjs-vision.provider';
+import { MockVisionProvider as IsolatedTestVisionProvider } from './infrastructure/mock-vision.provider';
 
 export function createVisionProvider(overrideType?: string): IVisionProvider {
+  const isProduction =
+    process.env.NODE_ENV === 'production' || process.env.HABITAT_ENV === 'production';
+
+  const rawProviderType = overrideType ?? process.env.VISION_PROVIDER;
+
+  // In production, default strictly to 'tfjs' (MoveNet Lightning) and reject 'mock'
   const providerType = (
-    overrideType ??
-    process.env.VISION_PROVIDER ??
-    'mock'
+    rawProviderType ?? (isProduction ? 'tfjs' : 'mock')
   )
     .trim()
     .toLowerCase();
+
+  if (isProduction && providerType === 'mock') {
+    throw new Error(
+      '[FATAL] Production startup rejected: MockVisionProvider cannot be loaded in production environment.'
+    );
+  }
 
   switch (providerType) {
     // All real-vision aliases resolve to TfjsVisionProvider, which is the only
@@ -22,7 +32,7 @@ export function createVisionProvider(overrideType?: string): IVisionProvider {
       return new TfjsVisionProvider();
 
     case 'mock':
-      return new MockVisionProvider();
+      return new IsolatedTestVisionProvider();
 
     default:
       throw new Error(

@@ -30,7 +30,7 @@ export class StorageService {
     mimeType: string;
   }): { uploadUrl: string; storageKey: string; expiresSec: number } {
     const storageKey = this.generateStorageKey(params);
-    const uploadUrl = `${this.endpoint}/${this.bucket}/${storageKey}?auth=presigned-token-mock`;
+    const uploadUrl = `${this.endpoint}/${this.bucket}/${storageKey}?signature=${uuidv4()}`;
 
     return {
       uploadUrl,

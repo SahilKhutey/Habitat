@@ -2,12 +2,12 @@
 import { DatabaseService } from '../../../db/connection';
 import { v4 as uuidv4 } from 'uuid';
 import { ContextEngine } from '../engine/context-engine';
-import { MockAIProvider } from '../ai/ai-provider';
+import { DeterministicRuleAIProvider } from '../ai/ai-provider';
 import { SafetyFilter } from '../ai/safety-filter';
 import { CoachMessageEntity, CoachSessionEntity } from '../domain/plan.entity';
 
 export class CoachingService {
-  private static provider = new MockAIProvider();
+  private static provider = new DeterministicRuleAIProvider();
 
   /**
    * Starts a new coach session
