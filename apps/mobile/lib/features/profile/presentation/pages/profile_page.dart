@@ -137,7 +137,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     SettingsTile(
                       icon: Icons.lock_outline,
                       title: 'Security & App Lock',
-                      subtitle: _controller.security.appLockEnabled ? 'Protected' : 'Standard',
+                      subtitle: _controller.security.appLockEnabled
+                          ? 'Protected'
+                          : 'Standard',
                       onTap: () => _openScreen(const SecurityPage()),
                     ),
                     SettingsTile(

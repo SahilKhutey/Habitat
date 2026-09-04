@@ -1,7 +1,7 @@
 // Habitat Centralized Route Definitions & Deep-Linking Architecture
 abstract final class AppRoutes {
   static const String home = '/';
-  
+
   // Tasks Domain
   static const String tasks = '/tasks';
   static const String taskCreate = '/tasks/create';

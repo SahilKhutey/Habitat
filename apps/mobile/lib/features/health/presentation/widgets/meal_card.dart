@@ -39,7 +39,8 @@ class MealCard extends StatelessWidget {
                       color: const Color(0xFFF72585).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.restaurant, color: Color(0xFFF72585), size: 18),
+                    child: const Icon(Icons.restaurant,
+                        color: Color(0xFFF72585), size: 18),
                   ),
                   const SizedBox(width: 10),
                   const Text(
@@ -68,7 +69,8 @@ class MealCard extends StatelessWidget {
                   if (onOpenDetails != null) ...[
                     const SizedBox(width: 4),
                     IconButton(
-                      icon: const Icon(Icons.chevron_right, size: 18, color: Color(0xFFF72585)),
+                      icon: const Icon(Icons.chevron_right,
+                          size: 18, color: Color(0xFFF72585)),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: onOpenDetails,
@@ -104,7 +106,8 @@ class MealCard extends StatelessWidget {
             Icon(
               isLogged ? Icons.check_circle : Icons.radio_button_unchecked,
               size: 16,
-              color: isLogged ? const Color(0xFFF72585) : HabitatTheme.textMuted,
+              color:
+                  isLogged ? const Color(0xFFF72585) : HabitatTheme.textMuted,
             ),
             const SizedBox(width: 10),
             Text(
@@ -138,7 +141,8 @@ class MealCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               minimumSize: const Size(0, 26),
               backgroundColor: HabitatTheme.surfaceSecondary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
             ),
             child: const Text(
               '+ Log',

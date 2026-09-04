@@ -98,7 +98,8 @@ class _HealthPageState extends State<HealthPage> {
                 tooltip: 'Health History',
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const HealthHistoryPage()),
+                    MaterialPageRoute(
+                        builder: (_) => const HealthHistoryPage()),
                   );
                 },
               ),
@@ -160,10 +161,12 @@ class _HealthPageState extends State<HealthPage> {
                     child: TextButton.icon(
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const HealthHistoryPage()),
+                          MaterialPageRoute(
+                              builder: (_) => const HealthHistoryPage()),
                         );
                       },
-                      icon: const Icon(Icons.history, size: 16, color: HabitatTheme.textSecondary),
+                      icon: const Icon(Icons.history,
+                          size: 16, color: HabitatTheme.textSecondary),
                       label: const Text(
                         'View Multi-Day Health History →',
                         style: TextStyle(

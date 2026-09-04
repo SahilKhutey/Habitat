@@ -24,9 +24,15 @@ class AchievementController extends ChangeNotifier {
     return switch (activeFilter.toUpperCase()) {
       'UNLOCKED' => allAchievements.where((a) => a.isUnlocked).toList(),
       'LOCKED' => allAchievements.where((a) => !a.isUnlocked).toList(),
-      'TASKS' => allAchievements.where((a) => a.category == AchievementCategory.tasks).toList(),
-      'STREAKS' => allAchievements.where((a) => a.category == AchievementCategory.streaks).toList(),
-      'HEALTH' => allAchievements.where((a) => a.category == AchievementCategory.health).toList(),
+      'TASKS' => allAchievements
+          .where((a) => a.category == AchievementCategory.tasks)
+          .toList(),
+      'STREAKS' => allAchievements
+          .where((a) => a.category == AchievementCategory.streaks)
+          .toList(),
+      'HEALTH' => allAchievements
+          .where((a) => a.category == AchievementCategory.health)
+          .toList(),
       _ => allAchievements,
     };
   }

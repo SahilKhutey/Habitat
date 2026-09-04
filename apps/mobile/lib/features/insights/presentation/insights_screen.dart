@@ -22,7 +22,8 @@ class InsightsScreen extends StatelessWidget {
         'id': 'rec-1',
         'type': 'MOVE_TASK',
         'title': 'Optimize Exercise Timing',
-        'explanation': 'You complete exercise 91% of the time between 07:00–08:00 vs 62% in the evening.',
+        'explanation':
+            'You complete exercise 91% of the time between 07:00–08:00 vs 62% in the evening.',
         'confidence': 0.88,
         'action': 'Move to 07:30'
       },
@@ -30,7 +31,8 @@ class InsightsScreen extends StatelessWidget {
         'id': 'rec-2',
         'type': 'INCREASE_DIFFICULTY',
         'title': 'Advance Push-Up Challenge',
-        'explanation': 'You have completed 10 pushups for 14 consecutive days with minimal resistance.',
+        'explanation':
+            'You have completed 10 pushups for 14 consecutive days with minimal resistance.',
         'confidence': 0.86,
         'action': 'Try 12–15 Reps'
       }
@@ -66,24 +68,39 @@ class InsightsScreen extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: AppRadii.radiusLarge,
-                  border: Border.all(color: AppColors.cyanDiscovery.withOpacity(0.3)),
+                  border: Border.all(
+                      color: AppColors.cyanDiscovery.withOpacity(0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('OVERALL DISCIPLINE HEALTH', style: TextStyle(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                    const Text('OVERALL DISCIPLINE HEALTH',
+                        style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5)),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${overallCompletionRate.toStringAsFixed(0)}%', style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
+                        Text('${overallCompletionRate.toStringAsFixed(0)}%',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold)),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.emeraldVictory.withOpacity(0.2),
                             borderRadius: AppRadii.radiusSmall,
                           ),
-                          child: const Text('STRONG MOMENTUM', style: TextStyle(color: AppColors.emeraldVictory, fontSize: 11, fontWeight: FontWeight.bold)),
+                          child: const Text('STRONG MOMENTUM',
+                              style: TextStyle(
+                                  color: AppColors.emeraldVictory,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -94,20 +111,26 @@ class InsightsScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
 
               // Core Insights Grid
-              _buildInsightCard('🔥 Strongest Habit', strongestHabit, AppColors.amberFocus),
+              _buildInsightCard(
+                  '🔥 Strongest Habit', strongestHabit, AppColors.amberFocus),
               const SizedBox(height: AppSpacing.md),
-              _buildInsightCard('⏰ Best Time Window', bestTimeWindow, AppColors.cyanDiscovery),
+              _buildInsightCard('⏰ Best Time Window', bestTimeWindow,
+                  AppColors.cyanDiscovery),
               const SizedBox(height: AppSpacing.md),
-              _buildInsightCard('⚡ Growing Habit', growingHabit, AppColors.emeraldVictory),
+              _buildInsightCard(
+                  '⚡ Growing Habit', growingHabit, AppColors.emeraldVictory),
               if (needsAttention != null) ...[
                 const SizedBox(height: AppSpacing.md),
-                _buildInsightCard('⚠️ Needs Attention', needsAttention!, AppColors.crimsonAlert),
+                _buildInsightCard('⚠️ Needs Attention', needsAttention!,
+                    AppColors.crimsonAlert),
               ],
 
               const SizedBox(height: AppSpacing.xl),
 
               // Personalized Recommendations Section
-              Text('PERSONALIZED RECOMMENDATIONS', style: AppTypography.titleSmall.copyWith(color: Colors.white70, letterSpacing: 1.5)),
+              Text('PERSONALIZED RECOMMENDATIONS',
+                  style: AppTypography.titleSmall
+                      .copyWith(color: Colors.white70, letterSpacing: 1.5)),
               const SizedBox(height: AppSpacing.md),
 
               ...recommendations.map((r) => Container(
@@ -124,12 +147,25 @@ class InsightsScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(r['title'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                            Text('${((r['confidence'] as double) * 100).toInt()}% match', style: const TextStyle(color: AppColors.cyanDiscovery, fontSize: 11, fontWeight: FontWeight.bold)),
+                            Text(r['title'] as String,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15)),
+                            Text(
+                                '${((r['confidence'] as double) * 100).toInt()}% match',
+                                style: const TextStyle(
+                                    color: AppColors.cyanDiscovery,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
                         const SizedBox(height: 6),
-                        Text(r['explanation'] as String, style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4)),
+                        Text(r['explanation'] as String,
+                            style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                                height: 1.4)),
                         const SizedBox(height: 12),
                         Row(
                           children: [
@@ -137,15 +173,21 @@ class InsightsScreen extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.amberFocus,
                                 foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                               ),
                               onPressed: () {},
-                              child: Text(r['action'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              child: Text(r['action'] as String,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12)),
                             ),
                             const SizedBox(width: 8),
                             TextButton(
                               onPressed: () {},
-                              child: const Text('Keep Current', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                              child: const Text('Keep Current',
+                                  style: TextStyle(
+                                      color: Colors.white54, fontSize: 12)),
                             ),
                           ],
                         ),
@@ -170,8 +212,16 @@ class InsightsScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
-          Text(value, style: TextStyle(color: accentColor, fontSize: 14, fontWeight: FontWeight.bold)),
+          Text(title,
+              style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+          Text(value,
+              style: TextStyle(
+                  color: accentColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold)),
         ],
       ),
     );

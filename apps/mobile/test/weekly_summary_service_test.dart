@@ -17,7 +17,8 @@ void main() {
   });
 
   group('WeeklySummaryService Unit Tests', () {
-    test('getWeeklySummary() returns 7-day Monday through Sunday breakdown', () {
+    test('getWeeklySummary() returns 7-day Monday through Sunday breakdown',
+        () {
       final now = DateTime.now();
 
       // Record a completion today

@@ -19,7 +19,8 @@ class WeeklySummaryScreen extends StatelessWidget {
     this.currentStreak = 12,
     this.xpEarned = 420,
     this.bestDay = 'Tuesday',
-    this.insight = 'You completed your morning missions more consistently than evening missions this week.',
+    this.insight =
+        'You completed your morning missions more consistently than evening missions this week.',
   });
 
   @override
@@ -96,25 +97,32 @@ class WeeklySummaryScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF15181E),
                   borderRadius: AppRadii.radiusLarge,
-                  border: Border.all(color: AppColors.amberFocus.withOpacity(0.4)),
+                  border:
+                      Border.all(color: AppColors.amberFocus.withOpacity(0.4)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: const [
-                        Icon(Icons.lightbulb_outline, color: AppColors.amberFocus, size: 20),
+                        Icon(Icons.lightbulb_outline,
+                            color: AppColors.amberFocus, size: 20),
                         SizedBox(width: 8),
                         Text(
                           'BEHAVIORAL INSIGHT',
-                          style: TextStyle(color: AppColors.amberFocus, fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 1.5),
+                          style: TextStyle(
+                              color: AppColors.amberFocus,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              letterSpacing: 1.5),
                         ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       insight,
-                      style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                      style: const TextStyle(
+                          color: Colors.white70, fontSize: 13, height: 1.4),
                     ),
                   ],
                 ),
@@ -150,11 +158,18 @@ class WeeklySummaryScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.bold)),
+          Text(label,
+              style: const TextStyle(
+                  color: Colors.white54,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
-          Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(value,
+              style: TextStyle(
+                  color: color, fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(sub, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+          Text(sub,
+              style: const TextStyle(color: Colors.white38, fontSize: 11)),
         ],
       ),
     );

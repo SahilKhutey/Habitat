@@ -35,3 +35,25 @@ class PermissionItemModel {
 
   bool get isGranted => status == PermissionState.granted;
 }
+
+typedef AppPermissionType = PermissionType;
+typedef PermissionAuthorizationStatus = PermissionState;
+
+class AppPermission extends PermissionItemModel {
+  final String name;
+  final String description;
+
+  const AppPermission({
+    required PermissionType type,
+    required this.name,
+    required this.description,
+    required PermissionState status,
+    bool isRequiredForDiscipline = true,
+  }) : super(
+          type: type,
+          displayName: name,
+          usageDescription: description,
+          status: status,
+          isRequiredForDiscipline: isRequiredForDiscipline,
+        );
+}

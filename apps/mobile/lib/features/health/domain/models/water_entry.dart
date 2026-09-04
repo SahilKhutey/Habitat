@@ -28,9 +28,11 @@ class WaterSummaryModel {
     this.entries = const [],
   });
 
-  double get progressPercentage => (consumedMilliliters / targetMilliliters).clamp(0.0, 1.0);
+  double get progressPercentage =>
+      (consumedMilliliters / targetMilliliters).clamp(0.0, 1.0);
 
-  int get remainingMilliliters => (targetMilliliters - consumedMilliliters).clamp(0, targetMilliliters);
+  int get remainingMilliliters =>
+      (targetMilliliters - consumedMilliliters).clamp(0, targetMilliliters);
 
   double get consumedLiters => consumedMilliliters / 1000.0;
 

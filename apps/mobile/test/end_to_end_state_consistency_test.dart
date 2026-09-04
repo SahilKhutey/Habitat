@@ -17,7 +17,9 @@ void main() {
   });
 
   group('Track L: Single State Owner & Mutation Invariants', () {
-    test('L1 & L2: LocalDatabase is the authoritative source of truth for all domain entities', () {
+    test(
+        'L1 & L2: LocalDatabase is the authoritative source of truth for all domain entities',
+        () {
       final user = db.getOrCreateProfile(name: 'Commander');
       expect(user.displayName, equals('Commander'));
 
@@ -37,7 +39,9 @@ void main() {
   });
 
   group('Track L: Idempotent Mission Completion & Deduplication', () {
-    test('L5 & L6: Triple completion produces exactly 1 XP event and 1 streak update', () async {
+    test(
+        'L5 & L6: Triple completion produces exactly 1 XP event and 1 streak update',
+        () async {
       final task = LocalTask(
         id: 'task_idempotent_flow',
         title: '20 Strict Pushups',
@@ -57,7 +61,8 @@ void main() {
         const ProofSubmission(
           type: 'VIDEO',
           filePath: 'habitat_storage://proofs/pushups_valid.mp4',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
           durationSeconds: 10,
         ),
       );
@@ -84,7 +89,9 @@ void main() {
       expect(db.getStreak().currentStreak, equals(streak1)); // Streak unchanged
     });
 
-    test('L7 & L8: XP events use deterministic composite keys to prevent duplicate awards', () {
+    test(
+        'L7 & L8: XP events use deterministic composite keys to prevent duplicate awards',
+        () {
       db.awardXP(taskId: 'task_001', attemptId: 'att_001', amount: 50);
       expect(db.getTotalXP(), equals(50));
 
@@ -99,7 +106,9 @@ void main() {
   });
 
   group('Track L: Alarm Startup Reconciliation & Recovery', () {
-    test('L13 & L14: reconcilePersistedAlarmsOnStartup synchronizes enabled alarms', () async {
+    test(
+        'L13 & L14: reconcilePersistedAlarmsOnStartup synchronizes enabled alarms',
+        () async {
       db.saveTask(LocalTask(
         id: 'task_reconcile',
         title: 'Cold Plunge',
@@ -125,12 +134,15 @@ void main() {
         createdAt: DateTime.now(),
       ));
 
-      final reconciledCount = await alarmService.reconcilePersistedAlarmsOnStartup();
+      final reconciledCount =
+          await alarmService.reconcilePersistedAlarmsOnStartup();
       expect(reconciledCount, equals(1)); // Only the enabled alarm is scheduled
     });
 
-    test('L10 & L11: Corrupt payload recovery restores defaults without crash', () {
-      const corruptPayload = '{ "invalid_json": true, "tasks": "corrupted_non_list" }';
+    test('L10 & L11: Corrupt payload recovery restores defaults without crash',
+        () {
+      const corruptPayload =
+          '{ "invalid_json": true, "tasks": "corrupted_non_list" }';
 
       // Restoring corrupt data should safely fall back and seed default templates
       db.restoreFromStateJson(corruptPayload);

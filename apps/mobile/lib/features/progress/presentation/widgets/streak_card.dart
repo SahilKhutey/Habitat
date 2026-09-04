@@ -31,7 +31,8 @@ class StreakCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.local_fire_department, color: Colors.orangeAccent, size: 20),
+                  const Icon(Icons.local_fire_department,
+                      color: Colors.orangeAccent, size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'DISCIPLINE STREAK',
@@ -59,7 +60,8 @@ class StreakCard extends StatelessWidget {
                           color: Colors.orangeAccent,
                         ),
                       ),
-                      Icon(Icons.chevron_right, size: 16, color: Colors.orangeAccent),
+                      Icon(Icons.chevron_right,
+                          size: 16, color: Colors.orangeAccent),
                     ],
                   ),
                 ),
@@ -95,7 +97,8 @@ class StreakCard extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: HabitatTheme.surfaceSecondary,
                   borderRadius: BorderRadius.circular(10),
@@ -103,7 +106,8 @@ class StreakCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.shield, size: 14, color: HabitatTheme.youngLeaf),
+                    const Icon(Icons.shield,
+                        size: 14, color: HabitatTheme.youngLeaf),
                     const SizedBox(width: 4),
                     Text(
                       '${streak.graceTokens} Grace Token${streak.graceTokens == 1 ? '' : 's'}',

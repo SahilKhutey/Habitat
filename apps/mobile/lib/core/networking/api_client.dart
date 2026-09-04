@@ -81,7 +81,10 @@ class ServerVerificationResponse {
       truthScore: (data['truthScore'] as num?)?.toDouble() ?? 0.0,
       repsVerified: data['repsVerified'] as int? ?? 0,
       rejectionReason: data['rejectionReason'] as String?,
-      flags: (data['flags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? const [],
+      flags: (data['flags'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
       nonceValidated: data['nonceValidated'] as bool? ?? false,
     );
   }

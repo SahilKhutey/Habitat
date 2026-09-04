@@ -34,7 +34,8 @@ class HealthSummaryCard extends StatelessWidget {
             children: [
               const Row(
                 children: [
-                  Icon(Icons.favorite_outline, color: HabitatTheme.growthGreen, size: 18),
+                  Icon(Icons.favorite_outline,
+                      color: HabitatTheme.growthGreen, size: 18),
                   SizedBox(width: 8),
                   Text(
                     "TODAY'S HEALTH SNAPSHOT",
@@ -67,7 +68,6 @@ class HealthSummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
           Row(
             children: [
               // 1. Water Pillar
@@ -75,7 +75,8 @@ class HealthSummaryCard extends StatelessWidget {
                 child: _buildMetricTile(
                   title: 'WATER',
                   value: '${summary.water.consumedLiters.toStringAsFixed(1)}L',
-                  target: '${summary.water.targetLiters.toStringAsFixed(1)}L target',
+                  target:
+                      '${summary.water.targetLiters.toStringAsFixed(1)}L target',
                   icon: Icons.water_drop_outlined,
                   color: const Color(0xFF4CC9F0),
                   onTap: onOpenWater,
@@ -100,8 +101,11 @@ class HealthSummaryCard extends StatelessWidget {
               Expanded(
                 child: _buildMetricTile(
                   title: 'REST / NAP',
-                  value: summary.nap.isRunning ? 'RUNNING' : summary.nap.formattedDuration,
-                  target: summary.nap.isRunning ? 'Active session' : 'rest logged',
+                  value: summary.nap.isRunning
+                      ? 'RUNNING'
+                      : summary.nap.formattedDuration,
+                  target:
+                      summary.nap.isRunning ? 'Active session' : 'rest logged',
                   icon: Icons.bedtime_outlined,
                   color: const Color(0xFF7209B7),
                   onTap: onOpenNap,

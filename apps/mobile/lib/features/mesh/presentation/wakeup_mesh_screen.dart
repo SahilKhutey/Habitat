@@ -48,7 +48,8 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: HabitatTheme.crimsonAlert,
-        content: Text('🚨 SYNCHRONIZED MESH SIREN DISPATCHED ACROSS ALL 4 DEVICES (85dB)!'),
+        content: Text(
+            '🚨 SYNCHRONIZED MESH SIREN DISPATCHED ACROSS ALL 4 DEVICES (85dB)!'),
       ),
     );
   }
@@ -58,7 +59,8 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: HabitatTheme.emeraldVictory,
-        content: Text('✅ SYNCHRONOUS DISARM BROADCAST! All secondary devices silenced.'),
+        content: Text(
+            '✅ SYNCHRONOUS DISARM BROADCAST! All secondary devices silenced.'),
       ),
     );
   }
@@ -82,7 +84,9 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: _isMeshAlarmActive ? HabitatTheme.crimsonAlert : HabitatTheme.amberFocus.withOpacity(0.4),
+                  color: _isMeshAlarmActive
+                      ? HabitatTheme.crimsonAlert
+                      : HabitatTheme.amberFocus.withOpacity(0.4),
                   width: _isMeshAlarmActive ? 2 : 1,
                 ),
               ),
@@ -94,12 +98,20 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.hub, color: _isMeshAlarmActive ? HabitatTheme.crimsonAlert : HabitatTheme.amberFocus, size: 22),
+                          Icon(Icons.hub,
+                              color: _isMeshAlarmActive
+                                  ? HabitatTheme.crimsonAlert
+                                  : HabitatTheme.amberFocus,
+                              size: 22),
                           const SizedBox(width: 8),
                           Text(
-                            _isMeshAlarmActive ? 'MESH SIREN ACTIVE (4 NODES)' : '4 MESH NODES ONLINE',
+                            _isMeshAlarmActive
+                                ? 'MESH SIREN ACTIVE (4 NODES)'
+                                : '4 MESH NODES ONLINE',
                             style: TextStyle(
-                              color: _isMeshAlarmActive ? HabitatTheme.crimsonAlert : HabitatTheme.amberFocus,
+                              color: _isMeshAlarmActive
+                                  ? HabitatTheme.crimsonAlert
+                                  : HabitatTheme.amberFocus,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
@@ -108,21 +120,34 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(color: const Color(0xFF1E2820), borderRadius: BorderRadius.circular(6)),
-                        child: const Text('SYNCED', style: TextStyle(color: HabitatTheme.emeraldVictory, fontSize: 10, fontWeight: FontWeight.bold)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF1E2820),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: const Text('SYNCED',
+                            style: TextStyle(
+                                color: HabitatTheme.emeraldVictory,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'Distributed Wakeup Mesh',
-                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 6),
                   const Text(
                     'When 07:00 arrives, sirens fire simultaneously across your phone, tablet, smartwatch, and desktop. Verifying proof on any single device synchronously silences all other mesh nodes.',
-                    style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
+                    style: TextStyle(
+                        color: HabitatTheme.textSecondary,
+                        fontSize: 13,
+                        height: 1.4),
                   ),
                   const SizedBox(height: 20),
 
@@ -131,16 +156,30 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton.icon(
-                      icon: Icon(_isMeshAlarmActive ? Icons.volume_off : Icons.wifi_tethering, color: Colors.black),
+                      icon: Icon(
+                          _isMeshAlarmActive
+                              ? Icons.volume_off
+                              : Icons.wifi_tethering,
+                          color: Colors.black),
                       label: Text(
-                        _isMeshAlarmActive ? 'DISARM ALL MESH NODES' : 'TRIGGER SYNCHRONIZED MESH SIREN',
-                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 1),
+                        _isMeshAlarmActive
+                            ? 'DISARM ALL MESH NODES'
+                            : 'TRIGGER SYNCHRONIZED MESH SIREN',
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 12,
+                            letterSpacing: 1),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isMeshAlarmActive ? HabitatTheme.emeraldVictory : HabitatTheme.amberFocus,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        backgroundColor: _isMeshAlarmActive
+                            ? HabitatTheme.emeraldVictory
+                            : HabitatTheme.amberFocus,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
-                      onPressed: _isMeshAlarmActive ? _disarmMesh : _triggerMeshSiren,
+                      onPressed:
+                          _isMeshAlarmActive ? _disarmMesh : _triggerMeshSiren,
                     ),
                   ),
                 ],
@@ -149,7 +188,12 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
             const SizedBox(height: 28),
 
             // 2. Connected Nodes List
-            const Text('CONNECTED HARDWARE NODES', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+            const Text('CONNECTED HARDWARE NODES',
+                style: TextStyle(
+                    color: HabitatTheme.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2)),
             const SizedBox(height: 12),
 
             ..._devices.map((device) {
@@ -170,29 +214,50 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
                         color: const Color(0xFF1C1C24),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(device['icon'] as IconData, color: HabitatTheme.amberFocus, size: 22),
+                      child: Icon(device['icon'] as IconData,
+                          color: HabitatTheme.amberFocus, size: 22),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(device['name'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                          Text(device['name'] as String,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
                           const SizedBox(height: 2),
                           Row(
                             children: [
-                              Container(width: 8, height: 8, decoration: const BoxDecoration(color: HabitatTheme.emeraldVictory, shape: BoxShape.circle)),
+                              Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                      color: HabitatTheme.emeraldVictory,
+                                      shape: BoxShape.circle)),
                               const SizedBox(width: 6),
-                              Text('Online • Latency: ${device['latency']}', style: const TextStyle(color: HabitatTheme.textMuted, fontSize: 11)),
+                              Text('Online • Latency: ${device['latency']}',
+                                  style: const TextStyle(
+                                      color: HabitatTheme.textMuted,
+                                      fontSize: 11)),
                             ],
                           ),
                         ],
                       ),
                     ),
                     if (_isMeshAlarmActive)
-                      const Text('🚨 RINGING', style: TextStyle(color: HabitatTheme.crimsonAlert, fontWeight: FontWeight.bold, fontSize: 11))
+                      const Text('🚨 RINGING',
+                          style: TextStyle(
+                              color: HabitatTheme.crimsonAlert,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11))
                     else
-                      const Text('READY', style: TextStyle(color: HabitatTheme.emeraldVictory, fontWeight: FontWeight.bold, fontSize: 11)),
+                      const Text('READY',
+                          style: TextStyle(
+                              color: HabitatTheme.emeraldVictory,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11)),
                   ],
                 ),
               );
@@ -206,14 +271,21 @@ class _WakeupMeshScreenState extends State<WakeupMeshScreen> {
               height: 52,
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.add_to_queue, color: Colors.white70),
-                label: const Text('ENROLL NEW HARDWARE MESH NODE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                label: const Text('ENROLL NEW HARDWARE MESH NODE',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: HabitatTheme.surfaceBorder),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Scan QR code on secondary device to join mesh topology.')),
+                    const SnackBar(
+                        content: Text(
+                            'Scan QR code on secondary device to join mesh topology.')),
                   );
                 },
               ),

@@ -19,7 +19,8 @@ class TaskExecutionService {
     required String taskId,
     String? taskTitle,
   }) {
-    final title = taskTitle ?? _database.getTask(taskId)?.title ?? 'Discipline Action';
+    final title =
+        taskTitle ?? _database.getTask(taskId)?.title ?? 'Discipline Action';
     final task = _database.getTask(taskId);
     final attemptId = 'exec-${DateTime.now().microsecondsSinceEpoch}';
     final now = DateTime.now();

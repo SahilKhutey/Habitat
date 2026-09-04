@@ -35,7 +35,8 @@ class MonthlySummaryService {
       }
     }
 
-    final avgPercentage = weeks.isNotEmpty ? (percentageSum / weeks.length) : 0.0;
+    final avgPercentage =
+        weeks.isNotEmpty ? (percentageSum / weeks.length) : 0.0;
 
     return MonthlyProgressSummaryModel(
       year: ref.year,

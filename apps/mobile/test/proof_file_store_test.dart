@@ -19,7 +19,8 @@ void main() {
       expect(RegExp(r'^[a-f0-9]{64}$').hasMatch(hash), isTrue);
     });
 
-    test('saveProofBytes() saves file and tracks byte size accurately', () async {
+    test('saveProofBytes() saves file and tracks byte size accurately',
+        () async {
       final sampleBytes = utf8.encode('PHOTO_BYTES_123456');
       final path = await store.saveProofBytes(
         taskId: 'task_001',

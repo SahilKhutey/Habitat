@@ -7,7 +7,8 @@ class ProofCaptureView extends StatefulWidget {
   final String taskCategory;
   final String proofType;
   final int minLuminance;
-  final Function(String localPath, Map<String, dynamic> telemetry)? onProofCaptured;
+  final Function(String localPath, Map<String, dynamic> telemetry)?
+      onProofCaptured;
 
   const ProofCaptureView({
     super.key,
@@ -41,7 +42,9 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 70),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: isDark ? HabitatTheme.crimsonAlert : HabitatTheme.amberFocus,
+                  color: isDark
+                      ? HabitatTheme.crimsonAlert
+                      : HabitatTheme.amberFocus,
                   width: 2.5,
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -51,9 +54,12 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
                   // Framing Silhouette Guide
                   Center(
                     child: Icon(
-                      widget.taskCategory == 'physical' ? Icons.accessibility_new : Icons.crop_free,
+                      widget.taskCategory == 'physical'
+                          ? Icons.accessibility_new
+                          : Icons.crop_free,
                       size: 100,
-                      color: isDark ? Colors.red.withOpacity(0.5) : Colors.white24,
+                      color:
+                          isDark ? Colors.red.withOpacity(0.5) : Colors.white24,
                     ),
                   ),
 
@@ -62,16 +68,20 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
                     top: 16,
                     left: 16,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.black87,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: isDark ? Colors.red : Colors.green),
+                        border: Border.all(
+                            color: isDark ? Colors.red : Colors.green),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.lightbulb, size: 14, color: isDark ? Colors.red : Colors.green),
+                          Icon(Icons.lightbulb,
+                              size: 14,
+                              color: isDark ? Colors.red : Colors.green),
                           const SizedBox(width: 6),
                           Text(
                             '${_currentLux.toInt()} LUX ${isDark ? "(TOO DARK)" : "(GOOD LIGHT)"}',
@@ -101,17 +111,20 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
                 if (isDark)
                   Container(
                     margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: HabitatTheme.crimsonAlert.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
                       '⚠️ Turn on room lights to capture proof',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
                     ),
                   ),
-
                 GestureDetector(
                   onTap: isDark ? null : _handleCapture,
                   child: Container(
@@ -119,7 +132,8 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: isDark ? Colors.grey : Colors.white, width: 4),
+                      border: Border.all(
+                          color: isDark ? Colors.grey : Colors.white, width: 4),
                     ),
                     child: Center(
                       child: Container(
@@ -130,7 +144,9 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          widget.proofType == 'VIDEO' ? Icons.videocam : Icons.camera,
+                          widget.proofType == 'VIDEO'
+                              ? Icons.videocam
+                              : Icons.camera,
                           color: Colors.black,
                         ),
                       ),
@@ -146,7 +162,8 @@ class _ProofCaptureViewState extends State<ProofCaptureView> {
   }
 
   void _handleCapture() {
-    final simulatedPath = '/app_storage/proofs/proof_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final simulatedPath =
+        '/app_storage/proofs/proof_${DateTime.now().millisecondsSinceEpoch}.jpg';
     final telemetry = {
       'ambientLux': _currentLux,
       'accelerometerMotion': _motionDetected,

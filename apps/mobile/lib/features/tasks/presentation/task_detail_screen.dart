@@ -31,13 +31,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     AppDialog.show(
       context,
       title: 'ARCHIVE TASK?',
-      content: 'Archiving removes this task from active alarm scheduling. All past completed missions and XP will be preserved forever.',
+      content:
+          'Archiving removes this task from active alarm scheduling. All past completed missions and XP will be preserved forever.',
       confirmLabel: 'ARCHIVE',
       isDestructive: true,
     ).then((confirmed) {
       if (confirmed == true) {
         setState(() => _status = 'ARCHIVED');
-        AppFeedback.showToast(context, message: 'Task archived. Historical data preserved.');
+        AppFeedback.showToast(context,
+            message: 'Task archived. Historical data preserved.');
         Navigator.of(context).pop();
       }
     });
@@ -48,7 +50,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('TASK PROTOCOL'),
         actions: [
@@ -71,15 +74,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 MissionStatusBadge(status: _status),
                 Text(
                   '+${widget.task['xpReward'] ?? 30} XP REWARD',
-                  style: const TextStyle(color: AppColors.emeraldVictory, fontWeight: FontWeight.w900, fontSize: 14),
+                  style: const TextStyle(
+                      color: AppColors.emeraldVictory,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14),
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            Text(widget.task['name'] as String? ?? 'Task Title', style: AppTypography.displayMedium),
+            Text(widget.task['name'] as String? ?? 'Task Title',
+                style: AppTypography.displayMedium),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              widget.task['description'] as String? ?? 'Execute strict repetitions upon alarm firing.',
+              widget.task['description'] as String? ??
+                  'Execute strict repetitions upon alarm firing.',
               style: AppTypography.bodyMedium,
             ),
             const SizedBox(height: AppSpacing.xxl),
@@ -89,28 +97,34 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('TASK RULES & PROOF SPECIFICATION', style: AppTypography.labelMedium),
+                  const Text('TASK RULES & PROOF SPECIFICATION',
+                      style: AppTypography.labelMedium),
                   const SizedBox(height: AppSpacing.md),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Proof Evidence:', style: AppTypography.bodySmall),
-                      Text(widget.task['proofType'] as String? ?? 'VIDEO', style: AppTypography.titleSmall),
+                      const Text('Proof Evidence:',
+                          style: AppTypography.bodySmall),
+                      Text(widget.task['proofType'] as String? ?? 'VIDEO',
+                          style: AppTypography.titleSmall),
                     ],
                   ),
                   const Divider(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Difficulty Rating:', style: AppTypography.bodySmall),
-                      Text('Level ${widget.task['difficulty'] ?? 2} / 5', style: AppTypography.titleSmall),
+                      const Text('Difficulty Rating:',
+                          style: AppTypography.bodySmall),
+                      Text('Level ${widget.task['difficulty'] ?? 2} / 5',
+                          style: AppTypography.titleSmall),
                     ],
                   ),
                   const Divider(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Estimated Duration:', style: AppTypography.bodySmall),
+                      const Text('Estimated Duration:',
+                          style: AppTypography.bodySmall),
                       const Text('60 Seconds', style: AppTypography.titleSmall),
                     ],
                   ),
@@ -121,7 +135,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
             // Action Buttons
             AppButton.outline(
-              label: _status == 'ACTIVE' ? 'PAUSE TASK SCHEDULING' : 'RESUME TASK SCHEDULING',
+              label: _status == 'ACTIVE'
+                  ? 'PAUSE TASK SCHEDULING'
+                  : 'RESUME TASK SCHEDULING',
               icon: _status == 'ACTIVE' ? Icons.pause : Icons.play_arrow,
               onPressed: _togglePause,
             ),

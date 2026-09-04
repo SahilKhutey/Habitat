@@ -29,7 +29,8 @@ class NapService {
     final entries = _repository.getNapEntries(day);
     final isRunning = entries.any((e) => e.isRunning);
     final activeNap = getCurrentNap(day);
-    final totalMinutes = entries.fold(0, (total, e) => total + e.durationMinutes);
+    final totalMinutes =
+        entries.fold(0, (total, e) => total + e.durationMinutes);
 
     return NapSummaryModel(
       totalMinutes: totalMinutes,

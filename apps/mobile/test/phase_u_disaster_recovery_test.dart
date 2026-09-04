@@ -5,20 +5,26 @@ import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
   late AlarmService alarmService;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
   });
 
   group('Phase U: Versioned Schema Migrations (U2, U3, U4, U21, U23)', () {
-    test('U2 & U3: Migrates Schema V1 payload to Current Schema V3 without data loss', () {
+    test(
+        'U2 & U3: Migrates Schema V1 payload to Current Schema V3 without data loss',
+        () {
       final v1Payload = jsonEncode({
         'version': 1,
         'user': {
@@ -89,7 +95,8 @@ void main() {
   });
 
   group('Phase U: Backup & Corruption Recovery Matrix (U8, U9, U10)', () {
-    test('U9: Recovers from backup snapshot when primary state is corrupted', () async {
+    test('U9: Recovers from backup snapshot when primary state is corrupted',
+        () async {
       final task = LocalTask(
         id: 'task_disaster_backup',
         title: 'Deep Meditation',
@@ -104,24 +111,36 @@ void main() {
       expect(db.getTask('task_disaster_backup'), isNotNull);
 
       // Simulate primary corruption with corrupted JSON
-      const corruptedJson = '{"version": 3, "tasks": [{"id": "broken", "title": truncated';
+      const corruptedJson =
+          '{"version": 3, "tasks": [{"id": "broken", "title": truncated';
       db.restoreFromStateJson(corruptedJson);
 
       // Trigger backup recovery
       final recovered = db.recoverFromBackup();
       expect(recovered, isTrue);
-      expect(db.getTask('task_disaster_backup')?.title, equals('Deep Meditation'));
+      expect(
+          db.getTask('task_disaster_backup')?.title, equals('Deep Meditation'));
     });
 
-    test('U10: Handles empty, truncated, or unknown fields gracefully without crashing', () {
+    test(
+        'U10: Handles empty, truncated, or unknown fields gracefully without crashing',
+        () {
       expect(() => db.restoreFromStateJson(''), returnsNormally);
-      expect(() => db.restoreFromStateJson('{ "unknown_future_field": [1,2,3] }'), returnsNormally);
-      expect(() => db.restoreFromStateJson('{ "tasks": null, "streak": "invalid_type" }'), returnsNormally);
+      expect(
+          () => db.restoreFromStateJson('{ "unknown_future_field": [1,2,3] }'),
+          returnsNormally);
+      expect(
+          () => db.restoreFromStateJson(
+              '{ "tasks": null, "streak": "invalid_type" }'),
+          returnsNormally);
     });
   });
 
-  group('Phase U: Referential Integrity & Duplicate Detection (U11, U12, U14)', () {
-    test('U11 & U14: Interrupted or duplicate XP/Streak awards are strictly deduplicated', () async {
+  group('Phase U: Referential Integrity & Duplicate Detection (U11, U12, U14)',
+      () {
+    test(
+        'U11 & U14: Interrupted or duplicate XP/Streak awards are strictly deduplicated',
+        () async {
       final task = LocalTask(
         id: 'task_u_idempotency',
         title: '15 Diamond Pushups',
@@ -140,7 +159,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/u_proof.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -162,7 +182,9 @@ void main() {
   });
 
   group('Phase U: Full Disaster Scenario Certification (U24)', () {
-    test('U24: Full Disaster Cycle — Old state -> Active mission -> Corrupted disk -> Restore -> Intact state', () async {
+    test(
+        'U24: Full Disaster Cycle — Old state -> Active mission -> Corrupted disk -> Restore -> Intact state',
+        () async {
       // 1. Seed historical state
       final task = LocalTask(
         id: 'task_disaster_full',
@@ -184,13 +206,15 @@ void main() {
       ));
 
       // 2. Complete Mission with Proof
-      final attempt = await missionService.start('task_disaster_full', alarmId: 'alm_disaster_full');
+      final attempt = await missionService.start('task_disaster_full',
+          alarmId: 'alm_disaster_full');
       await missionService.submitProof(
         attempt.id,
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/disaster_proof.jpg',
-          sha256Checksum: '9999888877776666555544443333222211110000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '9999888877776666555544443333222211110000aaaabbbbccccddddeeeeffff',
         ),
       );
       final completion = await missionService.complete(attempt.id);
@@ -202,7 +226,7 @@ void main() {
       final validSnapshot = db.exportCompleteStateJson();
 
       // 4. Simulate crash & corruption
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       db.restoreFromStateJson('{"corrupted": true}');
 
       // 5. Restore from snapshot
@@ -213,7 +237,8 @@ void main() {
       expect(db.getTotalXP(), equals(20));
       expect(db.getStreak().currentStreak, equals(1));
       expect(db.getProofsForTask('task_disaster_full').length, equals(1));
-      expect(db.getProofsForTask('task_disaster_full').first.isVerified, isTrue);
+      expect(
+          db.getProofsForTask('task_disaster_full').first.isVerified, isTrue);
     });
   });
 }

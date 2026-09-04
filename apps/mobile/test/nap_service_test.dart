@@ -15,7 +15,8 @@ void main() {
   });
 
   group('NapService Unit Tests', () {
-    test('startNap() creates a running session and getCurrentNap() returns it', () {
+    test('startNap() creates a running session and getCurrentNap() returns it',
+        () {
       final session = napService.startNap();
       expect(session.isRunning, isTrue);
 

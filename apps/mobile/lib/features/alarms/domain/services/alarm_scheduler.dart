@@ -86,8 +86,10 @@ class AlarmScheduler implements IAlarmScheduler {
   @override
   Future<HabitatAlarm> applyRetryPolicy(HabitatAlarm alarm) async {
     final nextMinute = (alarm.time.minute + alarm.retryIntervalMinutes) % 60;
-    final nextHour = (alarm.time.hour + ((alarm.time.minute + alarm.retryIntervalMinutes) ~/ 60)) % 24;
-    
+    final nextHour = (alarm.time.hour +
+            ((alarm.time.minute + alarm.retryIntervalMinutes) ~/ 60)) %
+        24;
+
     final updated = alarm.copyWith(
       time: TimeOfDay(hour: nextHour, minute: nextMinute),
       retryCount: alarm.retryCount + 1,

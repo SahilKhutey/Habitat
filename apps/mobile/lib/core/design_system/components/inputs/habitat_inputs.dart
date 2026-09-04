@@ -68,7 +68,8 @@ class HabitatTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(HabitatRadius.md),
-          borderSide: const BorderSide(color: HabitatColors.growthGreen, width: 1.5),
+          borderSide:
+              const BorderSide(color: HabitatColors.growthGreen, width: 1.5),
         ),
       ),
     );

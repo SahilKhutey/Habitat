@@ -15,7 +15,9 @@ void main() {
   });
 
   group('Phase 20: Master Quality & Regression Gate Tests', () {
-    test('20.1: Full Core Product Loop Integration (Task -> Alarm -> Mission -> Verification -> XP -> Streak -> Progress)', () async {
+    test(
+        '20.1: Full Core Product Loop Integration (Task -> Alarm -> Mission -> Verification -> XP -> Streak -> Progress)',
+        () async {
       // 1. Task & Alarm Creation
       final task = LocalTask(
         id: 'gate_task_01',
@@ -61,7 +63,10 @@ void main() {
       db.saveProof(proof);
 
       // 4. Mission Completion & Disarm
-      db.updateAttemptStatus(attemptId: 'gate_att_01', status: 'COMPLETED', completedAt: DateTime.now());
+      db.updateAttemptStatus(
+          attemptId: 'gate_att_01',
+          status: 'COMPLETED',
+          completedAt: DateTime.now());
       db.awardXP(taskId: 'gate_task_01', attemptId: 'gate_att_01', amount: 20);
       db.updateStreak();
 

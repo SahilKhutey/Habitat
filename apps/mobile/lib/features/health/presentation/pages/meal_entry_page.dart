@@ -34,7 +34,8 @@ class _MealEntryPageState extends State<MealEntryPage> {
     _selectedType = widget.existingEntry?.type ?? widget.initialType;
     if (widget.existingEntry != null) {
       _selectedTime = TimeOfDay.fromDateTime(widget.existingEntry!.recordedAt);
-      _notesController = TextEditingController(text: widget.existingEntry!.notes ?? '');
+      _notesController =
+          TextEditingController(text: widget.existingEntry!.notes ?? '');
     } else {
       _selectedTime = TimeOfDay.now();
       _notesController = TextEditingController();
@@ -149,7 +150,8 @@ class _MealEntryPageState extends State<MealEntryPage> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.access_time, size: 18, color: Color(0xFFF72585)),
+                          const Icon(Icons.access_time,
+                              size: 18, color: Color(0xFFF72585)),
                           const SizedBox(width: 12),
                           Text(
                             _selectedTime.format(context),
@@ -197,9 +199,17 @@ class _MealEntryPageState extends State<MealEntryPage> {
                   hintStyle: const TextStyle(color: HabitatTheme.textMuted),
                   filled: true,
                   fillColor: HabitatTheme.surfacePrimary,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFF72585))),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.surfaceBorder)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.surfaceBorder)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFFF72585))),
                 ),
               ),
               const Spacer(),
@@ -223,7 +233,8 @@ class _MealEntryPageState extends State<MealEntryPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF72585),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
               ),

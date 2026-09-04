@@ -6,7 +6,8 @@ import 'package:habitat_mobile/features/alarms/domain/services/alarm_scheduler.d
 
 void main() {
   group('PlatformAlarmService Multi-Platform Tests', () {
-    test('AndroidAlarmService schedules, retrieves, and cancels alarms', () async {
+    test('AndroidAlarmService schedules, retrieves, and cancels alarms',
+        () async {
       final androidService = AndroidAlarmService();
       const alarm = HabitatAlarm(
         id: 'alarm_001',
@@ -25,7 +26,8 @@ void main() {
       expect(scheduled.isEmpty, isTrue);
     });
 
-    test('IOSAlarmService requests permission and schedules reminders', () async {
+    test('IOSAlarmService requests permission and schedules reminders',
+        () async {
       final iosService = IOSAlarmService();
       final hasPerm = await iosService.requestPermission();
       expect(hasPerm, isTrue);
@@ -42,7 +44,8 @@ void main() {
       expect(scheduled.length, equals(1));
     });
 
-    test('WebAlarmService provides browser fallback without throwing', () async {
+    test('WebAlarmService provides browser fallback without throwing',
+        () async {
       final webService = WebAlarmService();
       const alarm = HabitatAlarm(
         id: 'alarm_web_01',

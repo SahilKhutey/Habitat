@@ -9,7 +9,8 @@ class DailyProgressSummaryModel {
   final int missedCount;
   final int failedCount;
   final List<String> completedTaskTitles;
-  final bool hasData; // Distinction: true = scheduled activity existed; false = no data / fresh
+  final bool
+      hasData; // Distinction: true = scheduled activity existed; false = no data / fresh
 
   const DailyProgressSummaryModel({
     required this.date,
@@ -21,8 +22,9 @@ class DailyProgressSummaryModel {
     required this.hasData,
   });
 
-  double get completionRatio =>
-      scheduledCount > 0 ? (completedCount / scheduledCount).clamp(0.0, 1.0) : 0.0;
+  double get completionRatio => scheduledCount > 0
+      ? (completedCount / scheduledCount).clamp(0.0, 1.0)
+      : 0.0;
 
   int get completionPercentage => (completionRatio * 100).round();
 

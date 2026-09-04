@@ -4,12 +4,7 @@ import 'dart:io';
 import '../core/alarm/battery_optimization_service.dart';
 import '../features/alarms/domain/alarm_health_models.dart';
 
-enum ReliabilityStatus {
-  ready,
-  degraded,
-  restricted,
-  verified
-}
+enum ReliabilityStatus { ready, degraded, restricted, verified }
 
 class PersistedReliabilityState {
   final bool batteryOptimizationChecked;
@@ -42,10 +37,12 @@ class PersistedReliabilityState {
 }
 
 class AlarmReliabilityService {
-  static final AlarmReliabilityService instance = AlarmReliabilityService._internal();
+  static final AlarmReliabilityService instance =
+      AlarmReliabilityService._internal();
   AlarmReliabilityService._internal();
 
-  IBatteryOptimizationService batteryService = BatteryOptimizationService.instance;
+  IBatteryOptimizationService batteryService =
+      BatteryOptimizationService.instance;
   PersistedReliabilityState? _persistedState;
 
   PersistedReliabilityState? get persistedState => _persistedState;
@@ -57,7 +54,8 @@ class AlarmReliabilityService {
   }) async {
     final canScheduleExact = await batteryService.canScheduleExactAlarms();
     final isBatteryIgnored = await batteryService.isOptimizationIgnored();
-    final manufacturer = manufacturerOverride ?? await batteryService.getDeviceManufacturer();
+    final manufacturer =
+        manufacturerOverride ?? await batteryService.getDeviceManufacturer();
 
     return diagnose(
       canScheduleExact: canScheduleExact,
@@ -82,21 +80,33 @@ class AlarmReliabilityService {
 
     final exactStatus = isIos
         ? DiagnosticStatus.confirmed
-        : (canScheduleExact ? DiagnosticStatus.confirmed : DiagnosticStatus.actionRecommended);
+        : (canScheduleExact
+            ? DiagnosticStatus.confirmed
+            : DiagnosticStatus.actionRecommended);
 
-    final notifStatus = notificationsEnabled ? DiagnosticStatus.confirmed : DiagnosticStatus.actionRecommended;
+    final notifStatus = notificationsEnabled
+        ? DiagnosticStatus.confirmed
+        : DiagnosticStatus.actionRecommended;
 
     final batteryStatus = isIos
         ? DiagnosticStatus.confirmed
-        : (isBatteryOptimizationIgnored ? DiagnosticStatus.confirmed : DiagnosticStatus.actionRecommended);
+        : (isBatteryOptimizationIgnored
+            ? DiagnosticStatus.confirmed
+            : DiagnosticStatus.actionRecommended);
 
-    final bgStatus = isBackgroundRestricted ? DiagnosticStatus.actionRecommended : DiagnosticStatus.confirmed;
+    final bgStatus = isBackgroundRestricted
+        ? DiagnosticStatus.actionRecommended
+        : DiagnosticStatus.confirmed;
 
     ReliabilityTier tier = ReliabilityTier.excellent;
-    if (exactStatus == DiagnosticStatus.actionRecommended || notifStatus == DiagnosticStatus.actionRecommended) {
+    if (exactStatus == DiagnosticStatus.actionRecommended ||
+        notifStatus == DiagnosticStatus.actionRecommended) {
       tier = ReliabilityTier.critical;
-    } else if (batteryStatus == DiagnosticStatus.actionRecommended || bgStatus == DiagnosticStatus.actionRecommended) {
-      tier = oemGuidance.riskLevel == 'HIGH' ? ReliabilityTier.needsAttention : ReliabilityTier.good;
+    } else if (batteryStatus == DiagnosticStatus.actionRecommended ||
+        bgStatus == DiagnosticStatus.actionRecommended) {
+      tier = oemGuidance.riskLevel == 'HIGH'
+          ? ReliabilityTier.needsAttention
+          : ReliabilityTier.good;
     }
 
     return AlarmHealth(
@@ -131,7 +141,8 @@ class AlarmReliabilityService {
     if (health.canScheduleExactAlarms == DiagnosticStatus.actionRecommended) {
       return 'Exact alarm access is disabled. Android may deliver this alarm later than scheduled.';
     }
-    if (health.batteryOptimizationStatus == DiagnosticStatus.actionRecommended) {
+    if (health.batteryOptimizationStatus ==
+        DiagnosticStatus.actionRecommended) {
       return 'Battery optimization is active. Your alarms may be delayed or silenced when the phone is locked.';
     }
     if (health.notificationsEnabled == DiagnosticStatus.actionRecommended) {
@@ -143,13 +154,15 @@ class AlarmReliabilityService {
   OEMVendor _resolveOEM(String manufacturer) {
     final m = manufacturer.toLowerCase();
     if (m.contains('samsung')) return OEMVendor.samsung;
-    if (m.contains('xiaomi') || m.contains('redmi') || m.contains('poco')) return OEMVendor.xiaomi;
+    if (m.contains('xiaomi') || m.contains('redmi') || m.contains('poco'))
+      return OEMVendor.xiaomi;
     if (m.contains('oneplus')) return OEMVendor.oneplus;
     if (m.contains('oppo')) return OEMVendor.oppo;
     if (m.contains('vivo') || m.contains('iqoo')) return OEMVendor.vivo;
     if (m.contains('realme')) return OEMVendor.realme;
     if (m.contains('huawei') || m.contains('honor')) return OEMVendor.other;
-    if (m.contains('google') || m.contains('pixel') || m.contains('motorola')) return OEMVendor.pixel;
+    if (m.contains('google') || m.contains('pixel') || m.contains('motorola'))
+      return OEMVendor.pixel;
     return OEMVendor.other;
   }
 
@@ -164,7 +177,8 @@ class AlarmReliabilityService {
             '2. Go to Settings > Battery and Device Care > Battery > Background Usage Limits.',
             '3. Add Habitat to "Never Sleeping Apps" and set App Battery to "Unrestricted".',
           ],
-          settingsIntentAction: 'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
+          settingsIntentAction:
+              'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
         );
       case OEMVendor.xiaomi:
         return const OEMGuidance(
@@ -187,7 +201,8 @@ class AlarmReliabilityService {
             '2. Select "Don\'t Optimize".',
             '3. Allow background execution in App Info.',
           ],
-          settingsIntentAction: 'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
+          settingsIntentAction:
+              'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
         );
       default:
         return const OEMGuidance(

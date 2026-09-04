@@ -24,7 +24,8 @@ void main() {
       expect(db.lastSavedAt, isNotNull);
     });
 
-    test('18.2: Flush lifecycle persistence creates valid backup snapshot', () async {
+    test('18.2: Flush lifecycle persistence creates valid backup snapshot',
+        () async {
       db.saveTask(LocalTask(
         id: 'task_rel_01',
         title: 'Morning Run',
@@ -47,7 +48,9 @@ void main() {
       expect(recovered, isTrue);
     });
 
-    test('18.4: Durable sync queue stores events with idempotency and retry tracking', () {
+    test(
+        '18.4: Durable sync queue stores events with idempotency and retry tracking',
+        () {
       db.enqueueSyncEvent(
         eventType: 'MISSION_COMPLETED',
         idempotencyKey: 'idempotent_key_001',
@@ -76,7 +79,9 @@ void main() {
       expect(db.getPendingSyncEvents().isEmpty, isTrue);
     });
 
-    test('18.5: HabitatReliabilityCoordinator captures complete system snapshot', () {
+    test(
+        '18.5: HabitatReliabilityCoordinator captures complete system snapshot',
+        () {
       db.saveTask(LocalTask(
         id: 'task_rel_02',
         title: 'Evening Reading',

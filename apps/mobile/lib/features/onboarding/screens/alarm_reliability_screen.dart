@@ -23,9 +23,12 @@ class AlarmReliabilityScreen extends StatefulWidget {
   State<AlarmReliabilityScreen> createState() => _AlarmReliabilityScreenState();
 }
 
-class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with WidgetsBindingObserver {
-  final AlarmReliabilityService _reliabilityService = AlarmReliabilityService.instance;
-  final IBatteryOptimizationService _batteryService = BatteryOptimizationService.instance;
+class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen>
+    with WidgetsBindingObserver {
+  final AlarmReliabilityService _reliabilityService =
+      AlarmReliabilityService.instance;
+  final IBatteryOptimizationService _batteryService =
+      BatteryOptimizationService.instance;
 
   AlarmHealth? _health;
   bool _isLoading = true;
@@ -112,7 +115,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
               Navigator.pop(ctx);
               setState(() => _isTestingAlarm = false);
             },
-            child: const Text('No / Delayed', style: TextStyle(color: Color(0xFFEF4444))),
+            child: const Text('No / Delayed',
+                style: TextStyle(color: Color(0xFFEF4444))),
           ),
           ElevatedButton(
             onPressed: () {
@@ -141,8 +145,11 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
   @override
   Widget build(BuildContext context) {
     final health = _health;
-    final warning = health != null ? _reliabilityService.getDegradationWarning(health) : null;
-    final isVerified = _reliabilityService.persistedState?.isVerifiedViaTest ?? false;
+    final warning = health != null
+        ? _reliabilityService.getDegradationWarning(health)
+        : null;
+    final isVerified =
+        _reliabilityService.persistedState?.isVerifiedViaTest ?? false;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0E11),
@@ -162,7 +169,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF3B82F6)))
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF3B82F6)))
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
@@ -192,7 +200,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                   // 1. Notifications Tile
                   ReliabilityCheckTile(
                     title: 'System Notifications',
-                    description: 'Required to show high-priority wake-up alerts on lock screen.',
+                    description:
+                        'Required to show high-priority wake-up alerts on lock screen.',
                     icon: Icons.notifications_active_outlined,
                     status: health.notificationsEnabled,
                     onFix: () => _batteryService.openBatterySettings(),
@@ -202,7 +211,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                   if (Platform.isAndroid)
                     ReliabilityCheckTile(
                       title: 'Exact Alarm Capability',
-                      description: 'Allows millisecond-accurate RTC wakeup piercing deep Doze mode.',
+                      description:
+                          'Allows millisecond-accurate RTC wakeup piercing deep Doze mode.',
                       icon: Icons.alarm_on_outlined,
                       status: health.canScheduleExactAlarms,
                       onFix: () => _batteryService.openExactAlarmSettings(),
@@ -212,7 +222,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                   if (Platform.isAndroid)
                     ReliabilityCheckTile(
                       title: 'Battery Optimization Exemption',
-                      description: 'Prevents Android from killing background alarm receivers.',
+                      description:
+                          'Prevents Android from killing background alarm receivers.',
                       icon: Icons.battery_charging_full_outlined,
                       status: health.batteryOptimizationStatus,
                       onFix: () => _batteryService.openBatterySettings(),
@@ -221,7 +232,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                   const SizedBox(height: 20),
 
                   // OEM Guidance Section
-                  if (health.oemGuidance != null && health.oemGuidance!.specificSteps.isNotEmpty)
+                  if (health.oemGuidance != null &&
+                      health.oemGuidance!.specificSteps.isNotEmpty)
                     _buildOemGuidanceCard(health.oemGuidance!),
 
                   const SizedBox(height: 28),
@@ -240,7 +252,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
   }
 
   Widget _buildStatusHeaderCard(AlarmHealth health, bool isVerified) {
-    final isReady = health.overallReliability == ReliabilityTier.excellent || isVerified;
+    final isReady =
+        health.overallReliability == ReliabilityTier.excellent || isVerified;
     final isCritical = health.overallReliability == ReliabilityTier.critical;
 
     return Container(
@@ -252,7 +265,11 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
         border: Border.all(
           color: isVerified
               ? const Color(0xFF10B981)
-              : (isReady ? const Color(0xFF3B82F6) : (isCritical ? const Color(0xFFEF4444) : const Color(0xFFF59E0B))),
+              : (isReady
+                  ? const Color(0xFF3B82F6)
+                  : (isCritical
+                      ? const Color(0xFFEF4444)
+                      : const Color(0xFFF59E0B))),
           width: 1.5,
         ),
       ),
@@ -264,10 +281,16 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
               Icon(
                 isVerified
                     ? Icons.verified
-                    : (isReady ? Icons.check_circle_outline : Icons.warning_amber_rounded),
+                    : (isReady
+                        ? Icons.check_circle_outline
+                        : Icons.warning_amber_rounded),
                 color: isVerified
                     ? const Color(0xFF10B981)
-                    : (isReady ? const Color(0xFF3B82F6) : (isCritical ? const Color(0xFFEF4444) : const Color(0xFFF59E0B))),
+                    : (isReady
+                        ? const Color(0xFF3B82F6)
+                        : (isCritical
+                            ? const Color(0xFFEF4444)
+                            : const Color(0xFFF59E0B))),
                 size: 28,
               ),
               const SizedBox(width: 12),
@@ -275,19 +298,26 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isVerified ? 'VERIFIED HARDWARE PATH' : (isReady ? 'SYSTEM READY' : 'DEGRADED RELIABILITY'),
+                    isVerified
+                        ? 'VERIFIED HARDWARE PATH'
+                        : (isReady ? 'SYSTEM READY' : 'DEGRADED RELIABILITY'),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
                       color: isVerified
                           ? const Color(0xFF10B981)
-                          : (isReady ? const Color(0xFF3B82F6) : (isCritical ? const Color(0xFFEF4444) : const Color(0xFFF59E0B))),
+                          : (isReady
+                              ? const Color(0xFF3B82F6)
+                              : (isCritical
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFFF59E0B))),
                     ),
                   ),
                   Text(
                     'Device: ${health.manufacturer} (${health.platform.toUpperCase()})',
-                    style: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
+                    style:
+                        const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
                   ),
                 ],
               ),
@@ -300,7 +330,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                 : (isReady
                     ? 'All standard native permissions are granted. Run a 15-second test alarm to verify real hardware wakeup.'
                     : 'Some system settings are restricting background alarm execution. Alarms may be delayed or silenced.'),
-            style: const TextStyle(fontSize: 13, color: Color(0xFFD1D5DB), height: 1.4),
+            style: const TextStyle(
+                fontSize: 13, color: Color(0xFFD1D5DB), height: 1.4),
           ),
         ],
       ),
@@ -323,7 +354,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
           Expanded(
             child: Text(
               warningText,
-              style: const TextStyle(fontSize: 13, color: Color(0xFFFCA5A5), height: 1.4),
+              style: const TextStyle(
+                  fontSize: 13, color: Color(0xFFFCA5A5), height: 1.4),
             ),
           ),
         ],
@@ -344,7 +376,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
         children: [
           Row(
             children: [
-              const Icon(Icons.settings_suggest_outlined, color: Color(0xFF60A5FA), size: 20),
+              const Icon(Icons.settings_suggest_outlined,
+                  color: Color(0xFF60A5FA), size: 20),
               const SizedBox(width: 8),
               Text(
                 '${guidance.oemName.name.toUpperCase()} SPECIFIC INSTRUCTIONS',
@@ -359,7 +392,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
           ),
           const SizedBox(height: 12),
           for (int i = 0; i < guidance.specificSteps.length; i++)
-            ReliabilityStepItem(stepNumber: i + 1, text: guidance.specificSteps[i]),
+            ReliabilityStepItem(
+                stepNumber: i + 1, text: guidance.specificSteps[i]),
         ],
       ),
     );
@@ -394,7 +428,8 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
           const SizedBox(height: 8),
           const Text(
             'Schedules a 15-second test alarm. Lock your phone now and confirm that the siren pierces lock screen & DND.',
-            style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF), height: 1.4),
+            style:
+                TextStyle(fontSize: 13, color: Color(0xFF9CA3AF), height: 1.4),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -405,18 +440,23 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.timer_outlined),
               label: Text(
-                _isTestingAlarm ? 'Firing in $_testCountdown s... (Lock Phone Now!)' : 'Start 15s Test Alarm',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                _isTestingAlarm
+                    ? 'Firing in $_testCountdown s... (Lock Phone Now!)'
+                    : 'Start 15s Test Alarm',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
@@ -442,9 +482,11 @@ class _AlarmReliabilityScreenState extends State<AlarmReliabilityScreen> with Wi
               backgroundColor: const Color(0xFF10B981),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text('Save & Continue', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+            child: const Text('Save & Continue',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           ),
         ),
         const SizedBox(height: 10),

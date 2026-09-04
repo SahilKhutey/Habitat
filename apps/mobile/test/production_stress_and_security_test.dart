@@ -3,18 +3,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
   });
 
   group('Track O12 & O13: Large-State Persistence & Performance Benchmark', () {
-    test('O12: LocalDatabase serializes and restores 100 tasks, 100 alarms, and 500 XP events seamlessly', () {
+    test(
+        'O12: LocalDatabase serializes and restores 100 tasks, 100 alarms, and 500 XP events seamlessly',
+        () {
       final now = DateTime.now();
 
       // Populate large dataset
@@ -58,7 +64,7 @@ void main() {
       expect(stopwatch.elapsedMilliseconds, lessThan(100));
 
       // Reset in-memory state
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       expect(db.getAllTasks().isEmpty, isTrue);
 
       // Restore from exported JSON
@@ -71,7 +77,9 @@ void main() {
   });
 
   group('Track O7 & O8: Replay Attack Defense & Intent Security', () {
-    test('O8: Replaying identical mission completion callback produces exactly 1 XP transaction', () async {
+    test(
+        'O8: Replaying identical mission completion callback produces exactly 1 XP transaction',
+        () async {
       final task = LocalTask(
         id: 'task_replay_sec',
         title: 'Integrity Walk',
@@ -89,7 +97,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/walk_sec.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -108,7 +117,9 @@ void main() {
   });
 
   group('Track O15: Timezone & Timestamp Integrity', () {
-    test('O15: Local timestamp format ISO8601 substring preserves calendar day for streak calculations', () {
+    test(
+        'O15: Local timestamp format ISO8601 substring preserves calendar day for streak calculations',
+        () {
       final todayStr = DateTime.now().toIso8601String().substring(0, 10);
       expect(todayStr.length, equals(10));
       expect(todayStr, matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));

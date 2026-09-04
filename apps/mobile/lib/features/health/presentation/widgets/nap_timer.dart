@@ -26,14 +26,17 @@ class NapTimer extends StatelessWidget {
                   ? const Color(0xFF7209B7).withOpacity(0.15)
                   : HabitatTheme.surfaceSecondary,
               border: Border.all(
-                color: isRunning ? const Color(0xFF7209B7) : HabitatTheme.surfaceBorder,
+                color: isRunning
+                    ? const Color(0xFF7209B7)
+                    : HabitatTheme.surfaceBorder,
                 width: isRunning ? 3 : 1,
               ),
             ),
             child: Icon(
               Icons.bedtime_outlined,
               size: 54,
-              color: isRunning ? const Color(0xFF7209B7) : HabitatTheme.textMuted,
+              color:
+                  isRunning ? const Color(0xFF7209B7) : HabitatTheme.textMuted,
             ),
           ),
           const SizedBox(height: 24),
@@ -49,7 +52,9 @@ class NapTimer extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            isRunning ? 'Rest session actively recording...' : 'Ready for quiet recovery',
+            isRunning
+                ? 'Rest session actively recording...'
+                : 'Ready for quiet recovery',
             style: const TextStyle(
               fontFamily: HabitatTheme.fontBody,
               fontSize: 13,

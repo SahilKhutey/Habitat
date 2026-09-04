@@ -19,7 +19,8 @@ class _CoachScreenState extends State<CoachScreen> {
   final List<Map<String, dynamic>> _messages = [
     {
       'role': 'assistant',
-      'content': 'Good morning. You completed 8 of 10 planned tasks yesterday. Your morning momentum remains high. What would you like help with today?',
+      'content':
+          'Good morning. You completed 8 of 10 planned tasks yesterday. Your morning momentum remains high. What would you like help with today?',
       'action': null,
     }
   ];
@@ -37,17 +38,20 @@ class _CoachScreenState extends State<CoachScreen> {
         if (text.toLowerCase().contains('plan')) {
           _messages.add({
             'role': 'assistant',
-            'content': 'Here is your structured plan for today. You have 3 primary commitments scheduled. Your first focus block starts at 07:00 AM.',
+            'content':
+                'Here is your structured plan for today. You have 3 primary commitments scheduled. Your first focus block starts at 07:00 AM.',
             'action': {
               'type': 'SHOW_PLAN',
               'title': "Today's Structured Schedule",
               'description': '3 commitments • 0 conflicts • 55 min total focus',
             }
           });
-        } else if (text.toLowerCase().contains('why') || text.toLowerCase().contains('struggling')) {
+        } else if (text.toLowerCase().contains('why') ||
+            text.toLowerCase().contains('struggling')) {
           _messages.add({
             'role': 'assistant',
-            'content': 'Observation: Tasks scheduled after 21:30 encounter friction due to accumulated cognitive fatigue. Moving key commitments 30 minutes earlier significantly increases execution reliability.',
+            'content':
+                'Observation: Tasks scheduled after 21:30 encounter friction due to accumulated cognitive fatigue. Moving key commitments 30 minutes earlier significantly increases execution reliability.',
             'action': {
               'type': 'PROPOSE_SCHEDULE_CHANGE',
               'title': 'Optimize Schedule Window',
@@ -57,7 +61,8 @@ class _CoachScreenState extends State<CoachScreen> {
         } else {
           _messages.add({
             'role': 'assistant',
-            'content': 'I am monitoring your discipline patterns and active streaks. Stay focused on your primary commitments.',
+            'content':
+                'I am monitoring your discipline patterns and active streaks. Stay focused on your primary commitments.',
             'action': null,
           });
         }
@@ -84,7 +89,8 @@ class _CoachScreenState extends State<CoachScreen> {
             // Quick Action Prompt Chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               child: Row(
                 children: [
                   _buildPromptChip('Plan Today', Icons.calendar_today),
@@ -110,22 +116,29 @@ class _CoachScreenState extends State<CoachScreen> {
                   final isUser = msg['role'] == 'user';
 
                   return Align(
-                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                    alignment:
+                        isUser ? Alignment.centerRight : Alignment.centerLeft,
                     child: Container(
                       margin: const EdgeInsets.only(bottom: AppSpacing.md),
-                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
+                      constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.82),
                       padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: BoxDecoration(
-                        color: isUser ? AppColors.indigoHero : const Color(0xFF15181E),
+                        color: isUser
+                            ? AppColors.indigoHero
+                            : const Color(0xFF15181E),
                         borderRadius: AppRadii.radiusMedium,
-                        border: Border.all(color: isUser ? Colors.transparent : Colors.white12),
+                        border: Border.all(
+                            color:
+                                isUser ? Colors.transparent : Colors.white12),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             msg['content'] as String,
-                            style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 14, height: 1.4),
                           ),
                           if (msg['action'] != null) ...[
                             const SizedBox(height: AppSpacing.md),
@@ -134,25 +147,33 @@ class _CoachScreenState extends State<CoachScreen> {
                               decoration: BoxDecoration(
                                 color: const Color(0xFF1E222B),
                                 borderRadius: AppRadii.radiusSmall,
-                                border: Border.all(color: AppColors.amberFocus.withOpacity(0.4)),
+                                border: Border.all(
+                                    color:
+                                        AppColors.amberFocus.withOpacity(0.4)),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     children: [
-                                      const Icon(Icons.bolt, color: AppColors.amberFocus, size: 16),
+                                      const Icon(Icons.bolt,
+                                          color: AppColors.amberFocus,
+                                          size: 16),
                                       const SizedBox(width: 6),
                                       Text(
                                         (msg['action']['title'] as String),
-                                        style: const TextStyle(color: AppColors.amberFocus, fontWeight: FontWeight.bold, fontSize: 12),
+                                        style: const TextStyle(
+                                            color: AppColors.amberFocus,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     (msg['action']['description'] as String),
-                                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                    style: const TextStyle(
+                                        color: Colors.white70, fontSize: 12),
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
@@ -160,24 +181,39 @@ class _CoachScreenState extends State<CoachScreen> {
                                       Expanded(
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: AppColors.emeraldVictory,
-                                            padding: const EdgeInsets.symmetric(vertical: 6),
-                                            shape: RoundedRectangleBorder(borderRadius: AppRadii.radiusSmall),
+                                            backgroundColor:
+                                                AppColors.emeraldVictory,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    AppRadii.radiusSmall),
                                           ),
                                           onPressed: () {},
-                                          child: const Text('Accept Change', style: TextStyle(color: Colors.black, fontSize: 11, fontWeight: FontWeight.bold)),
+                                          child: const Text('Accept Change',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: OutlinedButton(
                                           style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(color: Colors.white24),
-                                            padding: const EdgeInsets.symmetric(vertical: 6),
-                                            shape: RoundedRectangleBorder(borderRadius: AppRadii.radiusSmall),
+                                            side: const BorderSide(
+                                                color: Colors.white24),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    AppRadii.radiusSmall),
                                           ),
                                           onPressed: () {},
-                                          child: const Text('Keep Current', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                                          child: const Text('Keep Current',
+                                              style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 11)),
                                         ),
                                       ),
                                     ],
@@ -209,15 +245,18 @@ class _CoachScreenState extends State<CoachScreen> {
                       style: const TextStyle(color: Colors.white, fontSize: 14),
                       decoration: const InputDecoration(
                         hintText: 'Ask your coach...',
-                        hintStyle: TextStyle(color: Colors.white38, fontSize: 14),
+                        hintStyle:
+                            TextStyle(color: Colors.white38, fontSize: 14),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
                       onSubmitted: _sendMessage,
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send, color: AppColors.cyanDiscovery),
+                    icon:
+                        const Icon(Icons.send, color: AppColors.cyanDiscovery),
                     onPressed: () => _sendMessage(_textController.text),
                   ),
                 ],
@@ -232,7 +271,11 @@ class _CoachScreenState extends State<CoachScreen> {
   Widget _buildPromptChip(String label, IconData icon) {
     return ActionChip(
       avatar: Icon(icon, color: AppColors.cyanDiscovery, size: 14),
-      label: Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w600)),
+      label: Text(label,
+          style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 11,
+              fontWeight: FontWeight.w600)),
       backgroundColor: const Color(0xFF15181E),
       side: const BorderSide(color: Colors.white12),
       shape: RoundedRectangleBorder(borderRadius: AppRadii.radiusSmall),

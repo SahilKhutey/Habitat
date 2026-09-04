@@ -83,7 +83,12 @@ class WaterQuickAdd extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: HabitatTheme.surfacePrimary,
-        title: const Text('CUSTOM WATER INTAKE', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
+        title: const Text('CUSTOM WATER INTAKE',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
@@ -93,13 +98,17 @@ class WaterQuickAdd extends StatelessWidget {
             labelStyle: const TextStyle(color: HabitatTheme.textSecondary),
             filled: true,
             fillColor: HabitatTheme.surfaceSecondary,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: HabitatTheme.textSecondary)),
+            child: const Text('Cancel',
+                style: TextStyle(color: HabitatTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -113,7 +122,8 @@ class WaterQuickAdd extends StatelessWidget {
               backgroundColor: const Color(0xFF4CC9F0),
               foregroundColor: Colors.black,
             ),
-            child: const Text('Add Water', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text('Add Water',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

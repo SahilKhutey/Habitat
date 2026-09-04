@@ -97,7 +97,8 @@ class HabitatErrorState extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: HabitatColors.danger),
               ),
-              child: const Icon(Icons.error_outline, size: 40, color: HabitatColors.danger),
+              child: const Icon(Icons.error_outline,
+                  size: 40, color: HabitatColors.danger),
             ),
             const SizedBox(height: HabitatSpacing.lg),
             Text(
@@ -136,7 +137,8 @@ class HabitatErrorState extends StatelessWidget {
   }
 }
 
-void showHabitatSnackBar(BuildContext context, String message, {bool isError = false}) {
+void showHabitatSnackBar(BuildContext context, String message,
+    {bool isError = false}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(
@@ -146,9 +148,11 @@ void showHabitatSnackBar(BuildContext context, String message, {bool isError = f
           fontWeight: FontWeight.w600,
         ),
       ),
-      backgroundColor: isError ? HabitatColors.danger : HabitatColors.surfacePrimary,
+      backgroundColor:
+          isError ? HabitatColors.danger : HabitatColors.surfacePrimary,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.md)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(HabitatRadius.md)),
     ),
   );
 }

@@ -44,15 +44,19 @@ class MissionSuccessScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.emeraldVictory.withOpacity(0.2),
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.emeraldVictory, width: 3),
+                      border:
+                          Border.all(color: AppColors.emeraldVictory, width: 3),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(Icons.check, color: AppColors.emeraldVictory, size: 54),
+                    child: const Icon(Icons.check,
+                        color: AppColors.emeraldVictory, size: 54),
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  const Text('MISSION ACCOMPLISHED', style: AppTypography.displayMedium),
+                  const Text('MISSION ACCOMPLISHED',
+                      style: AppTypography.displayMedium),
                   const SizedBox(height: AppSpacing.xs),
-                  const Text('Wake-up alarm disarmed. Proof verified.', style: TextStyle(color: Colors.white70)),
+                  const Text('Wake-up alarm disarmed. Proof verified.',
+                      style: TextStyle(color: Colors.white70)),
                   const SizedBox(height: AppSpacing.xxl),
 
                   // Reward Box
@@ -84,7 +88,8 @@ class MissionSuccessScreen extends StatelessWidget {
                           children: [
                             Column(
                               children: [
-                                const Text('CURRENT STREAK', style: AppTypography.labelSmall),
+                                const Text('CURRENT STREAK',
+                                    style: AppTypography.labelSmall),
                                 const SizedBox(height: 4),
                                 Text(
                                   '🔥 $displayStreak ${displayStreak == 1 ? 'Day' : 'Days'}',
@@ -98,7 +103,8 @@ class MissionSuccessScreen extends StatelessWidget {
                             ),
                             Column(
                               children: [
-                                const Text('GRACE VAULT', style: AppTypography.labelSmall),
+                                const Text('GRACE VAULT',
+                                    style: AppTypography.labelSmall),
                                 const SizedBox(height: 4),
                                 Text(
                                   '🛡️ $displayTokens ${displayTokens == 1 ? 'Token' : 'Tokens'}',
@@ -123,7 +129,8 @@ class MissionSuccessScreen extends StatelessWidget {
                 label: 'RETURN TO DISCIPLINE DASHBOARD',
                 icon: Icons.dashboard,
                 onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/home', (route) => false);
                 },
               ),
             ],

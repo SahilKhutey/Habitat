@@ -4,7 +4,8 @@ class AuthTokenManager {
   static String? _accessToken;
   static String? _refreshToken;
 
-  static void setTokens({required String accessToken, required String refreshToken}) {
+  static void setTokens(
+      {required String accessToken, required String refreshToken}) {
     _accessToken = accessToken;
     _refreshToken = refreshToken;
   }

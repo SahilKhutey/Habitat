@@ -8,7 +8,8 @@ class StreakModel {
   final String lastCompletedDate;
   final int graceTokens;
   final String stageMotto;
-  final List<bool?> recentWeekAdherence; // 7 days: true = completed, false = missed, null = future/pending
+  final List<bool?>
+      recentWeekAdherence; // 7 days: true = completed, false = missed, null = future/pending
 
   const StreakModel({
     required this.currentStreak,

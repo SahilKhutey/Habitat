@@ -53,7 +53,8 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
       });
     } else {
       _timer?.cancel();
-      final result = await _cameraService.stopVideoRecording(taskId: widget.missionId, attemptId: widget.missionId);
+      final result = await _cameraService.stopVideoRecording(
+          taskId: widget.missionId, attemptId: widget.missionId);
       final path = result.filePath;
       setState(() => _isRecording = false);
 
@@ -97,7 +98,9 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
               margin: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: _isRecording ? AppColors.crimsonAlert : AppColors.amberFocus.withOpacity(0.5),
+                  color: _isRecording
+                      ? AppColors.crimsonAlert
+                      : AppColors.amberFocus.withOpacity(0.5),
                   width: 2,
                 ),
                 borderRadius: AppRadii.radiusLarge,
@@ -108,14 +111,19 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
                 children: [
                   Icon(
                     _isRecording ? Icons.videocam : Icons.videocam_outlined,
-                    color: _isRecording ? AppColors.crimsonAlert : Colors.white24,
+                    color:
+                        _isRecording ? AppColors.crimsonAlert : Colors.white24,
                     size: 80,
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    _isRecording ? 'RECORDING EXERCISE REPS' : 'ALIGN FULL BODY IN FRAME',
+                    _isRecording
+                        ? 'RECORDING EXERCISE REPS'
+                        : 'ALIGN FULL BODY IN FRAME',
                     style: TextStyle(
-                      color: _isRecording ? AppColors.crimsonAlert : Colors.white54,
+                      color: _isRecording
+                          ? AppColors.crimsonAlert
+                          : Colors.white54,
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold,
                     ),
@@ -133,14 +141,18 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
               right: 0,
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppColors.crimsonAlert.withOpacity(0.8),
                     borderRadius: AppRadii.radiusMedium,
                   ),
                   child: Text(
                     '00:${_secondsRecorded.toString().padLeft(2, '0')} / 00:${widget.minDurationSeconds.toString().padLeft(2, '0')} MIN',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 2),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2),
                   ),
                 ),
               ),
@@ -159,7 +171,8 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
                       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Text(
                         'Record at least ${widget.minDurationSeconds - _secondsRecorded}s more',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 12),
                       ),
                     ),
                   InkWell(
@@ -168,14 +181,18 @@ class _VideoCaptureScreenState extends State<VideoCaptureScreen> {
                       width: 76,
                       height: 76,
                       decoration: BoxDecoration(
-                        color: _isRecording ? AppColors.crimsonAlert : Colors.white,
+                        color: _isRecording
+                            ? AppColors.crimsonAlert
+                            : Colors.white,
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white70, width: 4),
                       ),
                       alignment: Alignment.center,
                       child: Icon(
                         _isRecording ? Icons.stop : Icons.circle,
-                        color: _isRecording ? Colors.white : AppColors.crimsonAlert,
+                        color: _isRecording
+                            ? Colors.white
+                            : AppColors.crimsonAlert,
                         size: 36,
                       ),
                     ),

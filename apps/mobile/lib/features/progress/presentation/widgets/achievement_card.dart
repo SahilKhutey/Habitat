@@ -47,12 +47,16 @@ class AchievementCard extends StatelessWidget {
                         : HabitatTheme.surfaceSecondary,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isUnlocked ? HabitatTheme.growthGreen : HabitatTheme.surfaceBorder,
+                      color: isUnlocked
+                          ? HabitatTheme.growthGreen
+                          : HabitatTheme.surfaceBorder,
                     ),
                   ),
                   child: Icon(
                     _resolveIcon(achievement.iconName),
-                    color: isUnlocked ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+                    color: isUnlocked
+                        ? HabitatTheme.growthGreen
+                        : HabitatTheme.textMuted,
                     size: 24,
                   ),
                 ),
@@ -76,7 +80,8 @@ class AchievementCard extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: isUnlocked
                                   ? HabitatTheme.growthGreen.withOpacity(0.2)
@@ -89,7 +94,9 @@ class AchievementCard extends StatelessWidget {
                                 fontFamily: HabitatTheme.fontHeading,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
-                                color: isUnlocked ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+                                color: isUnlocked
+                                    ? HabitatTheme.growthGreen
+                                    : HabitatTheme.textMuted,
                               ),
                             ),
                           ),
@@ -112,7 +119,8 @@ class AchievementCard extends StatelessWidget {
                             value: achievement.progressPercent,
                             minHeight: 4,
                             backgroundColor: HabitatTheme.surfaceSecondary,
-                            valueColor: const AlwaysStoppedAnimation<Color>(HabitatTheme.youngLeaf),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                HabitatTheme.youngLeaf),
                           ),
                         ),
                       ],

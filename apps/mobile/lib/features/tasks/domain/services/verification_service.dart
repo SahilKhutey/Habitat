@@ -52,7 +52,8 @@ class VerificationService {
     // 1. Attempt Authoritative Backend Verification
     try {
       // Step A: Request cryptographic challenge nonce
-      final challenge = await _apiClient.requestChallenge(missionId: effectiveMissionId);
+      final challenge =
+          await _apiClient.requestChallenge(missionId: effectiveMissionId);
 
       // Step B: Create upload session bound to challenge
       final uploadSession = await _apiClient.createUploadSession(
@@ -60,7 +61,8 @@ class VerificationService {
         type: isVideo ? 'VIDEO' : 'PHOTO',
         mimeType: isVideo ? 'video/mp4' : 'image/jpeg',
         sizeBytes: mediaBytes?.length ?? 1024 * (isVideo ? 1024 : 256),
-        durationSeconds: durationSeconds > 0 ? durationSeconds : (isVideo ? 5 : null),
+        durationSeconds:
+            durationSeconds > 0 ? durationSeconds : (isVideo ? 5 : null),
         sessionId: challenge.sessionId,
         sessionNonce: challenge.sessionNonce,
       );
@@ -87,7 +89,8 @@ class VerificationService {
             ? (isVideo
                 ? 'Server Vision: ${serverResult.repsVerified} repetitions verified. Form accepted.'
                 : 'Server Vision: Evidence verified cleanly.')
-            : (serverResult.rejectionReason ?? 'Verification rejected by server.'),
+            : (serverResult.rejectionReason ??
+                'Verification rejected by server.'),
         score: (serverResult.truthScore * 100).toInt(),
         bonusXp: serverResult.isValid ? bonus : 0,
         isOfflineFallback: false,
@@ -100,7 +103,8 @@ class VerificationService {
         filePath: proofPath,
         mimeType: isVideo ? 'video/mp4' : 'image/jpeg',
         byteSize: mediaBytes?.length ?? (isVideo ? 1024 * 1024 : 1024 * 256),
-        sha256Checksum: 'offline_${proofPath.hashCode.toRadixString(16).padLeft(64, "0")}',
+        sha256Checksum:
+            'offline_${proofPath.hashCode.toRadixString(16).padLeft(64, "0")}',
         durationSeconds: durationSeconds,
         capturedAt: DateTime.now(),
       );

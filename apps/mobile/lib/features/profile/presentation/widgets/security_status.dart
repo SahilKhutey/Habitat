@@ -28,12 +28,15 @@ class SecurityStatus extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isSecured ? HabitatTheme.habitatGreen : HabitatTheme.surfaceSecondary,
+              color: isSecured
+                  ? HabitatTheme.habitatGreen
+                  : HabitatTheme.surfaceSecondary,
               shape: BoxShape.circle,
             ),
             child: Icon(
               isSecured ? Icons.lock_outline : Icons.lock_open_outlined,
-              color: isSecured ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+              color:
+                  isSecured ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
               size: 24,
             ),
           ),

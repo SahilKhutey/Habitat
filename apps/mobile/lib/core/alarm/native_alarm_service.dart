@@ -25,7 +25,8 @@ class NativeAlarmService {
     int attemptIndex = 1,
   }) async {
     try {
-      final res = await _channel.invokeMapMethod<String, dynamic>('scheduleExactAlarm', {
+      final res = await _channel
+          .invokeMapMethod<String, dynamic>('scheduleExactAlarm', {
         'missionId': missionId,
         'taskTitle': taskTitle,
         'triggerEpochMs': triggerTime.millisecondsSinceEpoch,
@@ -93,7 +94,8 @@ class NativeAlarmService {
     final nextTrigger = DateTime.now().add(Duration(minutes: retryMinutes));
     final nextVolume = nextAttempt == 2 ? 85 : 100;
 
-    print('[NativeAlarmService] Arming 5-Min Retry for Attempt $nextAttempt at $nextTrigger (Volume: $nextVolume%)');
+    print(
+        '[NativeAlarmService] Arming 5-Min Retry for Attempt $nextAttempt at $nextTrigger (Volume: $nextVolume%)');
 
     await scheduleExactAlarm(
       missionId: missionId,

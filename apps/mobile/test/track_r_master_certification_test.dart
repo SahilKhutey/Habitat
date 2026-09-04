@@ -5,6 +5,8 @@ import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
@@ -12,15 +14,19 @@ void main() {
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
   });
 
   group('Track R: Master Golden Path Certification Gate', () {
-    test('R1: End-to-End Golden Path Execution with Durability, Idempotency & Alarm Life-Cycle', () async {
+    test(
+        'R1: End-to-End Golden Path Execution with Durability, Idempotency & Alarm Life-Cycle',
+        () async {
       // ───────────────────────────────────────────────────────────────────────
       // 1. BOOTSTRAP & TASK INITIALIZATION
       // ───────────────────────────────────────────────────────────────────────
@@ -53,7 +59,8 @@ void main() {
       // ───────────────────────────────────────────────────────────────────────
       // 2. STARTUP ALARM RECONCILIATION
       // ───────────────────────────────────────────────────────────────────────
-      final reconciledCount = await alarmService.reconcilePersistedAlarmsOnStartup();
+      final reconciledCount =
+          await alarmService.reconcilePersistedAlarmsOnStartup();
       expect(reconciledCount, equals(1));
 
       // ───────────────────────────────────────────────────────────────────────
@@ -66,7 +73,8 @@ void main() {
       );
       expect(occurrence.isDisarmed, isFalse);
 
-      final attempt = await missionService.start('task_golden_path', alarmId: 'alm_golden_path');
+      final attempt = await missionService.start('task_golden_path',
+          alarmId: 'alm_golden_path');
       expect(attempt.status, equals('AWAITING_ACTION'));
 
       // ───────────────────────────────────────────────────────────────────────
@@ -75,11 +83,13 @@ void main() {
       final proofSubmission = const ProofSubmission(
         type: 'VIDEO',
         filePath: 'habitat_storage://proofs/golden_pushups.mp4',
-        sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+        sha256Checksum:
+            '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         durationSeconds: 12,
       );
 
-      final verificationResult = await missionService.submitProof(attempt.id, proofSubmission);
+      final verificationResult =
+          await missionService.submitProof(attempt.id, proofSubmission);
       expect(verificationResult.isPassed, isTrue);
 
       final verifiedAttempt = db.getAttempt(attempt.id);
@@ -112,7 +122,7 @@ void main() {
       // 7. DURABLE PERSISTENCE & COLD RESTART RECOVERY
       // ───────────────────────────────────────────────────────────────────────
       final serializedDiskPayload = db.exportCompleteStateJson();
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       expect(db.getAllTasks().isEmpty, isTrue);
 
       // Hydrate from cold persistence

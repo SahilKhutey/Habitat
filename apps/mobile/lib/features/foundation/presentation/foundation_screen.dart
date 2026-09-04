@@ -38,7 +38,8 @@ class _FoundationScreenState extends State<FoundationScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(Icons.flash_on, color: Colors.black, size: 28),
+                    child: const Icon(Icons.flash_on,
+                        color: Colors.black, size: 28),
                   ),
                   const SizedBox(width: 16),
                   const Column(
@@ -84,19 +85,22 @@ class _FoundationScreenState extends State<FoundationScreen> {
                       value: _apiStatus,
                       color: HabitatTheme.emeraldVictory,
                     ),
-                    const Divider(color: HabitatTheme.surfaceBorder, height: 24),
+                    const Divider(
+                        color: HabitatTheme.surfaceBorder, height: 24),
                     _buildStatusRow(
                       label: 'DATABASE',
                       value: _databaseStatus,
                       color: HabitatTheme.emeraldVictory,
                     ),
-                    const Divider(color: HabitatTheme.surfaceBorder, height: 24),
+                    const Divider(
+                        color: HabitatTheme.surfaceBorder, height: 24),
                     _buildStatusRow(
                       label: 'ENVIRONMENT',
                       value: _environment,
                       color: HabitatTheme.amberFocus,
                     ),
-                    const Divider(color: HabitatTheme.surfaceBorder, height: 24),
+                    const Divider(
+                        color: HabitatTheme.surfaceBorder, height: 24),
                     _buildStatusRow(
                       label: 'VERSION',
                       value: _version,
@@ -109,7 +113,10 @@ class _FoundationScreenState extends State<FoundationScreen> {
               const SizedBox(height: 24),
               const Text(
                 'Phase 1 Foundation Verified. All local Docker infrastructure, PostgreSQL database, and REST APIs communicating cleanly.',
-                style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
+                style: TextStyle(
+                    color: HabitatTheme.textSecondary,
+                    fontSize: 13,
+                    height: 1.4),
               ),
 
               const Spacer(),
@@ -122,19 +129,24 @@ class _FoundationScreenState extends State<FoundationScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.amberFocus,
                     foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         backgroundColor: HabitatTheme.surfacePrimary,
-                        content: Text('Phase 1 Acceptance Verified. Proceeding to Mission Engine.'),
+                        content: Text(
+                            'Phase 1 Acceptance Verified. Proceeding to Mission Engine.'),
                       ),
                     );
                   },
                   child: const Text(
                     'PROCEED TO MISSION ENGINE',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.2),
                   ),
                 ),
               ),
@@ -145,21 +157,34 @@ class _FoundationScreenState extends State<FoundationScreen> {
     );
   }
 
-  Widget _buildStatusRow({required String label, required String value, required Color color}) {
+  Widget _buildStatusRow(
+      {required String label, required String value, required Color color}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+          style: const TextStyle(
+              color: HabitatTheme.textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.0),
         ),
         Row(
           children: [
-            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            Container(
+                width: 8,
+                height: 8,
+                decoration:
+                    BoxDecoration(color: color, shape: BoxShape.circle)),
             const SizedBox(width: 8),
             Text(
               value,
-              style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+              style: TextStyle(
+                  color: color,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5),
             ),
           ],
         ),

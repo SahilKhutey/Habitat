@@ -14,7 +14,9 @@ void main() {
   });
 
   group('MissionExecutionService Core Tests', () {
-    test('Test 1 — Proof Bypass: direct completion of proof-required task is rejected', () {
+    test(
+        'Test 1 — Proof Bypass: direct completion of proof-required task is rejected',
+        () {
       final task = LocalTask(
         id: 'task_bypass_test',
         title: '50 Pushups',
@@ -36,7 +38,8 @@ void main() {
       );
     });
 
-    test('Test 2 — Valid Photo Proof: verification passes and awards +20 XP', () async {
+    test('Test 2 — Valid Photo Proof: verification passes and awards +20 XP',
+        () async {
       final task = LocalTask(
         id: 'task_photo_test',
         title: 'Make Bed',
@@ -58,7 +61,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/bed.jpg',
-          sha256Checksum: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+          sha256Checksum:
+              'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         ),
       );
       expect(verification.isPassed, isTrue);
@@ -76,7 +80,8 @@ void main() {
       expect(db.getTotalXP(), equals(20));
     });
 
-    test('Test 3 — Invalid Video (< 3s): rejected by verification engine', () async {
+    test('Test 3 — Invalid Video (< 3s): rejected by verification engine',
+        () async {
       final task = LocalTask(
         id: 'task_video_test',
         title: '15 Pushups',
@@ -96,7 +101,8 @@ void main() {
         const ProofSubmission(
           type: 'VIDEO',
           filePath: 'habitat_storage://proofs/short_pushups.mp4',
-          sha256Checksum: '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+          sha256Checksum:
+              '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
           durationSeconds: 2,
         ),
       );
@@ -126,7 +132,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/water.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -140,7 +147,8 @@ void main() {
       expect(db.getTotalXP(), equals(20));
     });
 
-    test('Test 6 — Checksum Validation: non-64 hex SHA-256 is rejected', () async {
+    test('Test 6 — Checksum Validation: non-64 hex SHA-256 is rejected',
+        () async {
       final task = LocalTask(
         id: 'task_hash_test',
         title: 'Cold Shower',
@@ -170,7 +178,9 @@ void main() {
       );
     });
 
-    test('Test 7 — Proof Reuse Prevention: duplicate submission of same file is rejected', () async {
+    test(
+        'Test 7 — Proof Reuse Prevention: duplicate submission of same file is rejected',
+        () async {
       final task = LocalTask(
         id: 'task_reuse_test',
         title: 'Morning Walk',
@@ -188,7 +198,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/walk.jpg',
-          sha256Checksum: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+          sha256Checksum:
+              'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         ),
       );
       await missionService.complete(attempt1.id);
@@ -200,7 +211,8 @@ void main() {
           const ProofSubmission(
             type: 'PHOTO',
             filePath: 'habitat_storage://proofs/walk.jpg',
-            sha256Checksum: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            sha256Checksum:
+                'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
           ),
         ),
         throwsA(isA<StateError>().having(
@@ -211,7 +223,9 @@ void main() {
       );
     });
 
-    test('Test 8 — Unverified Completion Guard: complete() throws if proof is missing', () async {
+    test(
+        'Test 8 — Unverified Completion Guard: complete() throws if proof is missing',
+        () async {
       final task = LocalTask(
         id: 'task_unverified_guard',
         title: 'Stretching',
@@ -235,4 +249,3 @@ void main() {
     });
   });
 }
-

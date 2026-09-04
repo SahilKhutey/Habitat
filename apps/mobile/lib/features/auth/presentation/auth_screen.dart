@@ -36,7 +36,8 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Please enter a valid email and 6+ character password.';
+          _errorMessage =
+              'Please enter a valid email and 6+ character password.';
         });
       }
       return;
@@ -61,7 +62,8 @@ class _AuthScreenState extends State<AuthScreen> {
         longestStreak: streak.longestStreak,
         totalXp: totalXp,
       ),
-      token: 'habitat_session_${localUser.id}_${DateTime.now().millisecondsSinceEpoch}',
+      token:
+          'habitat_session_${localUser.id}_${DateTime.now().millisecondsSinceEpoch}',
     );
 
     if (mounted) {
@@ -84,7 +86,8 @@ class _AuthScreenState extends State<AuthScreen> {
               children: [
                 // Logo & Header
                 const Center(
-                  child: Icon(Icons.shield, size: 64, color: HabitatTheme.amberFocus),
+                  child: Icon(Icons.shield,
+                      size: 64, color: HabitatTheme.amberFocus),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -122,7 +125,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: HabitatTheme.crimsonAlert, fontSize: 13),
+                      style: const TextStyle(
+                          color: HabitatTheme.crimsonAlert, fontSize: 13),
                     ),
                   ),
 
@@ -141,7 +145,8 @@ class _AuthScreenState extends State<AuthScreen> {
                           controller: _nameController,
                           decoration: const InputDecoration(
                             labelText: 'Display Name',
-                            prefixIcon: Icon(Icons.person_outline, color: HabitatTheme.textSecondary),
+                            prefixIcon: Icon(Icons.person_outline,
+                                color: HabitatTheme.textSecondary),
                             border: UnderlineInputBorder(),
                           ),
                         ),
@@ -152,7 +157,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           labelText: 'Email Address',
-                          prefixIcon: Icon(Icons.email_outlined, color: HabitatTheme.textSecondary),
+                          prefixIcon: Icon(Icons.email_outlined,
+                              color: HabitatTheme.textSecondary),
                           border: UnderlineInputBorder(),
                         ),
                       ),
@@ -162,7 +168,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         obscureText: true,
                         decoration: const InputDecoration(
                           labelText: 'Password',
-                          prefixIcon: Icon(Icons.lock_outline, color: HabitatTheme.textSecondary),
+                          prefixIcon: Icon(Icons.lock_outline,
+                              color: HabitatTheme.textSecondary),
                           border: UnderlineInputBorder(),
                         ),
                       ),
@@ -189,11 +196,17 @@ class _AuthScreenState extends State<AuthScreen> {
                         ? const SizedBox(
                             width: 24,
                             height: 24,
-                            child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5),
+                            child: CircularProgressIndicator(
+                                color: Colors.black, strokeWidth: 2.5),
                           )
                         : Text(
-                            _isSignUp ? 'CREATE DISCIPLINE ACCOUNT' : 'ENTER HABITAT',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, letterSpacing: 1),
+                            _isSignUp
+                                ? 'CREATE DISCIPLINE ACCOUNT'
+                                : 'ENTER HABITAT',
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1),
                           ),
                   ),
                 ),
@@ -204,8 +217,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 TextButton(
                   onPressed: () => setState(() => _isSignUp = !_isSignUp),
                   child: Text(
-                    _isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Create One",
-                    style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 13),
+                    _isSignUp
+                        ? 'Already have an account? Sign In'
+                        : "Don't have an account? Create One",
+                    style: const TextStyle(
+                        color: HabitatTheme.textSecondary, fontSize: 13),
                   ),
                 ),
               ],

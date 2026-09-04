@@ -21,7 +21,8 @@ void main() {
   });
 
   group('TaskExecutionService Unit Tests', () {
-    test('startTaskExecution() creates attempt and returns inProgress model', () {
+    test('startTaskExecution() creates attempt and returns inProgress model',
+        () {
       final execution = executionService.startTaskExecution(
         taskId: 'task-brush',
         taskTitle: 'Brush Teeth',
@@ -37,7 +38,9 @@ void main() {
       expect(attempts.last.status, equals('AWAITING_ACTION'));
     });
 
-    test('submitProofAndVerify() with success completes task, awards XP, and updates streak', () async {
+    test(
+        'submitProofAndVerify() with success completes task, awards XP, and updates streak',
+        () async {
       verificationService.shouldSucceed = true;
 
       final initialXP = db.getTotalXP();
@@ -65,7 +68,8 @@ void main() {
       expect(proofs.last.isVerified, isTrue);
     });
 
-    test('submitProofAndVerify() with failure arms 5-minute escalation retry', () async {
+    test('submitProofAndVerify() with failure arms 5-minute escalation retry',
+        () async {
       verificationService.shouldSucceed = false;
 
       final execution = executionService.startTaskExecution(
@@ -80,7 +84,8 @@ void main() {
       );
 
       expect(result.status, equals(ExecutionStatus.retrying));
-      expect(result.attemptNumber, equals(2)); // Incremented for next escalation
+      expect(
+          result.attemptNumber, equals(2)); // Incremented for next escalation
       expect(result.isVerified, isFalse);
 
       final attempts = db.getAttemptsForTask('task-pushups');

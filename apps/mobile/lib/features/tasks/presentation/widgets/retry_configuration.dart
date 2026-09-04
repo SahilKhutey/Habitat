@@ -96,10 +96,14 @@ class RetryConfiguration extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: isSelected ? HabitatTheme.habitatGreen : HabitatTheme.surfacePrimary,
+                        color: isSelected
+                            ? HabitatTheme.habitatGreen
+                            : HabitatTheme.surfacePrimary,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? HabitatTheme.growthGreen : HabitatTheme.surfaceBorder,
+                          color: isSelected
+                              ? HabitatTheme.growthGreen
+                              : HabitatTheme.surfaceBorder,
                         ),
                       ),
                       alignment: Alignment.center,
@@ -109,7 +113,9 @@ class RetryConfiguration extends StatelessWidget {
                           fontFamily: HabitatTheme.fontHeading,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: isSelected ? Colors.white : HabitatTheme.textSecondary,
+                          color: isSelected
+                              ? Colors.white
+                              : HabitatTheme.textSecondary,
                         ),
                       ),
                     ),

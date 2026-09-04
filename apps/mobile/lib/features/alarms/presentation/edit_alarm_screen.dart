@@ -43,7 +43,9 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
 
   void _handleSave() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Alarm commitment set for ${_selectedTime.format(context)} ($disciplineModeDescription)')),
+      SnackBar(
+          content: Text(
+              'Alarm commitment set for ${_selectedTime.format(context)} ($disciplineModeDescription)')),
     );
     Navigator.of(context).pop();
   }
@@ -90,18 +92,32 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
                   decoration: BoxDecoration(
                     color: HabitatTheme.surfacePrimary,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: HabitatTheme.amberFocus.withOpacity(0.5)),
+                    border: Border.all(
+                        color: HabitatTheme.amberFocus.withOpacity(0.5)),
                   ),
                   child: Column(
                     children: [
-                      const Text('WAKE-UP TIME', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                      const Text('WAKE-UP TIME',
+                          style: TextStyle(
+                              color: HabitatTheme.textSecondary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2)),
                       const SizedBox(height: 8),
                       Text(
                         timeString,
-                        style: const TextStyle(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w900, letterSpacing: 2),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 44,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2),
                       ),
                       const SizedBox(height: 6),
-                      const Text('Tap to adjust', style: TextStyle(color: HabitatTheme.amberFocus, fontSize: 12, fontWeight: FontWeight.bold)),
+                      const Text('Tap to adjust',
+                          style: TextStyle(
+                              color: HabitatTheme.amberFocus,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -109,7 +125,11 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
               const SizedBox(height: 28),
 
               // 2. 7-Day Recurrence Selector
-              const Text('REPEAT SCHEDULE', style: TextStyle(color: HabitatTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
+              const Text('REPEAT SCHEDULE',
+                  style: TextStyle(
+                      color: HabitatTheme.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +146,11 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
               const SizedBox(height: 28),
 
               // 3. Linked Mission Task Dropdown
-              const Text('ASSIGNED MISSION TASK', style: TextStyle(color: HabitatTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
+              const Text('ASSIGNED MISSION TASK',
+                  style: TextStyle(
+                      color: HabitatTheme.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: _selectedTaskTitle,
@@ -134,29 +158,43 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: HabitatTheme.surfacePrimary,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
-                items: _availableTasks.map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 14)))).toList(),
-                onChanged: (val) => setState(() => _selectedTaskTitle = val ?? _selectedTaskTitle),
+                items: _availableTasks
+                    .map((t) => DropdownMenuItem(
+                        value: t,
+                        child: Text(t, style: const TextStyle(fontSize: 14))))
+                    .toList(),
+                onChanged: (val) => setState(
+                    () => _selectedTaskTitle = val ?? _selectedTaskTitle),
               ),
               const SizedBox(height: 28),
 
               // 4. Discipline Mode Selector
-              const Text('DISCIPLINE ESCALATION PROTOCOL', style: TextStyle(color: HabitatTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
+              const Text('DISCIPLINE ESCALATION PROTOCOL',
+                  style: TextStyle(
+                      color: HabitatTheme.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  _buildModeChoice('GENTLE', 'Gentle', HabitatTheme.emeraldVictory),
+                  _buildModeChoice(
+                      'GENTLE', 'Gentle', HabitatTheme.emeraldVictory),
                   const SizedBox(width: 8),
-                  _buildModeChoice('DISCIPLINE', 'Discipline', HabitatTheme.amberFocus),
+                  _buildModeChoice(
+                      'DISCIPLINE', 'Discipline', HabitatTheme.amberFocus),
                   const SizedBox(width: 8),
-                  _buildModeChoice('HARDCORE', 'Hardcore', HabitatTheme.crimsonAlert),
+                  _buildModeChoice(
+                      'HARDCORE', 'Hardcore', HabitatTheme.crimsonAlert),
                 ],
               ),
               const SizedBox(height: 10),
               Text(
                 disciplineModeDescription,
-                style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 12),
+                style: const TextStyle(
+                    color: HabitatTheme.textSecondary, fontSize: 12),
               ),
 
               const SizedBox(height: 36),
@@ -168,10 +206,15 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.amberFocus,
                     foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: _handleSave,
-                  child: const Text('LOCK IN MISSION ALARM', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                  child: const Text('LOCK IN MISSION ALARM',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1)),
                 ),
               ),
             ],
@@ -189,9 +232,14 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: isSelected ? HabitatTheme.amberFocus : HabitatTheme.surfacePrimary,
+          color: isSelected
+              ? HabitatTheme.amberFocus
+              : HabitatTheme.surfacePrimary,
           shape: BoxShape.circle,
-          border: Border.all(color: isSelected ? HabitatTheme.amberFocus : HabitatTheme.surfaceBorder),
+          border: Border.all(
+              color: isSelected
+                  ? HabitatTheme.amberFocus
+                  : HabitatTheme.surfaceBorder),
         ),
         child: Center(
           child: Text(
@@ -215,9 +263,12 @@ class _EditAlarmScreenState extends State<EditAlarmScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? accentColor.withOpacity(0.15) : HabitatTheme.surfacePrimary,
+            color: isSelected
+                ? accentColor.withOpacity(0.15)
+                : HabitatTheme.surfacePrimary,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? accentColor : HabitatTheme.surfaceBorder),
+            border: Border.all(
+                color: isSelected ? accentColor : HabitatTheme.surfaceBorder),
           ),
           child: Center(
             child: Text(

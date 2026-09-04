@@ -34,7 +34,11 @@ class PlannerScreen extends StatelessWidget {
       }
     ],
     this.missions = const [
-      {'time': '07:00', 'name': 'Morning Sunlight Photo', 'status': 'COMPLETED'},
+      {
+        'time': '07:00',
+        'name': 'Morning Sunlight Photo',
+        'status': 'COMPLETED'
+      },
       {'time': '07:05', 'name': 'Hydration 500ml', 'status': 'COMPLETED'},
       {'time': '07:10', 'name': '10 Push-Ups Video', 'status': 'PENDING'},
       {'time': '10:00', 'name': 'Deep Focus Block', 'status': 'PENDING'},
@@ -68,20 +72,34 @@ class PlannerScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('TODAY', style: const TextStyle(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                      Text('TODAY',
+                          style: const TextStyle(
+                              color: Colors.white54,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5)),
                       const SizedBox(height: 4),
-                      Text(dateTitle, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text(dateTitle,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                   if (isRestDay)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: AppColors.cyanDiscovery.withOpacity(0.2),
                         borderRadius: AppRadii.radiusMedium,
                         border: Border.all(color: AppColors.cyanDiscovery),
                       ),
-                      child: const Text('REST DAY', style: TextStyle(color: AppColors.cyanDiscovery, fontWeight: FontWeight.bold, fontSize: 12)),
+                      child: const Text('REST DAY',
+                          style: TextStyle(
+                              color: AppColors.cyanDiscovery,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12)),
                     ),
                 ],
               ),
@@ -92,7 +110,8 @@ class PlannerScreen extends StatelessWidget {
               Expanded(
                 child: ListView.separated(
                   itemCount: routines.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.lg),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: AppSpacing.lg),
                   itemBuilder: (context, index) {
                     final r = routines[index];
                     final tasks = (r['tasks'] as List<dynamic>?) ?? [];
@@ -110,22 +129,37 @@ class PlannerScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(r['time'] as String, style: const TextStyle(color: AppColors.amberFocus, fontWeight: FontWeight.bold, fontSize: 14)),
-                              const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
+                              Text(r['time'] as String,
+                                  style: const TextStyle(
+                                      color: AppColors.amberFocus,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14)),
+                              const Icon(Icons.arrow_forward_ios,
+                                  color: Colors.white24, size: 14),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          Text(r['name'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(r['name'] as String,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16)),
                           const SizedBox(height: 8),
                           const Divider(color: Colors.white10),
                           const SizedBox(height: 8),
                           ...tasks.map((t) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 3.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 3.0),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.check_circle_outline, color: AppColors.emeraldVictory, size: 16),
+                                    const Icon(Icons.check_circle_outline,
+                                        color: AppColors.emeraldVictory,
+                                        size: 16),
                                     const SizedBox(width: 8),
-                                    Text(t.toString(), style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                                    Text(t.toString(),
+                                        style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 13)),
                                   ],
                                 ),
                               )),

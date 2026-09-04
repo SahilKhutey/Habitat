@@ -19,7 +19,8 @@ abstract class NotificationScheduler {
 class AndroidAlarmAdapter implements NotificationScheduler {
   @override
   Future<bool> requestPermissions() async {
-    debugPrint('[AndroidAlarmAdapter] Requesting POST_NOTIFICATIONS and SCHEDULE_EXACT_ALARM permissions');
+    debugPrint(
+        '[AndroidAlarmAdapter] Requesting POST_NOTIFICATIONS and SCHEDULE_EXACT_ALARM permissions');
     return true;
   }
 
@@ -35,24 +36,28 @@ class AndroidAlarmAdapter implements NotificationScheduler {
     required DateTime scheduledAt,
     required int volumeLevel,
   }) async {
-    debugPrint('[AndroidAlarmAdapter] Scheduling Exact Alarm on channel `discipline_alarm` at $scheduledAt (Volume: $volumeLevel dB) for Attempt $attemptId');
+    debugPrint(
+        '[AndroidAlarmAdapter] Scheduling Exact Alarm on channel `discipline_alarm` at $scheduledAt (Volume: $volumeLevel dB) for Attempt $attemptId');
   }
 
   @override
   Future<void> cancelAlarm(String attemptId) async {
-    debugPrint('[AndroidAlarmAdapter] Cancelling local alarm for Attempt $attemptId');
+    debugPrint(
+        '[AndroidAlarmAdapter] Cancelling local alarm for Attempt $attemptId');
   }
 
   @override
   Future<void> cancelMissionAlarms(String missionId) async {
-    debugPrint('[AndroidAlarmAdapter] Cancelling all pending local retries for Mission $missionId');
+    debugPrint(
+        '[AndroidAlarmAdapter] Cancelling all pending local retries for Mission $missionId');
   }
 }
 
 class IOSNotificationAdapter implements NotificationScheduler {
   @override
   Future<bool> requestPermissions() async {
-    debugPrint('[IOSNotificationAdapter] Requesting UNUserNotificationCenter authorization');
+    debugPrint(
+        '[IOSNotificationAdapter] Requesting UNUserNotificationCenter authorization');
     return true;
   }
 
@@ -68,17 +73,20 @@ class IOSNotificationAdapter implements NotificationScheduler {
     required DateTime scheduledAt,
     required int volumeLevel,
   }) async {
-    debugPrint('[IOSNotificationAdapter] Scheduling UNCalendarNotificationTrigger for Attempt $attemptId at $scheduledAt');
+    debugPrint(
+        '[IOSNotificationAdapter] Scheduling UNCalendarNotificationTrigger for Attempt $attemptId at $scheduledAt');
   }
 
   @override
   Future<void> cancelAlarm(String attemptId) async {
-    debugPrint('[IOSNotificationAdapter] Removing pending notification request $attemptId');
+    debugPrint(
+        '[IOSNotificationAdapter] Removing pending notification request $attemptId');
   }
 
   @override
   Future<void> cancelMissionAlarms(String missionId) async {
-    debugPrint('[IOSNotificationAdapter] Removing all pending notifications for Mission $missionId');
+    debugPrint(
+        '[IOSNotificationAdapter] Removing all pending notifications for Mission $missionId');
   }
 }
 
@@ -98,7 +106,8 @@ class WebNotificationAdapter implements NotificationScheduler {
     required DateTime scheduledAt,
     required int volumeLevel,
   }) async {
-    debugPrint('[WebNotificationAdapter] Web push notification registered for $scheduledAt');
+    debugPrint(
+        '[WebNotificationAdapter] Web push notification registered for $scheduledAt');
   }
 
   @override
@@ -111,8 +120,10 @@ class WebNotificationAdapter implements NotificationScheduler {
 class NotificationSchedulerFactory {
   static NotificationScheduler getScheduler() {
     if (kIsWeb) return WebNotificationAdapter();
-    if (defaultTargetPlatform == TargetPlatform.android) return AndroidAlarmAdapter();
-    if (defaultTargetPlatform == TargetPlatform.iOS) return IOSNotificationAdapter();
+    if (defaultTargetPlatform == TargetPlatform.android)
+      return AndroidAlarmAdapter();
+    if (defaultTargetPlatform == TargetPlatform.iOS)
+      return IOSNotificationAdapter();
     return AndroidAlarmAdapter();
   }
 }

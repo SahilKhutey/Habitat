@@ -146,18 +146,21 @@ class AlarmService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_kPendingAlarmsKey);
-      final list = raw != null ? List<Map<String, dynamic>>.from(
-        (jsonDecode(raw) as List).map((e) => Map<String, dynamic>.from(e as Map)),
-      ) : <Map<String, dynamic>>[];
+      final list = raw != null
+          ? List<Map<String, dynamic>>.from(
+              (jsonDecode(raw) as List)
+                  .map((e) => Map<String, dynamic>.from(e as Map)),
+            )
+          : <Map<String, dynamic>>[];
 
       // Remove existing entry for this missionId (idempotent upsert)
       list.removeWhere((e) => e['missionId'] == missionId);
       list.add({
-        'missionId':     missionId,
-        'taskTitle':     taskTitle,
+        'missionId': missionId,
+        'taskTitle': taskTitle,
         'triggerEpochMs': triggerEpochMs,
-        'sirenVolume':   sirenVolume,
-        'attemptIndex':  attemptIndex,
+        'sirenVolume': sirenVolume,
+        'attemptIndex': attemptIndex,
       });
 
       await prefs.setString(_kPendingAlarmsKey, jsonEncode(list));
@@ -173,13 +176,14 @@ class AlarmService {
       final raw = prefs.getString(_kPendingAlarmsKey);
       if (raw == null) return;
       final list = List<Map<String, dynamic>>.from(
-        (jsonDecode(raw) as List).map((e) => Map<String, dynamic>.from(e as Map)),
+        (jsonDecode(raw) as List)
+            .map((e) => Map<String, dynamic>.from(e as Map)),
       );
       list.removeWhere((e) => e['missionId'] == missionId);
       await prefs.setString(_kPendingAlarmsKey, jsonEncode(list));
     } catch (e) {
-      debugPrint('[AlarmService] Failed to remove alarm from persisted list: $e');
+      debugPrint(
+          '[AlarmService] Failed to remove alarm from persisted list: $e');
     }
   }
 }
-

@@ -21,7 +21,8 @@ class _DailyProgressPageState extends State<DailyProgressPage> {
   @override
   void initState() {
     super.initState();
-    _dailyService = DailySummaryService(ProgressRepository(LocalDatabase.instance));
+    _dailyService =
+        DailySummaryService(ProgressRepository(LocalDatabase.instance));
   }
 
   @override
@@ -69,7 +70,8 @@ class _DailyProgressPageState extends State<DailyProgressPage> {
                   alignment: Alignment.center,
                   child: const Text(
                     'No completed discipline missions for this date.',
-                    style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13),
+                    style: TextStyle(
+                        color: HabitatTheme.textSecondary, fontSize: 13),
                   ),
                 )
               else
@@ -84,7 +86,8 @@ class _DailyProgressPageState extends State<DailyProgressPage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.check_circle, color: HabitatTheme.growthGreen, size: 20),
+                        const Icon(Icons.check_circle,
+                            color: HabitatTheme.growthGreen, size: 20),
                         const SizedBox(width: 12),
                         Text(
                           title,

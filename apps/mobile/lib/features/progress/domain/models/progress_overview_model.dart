@@ -21,7 +21,8 @@ class ProgressOverviewModel {
     required this.totalXp,
   });
 
-  int get unlockedAchievementsCount => achievements.where((a) => a.isUnlocked).length;
+  int get unlockedAchievementsCount =>
+      achievements.where((a) => a.isUnlocked).length;
 
   int get totalAchievementsCount => achievements.length;
 }

@@ -34,7 +34,8 @@ void main() {
       var summary = mealService.getTodaySummary();
       final mealId = summary.entries.first.id;
 
-      mealService.updateMeal(id: mealId, type: MealType.lunch, notes: 'Soup & Rice');
+      mealService.updateMeal(
+          id: mealId, type: MealType.lunch, notes: 'Soup & Rice');
       summary = mealService.getTodaySummary();
       expect(summary.lunchEntry?.notes, equals('Soup & Rice'));
 

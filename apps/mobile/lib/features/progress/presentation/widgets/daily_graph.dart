@@ -98,7 +98,9 @@ class _DailyGraphState extends State<DailyGraph> {
                                 fontFamily: HabitatTheme.fontHeading,
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
-                                color: isToday ? HabitatTheme.growthGreen : Colors.white,
+                                color: isToday
+                                    ? HabitatTheme.growthGreen
+                                    : Colors.white,
                               ),
                             ),
                           const SizedBox(height: 4),
@@ -126,8 +128,11 @@ class _DailyGraphState extends State<DailyGraph> {
                             style: TextStyle(
                               fontFamily: HabitatTheme.fontHeading,
                               fontSize: 10,
-                              fontWeight: isToday ? FontWeight.w900 : FontWeight.w600,
-                              color: isToday ? Colors.white : HabitatTheme.textSecondary,
+                              fontWeight:
+                                  isToday ? FontWeight.w900 : FontWeight.w600,
+                              color: isToday
+                                  ? Colors.white
+                                  : HabitatTheme.textSecondary,
                             ),
                           ),
                         ],
@@ -140,7 +145,8 @@ class _DailyGraphState extends State<DailyGraph> {
           ),
 
           // Detail tooltip row if a day is selected
-          if (_selectedDayIndex != null && _selectedDayIndex! < days.length) ...[
+          if (_selectedDayIndex != null &&
+              _selectedDayIndex! < days.length) ...[
             const Divider(height: 20, color: HabitatTheme.surfaceBorder),
             _buildDayDetailRow(days[_selectedDayIndex!]),
           ],

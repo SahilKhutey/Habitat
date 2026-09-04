@@ -7,9 +7,11 @@ import '../domain/capture_result.dart';
 abstract interface class ICameraService {
   Future<void> initialize();
   Future<void> dispose();
-  Future<CaptureResult> takePhoto({required String taskId, required String attemptId});
+  Future<CaptureResult> takePhoto(
+      {required String taskId, required String attemptId});
   Future<void> startVideoRecording();
-  Future<CaptureResult> stopVideoRecording({required String taskId, required String attemptId});
+  Future<CaptureResult> stopVideoRecording(
+      {required String taskId, required String attemptId});
   Future<void> switchCamera();
 
   bool get isInitialized;
@@ -55,7 +57,8 @@ class CameraService implements ICameraService {
     required String attemptId,
   }) async {
     final timestamp = DateTime.now();
-    final rawString = 'HABITAT_PHOTO:$taskId:$attemptId:${timestamp.toIso8601String()}:front=$_isFront';
+    final rawString =
+        'HABITAT_PHOTO:$taskId:$attemptId:${timestamp.toIso8601String()}:front=$_isFront';
     final bytes = utf8.encode(rawString);
     final checksum = sha256.convert(bytes).toString();
 
@@ -93,7 +96,8 @@ class CameraService implements ICameraService {
     _isRecording = false;
     _recordingStartedAt = null;
 
-    final rawString = 'HABITAT_VIDEO:$taskId:$attemptId:$durationSeconds:${timestamp.toIso8601String()}:front=$_isFront';
+    final rawString =
+        'HABITAT_VIDEO:$taskId:$attemptId:$durationSeconds:${timestamp.toIso8601String()}:front=$_isFront';
     final bytes = utf8.encode(rawString);
     final checksum = sha256.convert(bytes).toString();
 

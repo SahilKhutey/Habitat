@@ -30,24 +30,28 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   void _togglePause() {
     if (_task.status == TaskStatus.paused) {
       _taskService.resumeTask(_task.id);
-      setState(() => _task = _task.copyWith(status: TaskStatus.ready, active: true));
+      setState(
+          () => _task = _task.copyWith(status: TaskStatus.ready, active: true));
     } else {
       _taskService.pauseTask(_task.id);
-      setState(() => _task = _task.copyWith(status: TaskStatus.paused, active: false));
+      setState(() =>
+          _task = _task.copyWith(status: TaskStatus.paused, active: false));
     }
   }
 
   void _archiveTask() {
     _taskService.archiveTask(_task.id);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Task archived. Historical logs preserved.')),
+      const SnackBar(
+          content: Text('Task archived. Historical logs preserved.')),
     );
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isReady = _task.status == TaskStatus.ready || _task.status == TaskStatus.active;
+    final isReady =
+        _task.status == TaskStatus.ready || _task.status == TaskStatus.active;
     final isCompleted = _task.status == TaskStatus.completed;
 
     return Scaffold(
@@ -66,7 +70,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
             itemBuilder: (ctx) => [
               PopupMenuItem(
                 value: 'pause',
-                child: Text(_task.status == TaskStatus.paused ? 'Resume Task' : 'Pause Task'),
+                child: Text(_task.status == TaskStatus.paused
+                    ? 'Resume Task'
+                    : 'Pause Task'),
               ),
               const PopupMenuItem(
                 value: 'archive',
@@ -88,7 +94,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                 children: [
                   TaskStatusBadge(status: _task.status),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: HabitatTheme.growthGreen.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -137,11 +144,16 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                 icon: Icons.access_time,
                 items: [
                   _buildSpecRow('Trigger Time', _task.schedule.timeOfDay),
-                  _buildSpecRow('Recurrence', _task.schedule.recurrenceDisplayName),
+                  _buildSpecRow(
+                      'Recurrence', _task.schedule.recurrenceDisplayName),
                   _buildSpecRow(
                     'Alarm State',
-                    _task.alarm != null && _task.alarm!.isEnabled ? 'Armed (Native Wake-up)' : 'Disabled',
-                    valueColor: _task.alarm != null && _task.alarm!.isEnabled ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+                    _task.alarm != null && _task.alarm!.isEnabled
+                        ? 'Armed (Native Wake-up)'
+                        : 'Disabled',
+                    valueColor: _task.alarm != null && _task.alarm!.isEnabled
+                        ? HabitatTheme.growthGreen
+                        : HabitatTheme.textMuted,
                   ),
                 ],
               ),
@@ -154,7 +166,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                 items: [
                   _buildSpecRow('Action Type', _task.action.typeDisplayName),
                   _buildSpecRow('Instruction', _task.action.instruction),
-                  _buildSpecRow('Verification', 'Anti-Cheat Camera Validation Active'),
+                  _buildSpecRow(
+                      'Verification', 'Anti-Cheat Camera Validation Active'),
                 ],
               ),
               const SizedBox(height: 14),
@@ -164,9 +177,12 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                 title: 'ESCALATION RETRY PROTOCOL',
                 icon: Icons.replay,
                 items: [
-                  _buildSpecRow('Escalation Interval', '${_task.retryRules.retryIntervalMinutes} Minutes'),
-                  _buildSpecRow('Max Retries', '${_task.retryRules.maxAttempts} Attempts'),
-                  _buildSpecRow('Policy on Max Fail', 'Mark Missed & Record History'),
+                  _buildSpecRow('Escalation Interval',
+                      '${_task.retryRules.retryIntervalMinutes} Minutes'),
+                  _buildSpecRow('Max Retries',
+                      '${_task.retryRules.maxAttempts} Attempts'),
+                  _buildSpecRow(
+                      'Policy on Max Fail', 'Mark Missed & Record History'),
                 ],
               ),
               const SizedBox(height: 28),
@@ -201,7 +217,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: HabitatTheme.growthGreen,
                       foregroundColor: HabitatTheme.forest,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
                     ),
                   ),
                 )
@@ -212,7 +229,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                   decoration: BoxDecoration(
                     color: HabitatTheme.surfacePrimary,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.4)),
+                    border: Border.all(
+                        color: HabitatTheme.growthGreen.withOpacity(0.4)),
                   ),
                   alignment: Alignment.center,
                   child: const Text(

@@ -9,6 +9,9 @@ class ScheduledAlarmOccurrence {
   final DateTime registeredAt;
   bool isCancelled;
 
+  bool get isDisarmed => isCancelled;
+  set isDisarmed(bool val) => isCancelled = val;
+
   ScheduledAlarmOccurrence({
     required this.occurrenceId,
     required this.alarmId,
@@ -26,6 +29,16 @@ class NativeAlarmScheduler {
   final Map<String, ScheduledAlarmOccurrence> _osRegistry = {};
   final Map<String, Timer> _retryTimers = {};
 
+  int get activeCount => _osRegistry.values.where((o) => !o.isCancelled).length;
+
+  void reset() {
+    for (final timer in _retryTimers.values) {
+      timer.cancel();
+    }
+    _retryTimers.clear();
+    _osRegistry.clear();
+  }
+
   /// Schedules an exact alarm idempotently
   ScheduledAlarmOccurrence scheduleExactAlarm({
     required String alarmId,
@@ -35,7 +48,8 @@ class NativeAlarmScheduler {
     final occurrenceId = 'occ_${alarmId}_${scheduledAt.millisecondsSinceEpoch}';
 
     // 1. Check if already registered
-    if (_osRegistry.containsKey(occurrenceId) && !_osRegistry[occurrenceId]!.isCancelled) {
+    if (_osRegistry.containsKey(occurrenceId) &&
+        !_osRegistry[occurrenceId]!.isCancelled) {
       return _osRegistry[occurrenceId]!;
     }
 
@@ -52,14 +66,18 @@ class NativeAlarmScheduler {
   }
 
   /// Triggered by Android AlarmManager or iOS UNNotification
-  void onAlarmTriggered({required String occurrenceId, int retryIntervalMinutes = 5}) {
+  void onAlarmTriggered(
+      {required String occurrenceId, int retryIntervalMinutes = 5}) {
     _retryTimers[occurrenceId]?.cancel();
 
-    _retryTimers[occurrenceId] = Timer(Duration(minutes: retryIntervalMinutes), () {
+    _retryTimers[occurrenceId] =
+        Timer(Duration(minutes: retryIntervalMinutes), () {
       // Escalation retry fired if not completed
       final occurrence = _osRegistry[occurrenceId];
       if (occurrence != null && !occurrence.isCancelled) {
-        onAlarmTriggered(occurrenceId: occurrenceId, retryIntervalMinutes: retryIntervalMinutes);
+        onAlarmTriggered(
+            occurrenceId: occurrenceId,
+            retryIntervalMinutes: retryIntervalMinutes);
       }
     });
   }
@@ -94,5 +112,6 @@ class NativeAlarmScheduler {
     return count;
   }
 
-  int get registeredCount => _osRegistry.values.where((o) => !o.isCancelled).length;
+  int get registeredCount =>
+      _osRegistry.values.where((o) => !o.isCancelled).length;
 }

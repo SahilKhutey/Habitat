@@ -18,7 +18,8 @@ class StorageFailure extends HabitatFailure {
 
 class PermissionFailure extends HabitatFailure {
   final String permissionType;
-  const PermissionFailure(super.message, {required this.permissionType, super.code});
+  const PermissionFailure(super.message,
+      {required this.permissionType, super.code});
 }
 
 class ValidationFailure extends HabitatFailure {

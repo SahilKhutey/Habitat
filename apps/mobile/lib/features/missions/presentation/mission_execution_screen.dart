@@ -55,7 +55,8 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
   Future<void> _initMission() async {
     _task = _database.getTask(widget.taskId);
     if (_task != null) {
-      final attempt = await _missionService.start(_task!.id, alarmId: widget.alarmId);
+      final attempt =
+          await _missionService.start(_task!.id, alarmId: widget.alarmId);
       setState(() {
         _attempt = attempt;
       });
@@ -126,7 +127,8 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
     if (_task == null) {
       return const Scaffold(
         backgroundColor: HabitatColors.darkBackground,
-        body: Center(child: CircularProgressIndicator(color: HabitatColors.growthGreen)),
+        body: Center(
+            child: CircularProgressIndicator(color: HabitatColors.growthGreen)),
       );
     }
 
@@ -219,11 +221,14 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
                         const Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            CircularProgressIndicator(color: HabitatColors.growthGreen),
+                            CircularProgressIndicator(
+                                color: HabitatColors.growthGreen),
                             SizedBox(height: HabitatSpacing.md),
                             Text(
                               'Running MoveNet Radar & Liveness...',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -238,12 +243,15 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.error_outline, color: Colors.white, size: 48),
+                              const Icon(Icons.error_outline,
+                                  color: Colors.white, size: 48),
                               const SizedBox(height: HabitatSpacing.sm),
                               Text(
                                 _errorMessage ?? 'Verification failed',
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -254,7 +262,8 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.verified, color: HabitatColors.growthGreen, size: 64),
+                              const Icon(Icons.verified,
+                                  color: HabitatColors.growthGreen, size: 64),
                               const SizedBox(height: HabitatSpacing.md),
                               const Text(
                                 'MISSION COMPLETE!',
@@ -284,7 +293,8 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
               const SizedBox(height: HabitatSpacing.lg),
 
               // Action Control Bar
-              if (_state == MissionScreenState.ready || _state == MissionScreenState.failed)
+              if (_state == MissionScreenState.ready ||
+                  _state == MissionScreenState.failed)
                 SizedBox(
                   width: double.infinity,
                   height: 54,
@@ -298,7 +308,9 @@ class _MissionExecutionScreenState extends State<MissionExecutionScreen> {
                       ),
                     ),
                     child: Text(
-                      _state == MissionScreenState.failed ? 'Try Again' : 'Capture & Verify Proof',
+                      _state == MissionScreenState.failed
+                          ? 'Try Again'
+                          : 'Capture & Verify Proof',
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,

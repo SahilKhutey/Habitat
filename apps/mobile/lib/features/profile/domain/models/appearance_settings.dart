@@ -37,7 +37,8 @@ class AppearanceSettingsModel {
         'largerText': largerText,
       };
 
-  factory AppearanceSettingsModel.fromMap(Map<String, dynamic> map) => AppearanceSettingsModel(
+  factory AppearanceSettingsModel.fromMap(Map<String, dynamic> map) =>
+      AppearanceSettingsModel(
         themeMode: ThemeModePreference.values.firstWhere(
           (m) => m.name == map['themeMode'],
           orElse: () => ThemeModePreference.system,

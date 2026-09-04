@@ -5,6 +5,8 @@ import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
@@ -12,15 +14,20 @@ void main() {
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
+    scheduler.reset();
   });
 
   group('Phase Z: Core Production Invariants (Z13)', () {
-    test('Z13.1: Completion Invariant — No valid proof strictly prevents completion', () async {
+    test(
+        'Z13.1: Completion Invariant — No valid proof strictly prevents completion',
+        () async {
       final task = LocalTask(
         id: 'task_z_unverified',
         title: 'Morning Pushup Protocol',
@@ -41,7 +48,9 @@ void main() {
       expect(db.getStreak().currentStreak, equals(0));
     });
 
-    test('Z13.2: Reward & Streak Invariants — Exactly 1 XP (+20) and 1 streak update per qualifying completion', () async {
+    test(
+        'Z13.2: Reward & Streak Invariants — Exactly 1 XP (+20) and 1 streak update per qualifying completion',
+        () async {
       final task = LocalTask(
         id: 'task_z_reward',
         title: 'Cold Water Hydration',
@@ -59,7 +68,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/z_water.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -77,7 +87,9 @@ void main() {
       expect(db.getStreak().currentStreak, equals(1));
     });
 
-    test('Z13.3: Alarm & Retry Invariant — Completion disarms alarm and cancels retries', () async {
+    test(
+        'Z13.3: Alarm & Retry Invariant — Completion disarms alarm and cancels retries',
+        () async {
       final task = LocalTask(
         id: 'task_z_retry',
         title: 'Evening Reflection',
@@ -95,13 +107,15 @@ void main() {
         scheduledAt: DateTime.now(),
       );
 
-      final attempt = await missionService.start('task_z_retry', alarmId: 'alm_z_retry');
+      final attempt =
+          await missionService.start('task_z_retry', alarmId: 'alm_z_retry');
       await missionService.submitProof(
         attempt.id,
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/z_reflection.jpg',
-          sha256Checksum: 'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef',
+          sha256Checksum:
+              'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd',
         ),
       );
 
@@ -114,7 +128,9 @@ void main() {
   });
 
   group('Phase Z: Disaster Recovery & Persistence Invariants (Z19, Z26)', () {
-    test('Z19 & Z26: Cold recovery from disk restores full state with zero corruption', () async {
+    test(
+        'Z19 & Z26: Cold recovery from disk restores full state with zero corruption',
+        () async {
       final task = LocalTask(
         id: 'task_z_persistence',
         title: 'Full System Operation Protocol',
@@ -132,7 +148,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/z_drill.jpg',
-          sha256Checksum: '9999888877776666555544443333222211110000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '9999888877776666555544443333222211110000aaaabbbbccccddddeeeeffff',
         ),
       );
       await missionService.complete(attempt.id);
@@ -140,7 +157,7 @@ void main() {
       await db.flush();
       final diskSnapshot = db.exportCompleteStateJson();
 
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       expect(db.getAllTasks().isEmpty, isTrue);
 
       db.restoreFromStateJson(diskSnapshot);

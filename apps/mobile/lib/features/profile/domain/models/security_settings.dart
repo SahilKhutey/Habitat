@@ -32,7 +32,8 @@ class SecuritySettingsModel {
         'pin': pinCode,
       };
 
-  factory SecuritySettingsModel.fromMap(Map<String, dynamic> map) => SecuritySettingsModel(
+  factory SecuritySettingsModel.fromMap(Map<String, dynamic> map) =>
+      SecuritySettingsModel(
         appLockEnabled: map['appLock'] ?? false,
         biometricEnabled: map['biometric'] ?? false,
         pinCode: map['pin'],

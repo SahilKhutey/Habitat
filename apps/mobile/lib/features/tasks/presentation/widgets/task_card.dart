@@ -23,12 +23,14 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isReady = task.status == TaskStatus.ready || task.status == TaskStatus.active;
+    final isReady =
+        task.status == TaskStatus.ready || task.status == TaskStatus.active;
     final isCompleted = task.status == TaskStatus.completed;
 
     return Semantics(
       container: true,
-      label: 'Task: ${task.title}. Status: ${task.status.name}. Schedule: ${task.schedule.timeOfDay}.',
+      label:
+          'Task: ${task.title}. Status: ${task.status.name}. Schedule: ${task.schedule.timeOfDay}.',
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
@@ -86,19 +88,23 @@ class TaskCard extends StatelessWidget {
                           if (onTogglePause != null || onArchive != null) ...[
                             const SizedBox(width: 4),
                             PopupMenuButton<String>(
-                              icon: const Icon(Icons.more_vert, size: 18, color: HabitatTheme.textMuted),
+                              icon: const Icon(Icons.more_vert,
+                                  size: 18, color: HabitatTheme.textMuted),
                               color: HabitatTheme.surfacePrimary,
                               onSelected: (val) {
                                 if (val == 'pause' && onTogglePause != null) {
                                   onTogglePause!();
-                                } else if (val == 'archive' && onArchive != null) {
+                                } else if (val == 'archive' &&
+                                    onArchive != null) {
                                   onArchive!();
                                 }
                               },
                               itemBuilder: (ctx) => [
                                 PopupMenuItem(
                                   value: 'pause',
-                                  child: Text(task.status == TaskStatus.paused ? 'Resume Task' : 'Pause Task'),
+                                  child: Text(task.status == TaskStatus.paused
+                                      ? 'Resume Task'
+                                      : 'Pause Task'),
                                 ),
                                 const PopupMenuItem(
                                   value: 'archive',
@@ -201,9 +207,11 @@ class TaskCard extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: HabitatTheme.growthGreen,
                             foregroundColor: HabitatTheme.forest,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 6),
                             minimumSize: const Size(0, 32),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                           ),
                           child: const Text(
                             'Start',
@@ -215,7 +223,8 @@ class TaskCard extends StatelessWidget {
                           ),
                         )
                       else
-                        const Icon(Icons.chevron_right, size: 18, color: HabitatTheme.textMuted),
+                        const Icon(Icons.chevron_right,
+                            size: 18, color: HabitatTheme.textMuted),
                     ],
                   ),
                 ],

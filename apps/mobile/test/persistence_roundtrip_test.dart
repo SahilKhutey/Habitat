@@ -26,7 +26,8 @@ void main() {
       expect(deserialized.avatarUrl, equals(user.avatarUrl));
       expect(deserialized.disciplineLevel, equals(user.disciplineLevel));
       expect(deserialized.timezone, equals(user.timezone));
-      expect(deserialized.createdAt.toIso8601String(), equals(now.toIso8601String()));
+      expect(deserialized.createdAt.toIso8601String(),
+          equals(now.toIso8601String()));
     });
 
     test('LocalTask roundtrips with all boolean constraints', () {
@@ -89,7 +90,8 @@ void main() {
       expect(deserialized.repeatDays, equals([1, 3, 5]));
       expect(deserialized.retryIntervalMinutes, equals(3));
       expect(deserialized.maxRetries, equals(5));
-      expect(deserialized.nextTrigger?.toIso8601String(), equals(alarm.nextTrigger?.toIso8601String()));
+      expect(deserialized.nextTrigger?.toIso8601String(),
+          equals(alarm.nextTrigger?.toIso8601String()));
     });
 
     test('LocalProof roundtrips with file path and verified flag', () {
@@ -178,7 +180,9 @@ void main() {
       db.resetAllData();
     });
 
-    test('exportCompleteStateJson & restoreFromStateJson preserves full app state', () {
+    test(
+        'exportCompleteStateJson & restoreFromStateJson preserves full app state',
+        () {
       db.getOrCreateProfile(name: 'Commander');
       db.saveTask(LocalTask(
         id: 'task_custom_1',
@@ -211,7 +215,11 @@ void main() {
       expect(db.getTask('task_custom_1')!.title, equals('Cold Plunge 3min'));
       expect(db.getAllAlarms().any((a) => a.id == 'alm_custom_1'), isTrue);
       expect(db.getTotalXP(), equals(100));
-      expect(db.getWaterEntriesToday().fold<int>(0, (sum, e) => sum + e.milliliters), equals(750));
+      expect(
+          db
+              .getWaterEntriesToday()
+              .fold<int>(0, (sum, e) => sum + e.milliliters),
+          equals(750));
     });
 
     test('Schema migration v1 -> v3 upgrades legacy records gracefully', () {

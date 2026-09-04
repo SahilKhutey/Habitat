@@ -78,12 +78,14 @@ class StandardNotificationService implements HabitatNotificationService {
     required String title,
     required String body,
   }) async {
-    final payload = NotificationPayload(type: 'alarm', alarmId: alarmId, taskId: taskId);
+    final payload =
+        NotificationPayload(type: 'alarm', alarmId: alarmId, taskId: taskId);
     deliveredPayloads.add(payload);
   }
 
   @override
   Future<void> cancel(String notificationId) async {
-    deliveredPayloads.removeWhere((p) => p.alarmId == notificationId || p.taskId == notificationId);
+    deliveredPayloads.removeWhere(
+        (p) => p.alarmId == notificationId || p.taskId == notificationId);
   }
 }

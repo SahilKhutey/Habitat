@@ -46,7 +46,8 @@ class NapCard extends StatelessWidget {
                       color: const Color(0xFF7209B7).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.bedtime, color: Color(0xFF7209B7), size: 18),
+                    child: const Icon(Icons.bedtime,
+                        color: Color(0xFF7209B7), size: 18),
                   ),
                   const SizedBox(width: 10),
                   const Text(
@@ -63,7 +64,8 @@ class NapCard extends StatelessWidget {
               ),
               if (onOpenDetails != null)
                 IconButton(
-                  icon: const Icon(Icons.chevron_right, size: 18, color: Color(0xFF7209B7)),
+                  icon: const Icon(Icons.chevron_right,
+                      size: 18, color: Color(0xFF7209B7)),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: onOpenDetails,
@@ -80,12 +82,16 @@ class NapCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    nap.isRunning ? (runningTimer ?? 'Running...') : nap.formattedDuration,
+                    nap.isRunning
+                        ? (runningTimer ?? 'Running...')
+                        : nap.formattedDuration,
                     style: TextStyle(
                       fontFamily: HabitatTheme.fontHeading,
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
-                      color: nap.isRunning ? const Color(0xFF7209B7) : Colors.white,
+                      color: nap.isRunning
+                          ? const Color(0xFF7209B7)
+                          : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -103,7 +109,8 @@ class NapCard extends StatelessWidget {
               ),
               ElevatedButton.icon(
                 onPressed: onToggleNap,
-                icon: Icon(nap.isRunning ? Icons.stop : Icons.play_arrow, size: 18),
+                icon: Icon(nap.isRunning ? Icons.stop : Icons.play_arrow,
+                    size: 18),
                 label: Text(
                   nap.isRunning ? 'END NAP' : 'START NAP',
                   style: const TextStyle(
@@ -113,10 +120,14 @@ class NapCard extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: nap.isRunning ? Colors.redAccent : const Color(0xFF7209B7),
+                  backgroundColor: nap.isRunning
+                      ? Colors.redAccent
+                      : const Color(0xFF7209B7),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ],

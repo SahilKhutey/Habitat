@@ -42,7 +42,8 @@ class TaskLifecycleService {
   }) async {
     // 1. Verify Action if required
     if (action != null) {
-      final verified = await _actionExecutor.executeAndVerify(action, actionPayload);
+      final verified =
+          await _actionExecutor.executeAndVerify(action, actionPayload);
       if (!verified) {
         return false;
       }

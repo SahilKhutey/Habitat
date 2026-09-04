@@ -76,17 +76,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     CircleAvatar(
                       radius: 44,
                       backgroundColor: HabitatTheme.habitatGreen,
-                      child: const Icon(Icons.person, color: HabitatTheme.growthGreen, size: 48),
+                      child: const Icon(Icons.person,
+                          color: HabitatTheme.growthGreen, size: 48),
                     ),
                     const SizedBox(height: 10),
                     TextButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Avatar customization active.')),
+                          const SnackBar(
+                              content: Text('Avatar customization active.')),
                         );
                       },
-                      icon: const Icon(Icons.camera_alt_outlined, size: 16, color: HabitatTheme.growthGreen),
-                      label: const Text('Change Avatar', style: TextStyle(color: HabitatTheme.growthGreen)),
+                      icon: const Icon(Icons.camera_alt_outlined,
+                          size: 16, color: HabitatTheme.growthGreen),
+                      label: const Text('Change Avatar',
+                          style: TextStyle(color: HabitatTheme.growthGreen)),
                     ),
                   ],
                 ),
@@ -110,9 +114,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: HabitatTheme.surfacePrimary,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.surfaceBorder)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.surfaceBorder)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.growthGreen)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -135,9 +148,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: HabitatTheme.surfacePrimary,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.surfaceBorder)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.surfaceBorder)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: HabitatTheme.growthGreen)),
                 ),
               ),
               const SizedBox(height: 32),
@@ -161,7 +183,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.growthGreen,
                     foregroundColor: HabitatTheme.forest,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
               ),

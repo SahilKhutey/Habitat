@@ -25,7 +25,8 @@ class HabitatAdaptiveScaffold extends StatelessWidget {
         body: child,
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: HabitatColors.surfaceBorder, width: 1)),
+            border: Border(
+                top: BorderSide(color: HabitatColors.surfaceBorder, width: 1)),
           ),
           child: NavigationBar(
             backgroundColor: HabitatColors.surfacePrimary,
@@ -35,28 +36,37 @@ class HabitatAdaptiveScaffold extends StatelessWidget {
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             destinations: const [
               NavigationDestination(
-                icon: Icon(Icons.wb_sunny_outlined, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.wb_sunny, color: HabitatColors.growthGreen),
+                icon: Icon(Icons.wb_sunny_outlined,
+                    color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.wb_sunny, color: HabitatColors.growthGreen),
                 label: 'Home',
               ),
               NavigationDestination(
                 icon: Icon(Icons.checklist_rtl, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.checklist_rtl, color: HabitatColors.growthGreen),
+                selectedIcon:
+                    Icon(Icons.checklist_rtl, color: HabitatColors.growthGreen),
                 label: 'Tasks',
               ),
               NavigationDestination(
-                icon: Icon(Icons.favorite_outline, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.favorite, color: HabitatColors.growthGreen),
+                icon: Icon(Icons.favorite_outline,
+                    color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.favorite, color: HabitatColors.growthGreen),
                 label: 'Health',
               ),
               NavigationDestination(
-                icon: Icon(Icons.insights_outlined, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.insights, color: HabitatColors.growthGreen),
+                icon: Icon(Icons.insights_outlined,
+                    color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.insights, color: HabitatColors.growthGreen),
                 label: 'Progress',
               ),
               NavigationDestination(
-                icon: Icon(Icons.person_outline, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.person, color: HabitatColors.growthGreen),
+                icon:
+                    Icon(Icons.person_outline, color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.person, color: HabitatColors.growthGreen),
                 label: 'Profile',
               ),
             ],
@@ -96,33 +106,43 @@ class HabitatAdaptiveScaffold extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: HabitatColors.habitatGreen,
                 ),
-                child: const Icon(Icons.eco, color: HabitatColors.growthGreen, size: 26),
+                child: const Icon(Icons.eco,
+                    color: HabitatColors.growthGreen, size: 26),
               ),
             ),
             destinations: const [
               NavigationRailDestination(
-                icon: Icon(Icons.wb_sunny_outlined, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.wb_sunny, color: HabitatColors.growthGreen),
+                icon: Icon(Icons.wb_sunny_outlined,
+                    color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.wb_sunny, color: HabitatColors.growthGreen),
                 label: Text('Home'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.checklist_rtl, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.checklist_rtl, color: HabitatColors.growthGreen),
+                selectedIcon:
+                    Icon(Icons.checklist_rtl, color: HabitatColors.growthGreen),
                 label: Text('Tasks'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.favorite_outline, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.favorite, color: HabitatColors.growthGreen),
+                icon: Icon(Icons.favorite_outline,
+                    color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.favorite, color: HabitatColors.growthGreen),
                 label: Text('Health'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.insights_outlined, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.insights, color: HabitatColors.growthGreen),
+                icon: Icon(Icons.insights_outlined,
+                    color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.insights, color: HabitatColors.growthGreen),
                 label: Text('Progress'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.person_outline, color: HabitatColors.textMuted),
-                selectedIcon: Icon(Icons.person, color: HabitatColors.growthGreen),
+                icon:
+                    Icon(Icons.person_outline, color: HabitatColors.textMuted),
+                selectedIcon:
+                    Icon(Icons.person, color: HabitatColors.growthGreen),
                 label: Text('Profile'),
               ),
             ],

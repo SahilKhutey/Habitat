@@ -31,7 +31,8 @@ class XpLedgerHistoryScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('IMMUTABLE XP LEDGER'),
       ),
@@ -50,9 +51,11 @@ class XpLedgerHistoryScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(tx['reason'] as String, style: AppTypography.titleSmall),
+                        Text(tx['reason'] as String,
+                            style: AppTypography.titleSmall),
                         const SizedBox(height: 2),
-                        Text(tx['time'] as String, style: AppTypography.bodySmall),
+                        Text(tx['time'] as String,
+                            style: AppTypography.bodySmall),
                       ],
                     ),
                   ),

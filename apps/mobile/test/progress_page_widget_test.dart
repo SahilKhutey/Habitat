@@ -41,7 +41,8 @@ void main() {
       streakService: streak,
       achievementService: achievements,
     );
-    controller = ProgressController(progressService: progressService, database: db);
+    controller =
+        ProgressController(progressService: progressService, database: db);
   });
 
   tearDown(() {
@@ -56,7 +57,9 @@ void main() {
   }
 
   group('ProgressPage Widget Tests', () {
-    testWidgets('renders master progress hub with header, selector, cards, and streak', (tester) async {
+    testWidgets(
+        'renders master progress hub with header, selector, cards, and streak',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -70,7 +73,8 @@ void main() {
       expect(find.text('MONTH'), findsOneWidget);
     });
 
-    testWidgets('switching timeframe chip to WEEK updates view dynamically', (tester) async {
+    testWidgets('switching timeframe chip to WEEK updates view dynamically',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 

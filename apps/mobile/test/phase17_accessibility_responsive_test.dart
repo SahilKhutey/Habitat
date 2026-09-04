@@ -5,7 +5,9 @@ import 'package:design_system/design_system.dart';
 
 void main() {
   group('Phase 17: Accessibility & Responsive UI/UX Tests', () {
-    testWidgets('17.1: HabitatAdaptiveGrid adapts column count to available width', (tester) async {
+    testWidgets(
+        '17.1: HabitatAdaptiveGrid adapts column count to available width',
+        (tester) async {
       // Test at phone width (360px)
       await tester.pumpWidget(
         MaterialApp(
@@ -34,7 +36,9 @@ void main() {
       expect(find.byType(Column), findsWidgets);
     });
 
-    testWidgets('17.2: HabitatPage constrains content width and provides safe padding', (tester) async {
+    testWidgets(
+        '17.2: HabitatPage constrains content width and provides safe padding',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -50,7 +54,9 @@ void main() {
       expect(find.byType(ConstrainedBox), findsWidgets);
     });
 
-    testWidgets('17.3: HabitatA11y.button produces semantic button role, label, and hint', (tester) async {
+    testWidgets(
+        '17.3: HabitatA11y.button produces semantic button role, label, and hint',
+        (tester) async {
       bool tapped = false;
 
       await tester.pumpWidget(
@@ -74,7 +80,9 @@ void main() {
       expect(semantics.label, contains('Start Mission'));
     });
 
-    testWidgets('17.4: HabitatA11y.heading produces structural header semantics', (tester) async {
+    testWidgets(
+        '17.4: HabitatA11y.heading produces structural header semantics',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -91,12 +99,15 @@ void main() {
       expect(semantics.label, contains("Today's Discipline"));
     });
 
-    testWidgets('17.5: HabitatA11y.chartAlternative presents text alternative for visual charts', (tester) async {
+    testWidgets(
+        '17.5: HabitatA11y.chartAlternative presents text alternative for visual charts',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: HabitatA11y.chartAlternative(
-              description: 'Seven day task completion chart. Mon: 3, Tue: 5, Wed: 2.',
+              description:
+                  'Seven day task completion chart. Mon: 3, Tue: 5, Wed: 2.',
               child: Container(height: 100, color: Colors.green),
             ),
           ),

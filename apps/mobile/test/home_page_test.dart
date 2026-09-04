@@ -41,7 +41,8 @@ void main() {
   }
 
   group('HomePage Widget Tests', () {
-    testWidgets('renders all Home foundation sections in order', (tester) async {
+    testWidgets('renders all Home foundation sections in order',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -83,7 +84,8 @@ void main() {
       expect(db.getMealEntriesForDay(DateTime.now()).length, equals(1));
     });
 
-    testWidgets('shows empty onboarding state when no tasks exist', (tester) async {
+    testWidgets('shows empty onboarding state when no tasks exist',
+        (tester) async {
       // Clear tasks completely
       db.resetAllData();
       // Remove default templates for this test

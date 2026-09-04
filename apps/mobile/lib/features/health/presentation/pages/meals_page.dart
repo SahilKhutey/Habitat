@@ -107,12 +107,14 @@ class _MealsPageState extends State<MealsPage> {
                       alignment: Alignment.center,
                       child: const Text(
                         'No meals recorded today. Tap below to log nourishment.',
-                        style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13),
+                        style: TextStyle(
+                            color: HabitatTheme.textSecondary, fontSize: 13),
                       ),
                     )
                   else
                     ...meals.entries.map((entry) {
-                      final timeStr = '${entry.recordedAt.hour.toString().padLeft(2, '0')}:${entry.recordedAt.minute.toString().padLeft(2, '0')}';
+                      final timeStr =
+                          '${entry.recordedAt.hour.toString().padLeft(2, '0')}:${entry.recordedAt.minute.toString().padLeft(2, '0')}';
                       return Container(
                         margin: const EdgeInsets.only(bottom: 10),
                         padding: const EdgeInsets.all(16),
@@ -129,10 +131,12 @@ class _MealsPageState extends State<MealsPage> {
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF72585).withOpacity(0.15),
+                                    color: const Color(0xFFF72585)
+                                        .withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Icon(Icons.restaurant, color: Color(0xFFF72585), size: 18),
+                                  child: const Icon(Icons.restaurant,
+                                      color: Color(0xFFF72585), size: 18),
                                 ),
                                 const SizedBox(width: 12),
                                 Column(
@@ -147,7 +151,8 @@ class _MealsPageState extends State<MealsPage> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    if (entry.notes != null && entry.notes!.isNotEmpty)
+                                    if (entry.notes != null &&
+                                        entry.notes!.isNotEmpty)
                                       Text(
                                         entry.notes!,
                                         style: const TextStyle(
@@ -162,13 +167,18 @@ class _MealsPageState extends State<MealsPage> {
                             ),
                             Row(
                               children: [
-                                Text(timeStr, style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 12)),
+                                Text(timeStr,
+                                    style: const TextStyle(
+                                        color: HabitatTheme.textSecondary,
+                                        fontSize: 12)),
                                 const SizedBox(width: 8),
                                 IconButton(
-                                  icon: const Icon(Icons.close, size: 16, color: HabitatTheme.textMuted),
+                                  icon: const Icon(Icons.close,
+                                      size: 16, color: HabitatTheme.textMuted),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
-                                  onPressed: () => _controller.deleteMeal(entry.id),
+                                  onPressed: () =>
+                                      _controller.deleteMeal(entry.id),
                                 ),
                               ],
                             ),
@@ -186,7 +196,9 @@ class _MealsPageState extends State<MealsPage> {
             icon: const Icon(Icons.add),
             label: const Text(
               'LOG MEAL',
-              style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontWeight: FontWeight.w800),
+              style: TextStyle(
+                  fontFamily: HabitatTheme.fontHeading,
+                  fontWeight: FontWeight.w800),
             ),
             onPressed: () => _openMealEntryModal(),
           ),

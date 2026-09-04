@@ -46,7 +46,8 @@ class WeeklySummaryService {
       }
     }
 
-    final avgPercentage = daysWithDataCount > 0 ? (percentageSum / daysWithDataCount) : 0.0;
+    final avgPercentage =
+        daysWithDataCount > 0 ? (percentageSum / daysWithDataCount) : 0.0;
 
     return WeeklyProgressSummaryModel(
       startDate: monday,

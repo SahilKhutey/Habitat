@@ -31,20 +31,25 @@ class HabitatPrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: HabitatColors.growthGreen,
           foregroundColor: HabitatColors.forest,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.md)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(HabitatRadius.md)),
           padding: const EdgeInsets.symmetric(horizontal: HabitatSpacing.lg),
         ),
         child: isLoading
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2.5, color: HabitatColors.forest),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2.5, color: HabitatColors.forest),
               )
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (icon != null) ...[icon!, const SizedBox(width: HabitatSpacing.xs)],
+                  if (icon != null) ...[
+                    icon!,
+                    const SizedBox(width: HabitatSpacing.xs)
+                  ],
                   Text(
                     label,
                     style: const TextStyle(
@@ -87,14 +92,18 @@ class HabitatSecondaryButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: HabitatColors.youngLeaf,
           side: const BorderSide(color: HabitatColors.youngLeaf),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.md)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(HabitatRadius.md)),
           padding: const EdgeInsets.symmetric(horizontal: HabitatSpacing.md),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) ...[icon!, const SizedBox(width: HabitatSpacing.xs)],
+            if (icon != null) ...[
+              icon!,
+              const SizedBox(width: HabitatSpacing.xs)
+            ],
             Text(
               label,
               style: const TextStyle(
@@ -131,14 +140,18 @@ class HabitatDestructiveButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: HabitatColors.danger,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.md)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(HabitatRadius.md)),
           padding: const EdgeInsets.symmetric(horizontal: HabitatSpacing.md),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) ...[icon!, const SizedBox(width: HabitatSpacing.xs)],
+            if (icon != null) ...[
+              icon!,
+              const SizedBox(width: HabitatSpacing.xs)
+            ],
             Text(
               label,
               style: const TextStyle(

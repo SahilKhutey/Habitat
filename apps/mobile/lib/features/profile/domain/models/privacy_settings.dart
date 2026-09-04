@@ -21,7 +21,8 @@ class PrivacySettingsModel {
       PrivacySettingsModel(
         analyticsEnabled: analyticsEnabled ?? this.analyticsEnabled,
         dataSharingEnabled: dataSharingEnabled ?? this.dataSharingEnabled,
-        localFirstNoticeAccepted: localFirstNoticeAccepted ?? this.localFirstNoticeAccepted,
+        localFirstNoticeAccepted:
+            localFirstNoticeAccepted ?? this.localFirstNoticeAccepted,
       );
 
   Map<String, dynamic> toMap() => {
@@ -30,7 +31,8 @@ class PrivacySettingsModel {
         'localFirstNoticeAccepted': localFirstNoticeAccepted,
       };
 
-  factory PrivacySettingsModel.fromMap(Map<String, dynamic> map) => PrivacySettingsModel(
+  factory PrivacySettingsModel.fromMap(Map<String, dynamic> map) =>
+      PrivacySettingsModel(
         analyticsEnabled: map['analytics'] ?? false,
         dataSharingEnabled: map['dataSharing'] ?? false,
         localFirstNoticeAccepted: map['localFirstNoticeAccepted'] ?? true,

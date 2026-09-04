@@ -36,8 +36,9 @@ class HomeState {
   double get completionRate =>
       tasksTotal <= 0 ? 0.0 : (tasksCompleted / tasksTotal).clamp(0.0, 1.0);
 
-  double get waterProgress =>
-      waterTargetMl <= 0 ? 0.0 : (waterConsumedMl / waterTargetMl).clamp(0.0, 1.0);
+  double get waterProgress => waterTargetMl <= 0
+      ? 0.0
+      : (waterConsumedMl / waterTargetMl).clamp(0.0, 1.0);
 }
 
 class HomeController extends ChangeNotifier {
@@ -60,7 +61,8 @@ class HomeController extends ChangeNotifier {
   })  : _database = database ?? LocalDatabase.instance,
         _taskService = taskService ??
             TaskLifecycleService(
-              taskRepository: TaskRepository(database ?? LocalDatabase.instance),
+              taskRepository:
+                  TaskRepository(database ?? LocalDatabase.instance),
               database: database ?? LocalDatabase.instance,
             ),
         _waterService = waterService ??
@@ -83,7 +85,8 @@ class HomeController extends ChangeNotifier {
     final active = tasks.where((t) => !t.isCompleted).firstOrNull;
 
     final waterHistory = _waterService.getTodayEntries();
-    final consumedWater = waterHistory.fold<int>(0, (sum, item) => sum + item.milliliters);
+    final consumedWater =
+        waterHistory.fold<int>(0, (sum, item) => sum + item.milliliters);
 
     final user = _database.getOrCreateProfile();
     final streak = _database.getStreak();
@@ -147,7 +150,8 @@ class HomeController extends ChangeNotifier {
 
   void completeAction(String attemptId, String taskId) {
     _database.completeTask(taskId);
-    _database.updateAttemptStatus(attemptId: attemptId, status: 'COMPLETED', completedAt: DateTime.now());
+    _database.updateAttemptStatus(
+        attemptId: attemptId, status: 'COMPLETED', completedAt: DateTime.now());
     _database.awardXP(taskId: taskId, attemptId: attemptId, amount: 25);
     _database.updateStreak();
     load();

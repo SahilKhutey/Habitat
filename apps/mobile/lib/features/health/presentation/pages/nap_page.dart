@@ -65,7 +65,8 @@ class _NapPageState extends State<NapPage> {
                   // Centerpiece Timer Card
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 32, horizontal: 20),
                     decoration: BoxDecoration(
                       color: HabitatTheme.surfacePrimary,
                       borderRadius: BorderRadius.circular(24),
@@ -83,7 +84,6 @@ class _NapPageState extends State<NapPage> {
                           isRunning: nap.isRunning,
                         ),
                         const SizedBox(height: 28),
-
                         SizedBox(
                           width: 200,
                           height: 48,
@@ -95,9 +95,12 @@ class _NapPageState extends State<NapPage> {
                                 _controller.startNap();
                               }
                             },
-                            icon: Icon(nap.isRunning ? Icons.stop : Icons.play_arrow),
+                            icon: Icon(
+                                nap.isRunning ? Icons.stop : Icons.play_arrow),
                             label: Text(
-                              nap.isRunning ? 'END REST SESSION' : 'START NAP SESSION',
+                              nap.isRunning
+                                  ? 'END REST SESSION'
+                                  : 'START NAP SESSION',
                               style: const TextStyle(
                                 fontFamily: HabitatTheme.fontHeading,
                                 fontWeight: FontWeight.w800,
@@ -105,9 +108,12 @@ class _NapPageState extends State<NapPage> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: nap.isRunning ? Colors.redAccent : const Color(0xFF7209B7),
+                              backgroundColor: nap.isRunning
+                                  ? Colors.redAccent
+                                  : const Color(0xFF7209B7),
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
                             ),
                           ),
                         ),
@@ -137,19 +143,23 @@ class _NapPageState extends State<NapPage> {
                             decoration: BoxDecoration(
                               color: HabitatTheme.surfacePrimary,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: HabitatTheme.surfaceBorder),
+                              border:
+                                  Border.all(color: HabitatTheme.surfaceBorder),
                             ),
                             alignment: Alignment.center,
                             child: const Text(
                               'No rest sessions recorded today.',
-                              style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13),
+                              style: TextStyle(
+                                  color: HabitatTheme.textSecondary,
+                                  fontSize: 13),
                             ),
                           )
                         : ListView.builder(
                             itemCount: nap.todayNaps.length,
                             itemBuilder: (context, index) {
                               final session = nap.todayNaps[index];
-                              final startStr = '${session.startedAt.hour.toString().padLeft(2, '0')}:${session.startedAt.minute.toString().padLeft(2, '0')}';
+                              final startStr =
+                                  '${session.startedAt.hour.toString().padLeft(2, '0')}:${session.startedAt.minute.toString().padLeft(2, '0')}';
                               final endStr = session.endedAt != null
                                   ? '${session.endedAt!.hour.toString().padLeft(2, '0')}:${session.endedAt!.minute.toString().padLeft(2, '0')}'
                                   : 'Now';
@@ -160,31 +170,39 @@ class _NapPageState extends State<NapPage> {
                                 decoration: BoxDecoration(
                                   color: HabitatTheme.surfacePrimary,
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: HabitatTheme.surfaceBorder),
+                                  border: Border.all(
+                                      color: HabitatTheme.surfaceBorder),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF7209B7).withOpacity(0.15),
-                                            borderRadius: BorderRadius.circular(10),
+                                            color: const Color(0xFF7209B7)
+                                                .withOpacity(0.15),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          child: const Icon(Icons.bedtime, color: Color(0xFF7209B7), size: 18),
+                                          child: const Icon(Icons.bedtime,
+                                              color: Color(0xFF7209B7),
+                                              size: 18),
                                         ),
                                         const SizedBox(width: 12),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               session.isRunning
                                                   ? 'Session Active'
                                                   : '${session.durationMinutes} Minutes Rest',
                                               style: const TextStyle(
-                                                fontFamily: HabitatTheme.fontHeading,
+                                                fontFamily:
+                                                    HabitatTheme.fontHeading,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w700,
                                                 color: Colors.white,
@@ -193,9 +211,11 @@ class _NapPageState extends State<NapPage> {
                                             Text(
                                               '$startStr - $endStr',
                                               style: const TextStyle(
-                                                fontFamily: HabitatTheme.fontBody,
+                                                fontFamily:
+                                                    HabitatTheme.fontBody,
                                                 fontSize: 12,
-                                                color: HabitatTheme.textSecondary,
+                                                color:
+                                                    HabitatTheme.textSecondary,
                                               ),
                                             ),
                                           ],
@@ -204,11 +224,15 @@ class _NapPageState extends State<NapPage> {
                                     ),
                                     if (session.isRunning)
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 3),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFF7209B7).withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(6),
-                                          border: Border.all(color: const Color(0xFF7209B7)),
+                                          color: const Color(0xFF7209B7)
+                                              .withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          border: Border.all(
+                                              color: const Color(0xFF7209B7)),
                                         ),
                                         child: const Text(
                                           'ACTIVE',

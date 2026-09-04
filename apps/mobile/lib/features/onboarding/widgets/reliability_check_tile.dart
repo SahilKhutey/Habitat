@@ -34,7 +34,9 @@ class ReliabilityCheckTile extends StatelessWidget {
         border: Border.all(
           color: isConfirmed
               ? const Color(0xFF10B981).withOpacity(0.3)
-              : (isRecommended ? const Color(0xFFF59E0B).withOpacity(0.4) : const Color(0xFF2A2E39)),
+              : (isRecommended
+                  ? const Color(0xFFF59E0B).withOpacity(0.4)
+                  : const Color(0xFF2A2E39)),
           width: 1.5,
         ),
       ),
@@ -54,7 +56,9 @@ class ReliabilityCheckTile extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: 20,
-                  color: isConfirmed ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                  color: isConfirmed
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFFF59E0B),
                 ),
               ),
               const SizedBox(width: 12),
@@ -83,9 +87,11 @@ class ReliabilityCheckTile extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               if (isConfirmed)
-                const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 22)
+                const Icon(Icons.check_circle,
+                    color: Color(0xFF10B981), size: 22)
               else
-                const Icon(Icons.warning_amber_rounded, color: Color(0xFFF59E0B), size: 22),
+                const Icon(Icons.warning_amber_rounded,
+                    color: Color(0xFFF59E0B), size: 22),
             ],
           ),
           if (!isConfirmed && onFix != null) ...[
@@ -104,7 +110,8 @@ class ReliabilityCheckTile extends StatelessWidget {
                 ),
                 child: Text(
                   fixButtonText,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

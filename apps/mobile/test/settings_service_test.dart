@@ -22,7 +22,8 @@ void main() {
       var prefs = settingsService.getPreferences();
       expect(prefs.timeFormat24h, isFalse);
 
-      settingsService.updatePreferences(prefs.copyWith(timeFormat24h: true, defaultTaskView: 'Timeline'));
+      settingsService.updatePreferences(
+          prefs.copyWith(timeFormat24h: true, defaultTaskView: 'Timeline'));
 
       prefs = settingsService.getPreferences();
       expect(prefs.timeFormat24h, isTrue);
@@ -33,7 +34,8 @@ void main() {
       var notifs = settingsService.getNotificationSettings();
       expect(notifs.quietHoursEnabled, isFalse);
 
-      settingsService.updateNotificationSettings(notifs.copyWith(quietHoursEnabled: true));
+      settingsService
+          .updateNotificationSettings(notifs.copyWith(quietHoursEnabled: true));
 
       notifs = settingsService.getNotificationSettings();
       expect(notifs.quietHoursEnabled, isTrue);
@@ -43,7 +45,8 @@ void main() {
       var app = settingsService.getAppearanceSettings();
       expect(app.themeMode, equals(ThemeModePreference.system));
 
-      settingsService.updateAppearanceSettings(app.copyWith(themeMode: ThemeModePreference.dark, highContrast: true));
+      settingsService.updateAppearanceSettings(app.copyWith(
+          themeMode: ThemeModePreference.dark, highContrast: true));
 
       app = settingsService.getAppearanceSettings();
       expect(app.themeMode, equals(ThemeModePreference.dark));

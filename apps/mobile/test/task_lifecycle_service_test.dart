@@ -41,7 +41,9 @@ void main() {
       expect(retrieved.isCompleted, isFalse);
     });
 
-    test('completeTaskWithAction() verifies checklist action and completes task', () async {
+    test(
+        'completeTaskWithAction() verifies checklist action and completes task',
+        () async {
       final task = LocalTask(
         id: 'task_002',
         title: 'Morning Routine Checklist',
@@ -63,7 +65,9 @@ void main() {
       final fail = await lifecycleService.completeTaskWithAction(
         'task_002',
         action: action,
-        actionPayload: {'checkedItems': ['Item 1']},
+        actionPayload: {
+          'checkedItems': ['Item 1']
+        },
       );
       expect(fail, isFalse);
       expect(lifecycleService.getTaskById('task_002')!.isCompleted, isFalse);
@@ -72,7 +76,9 @@ void main() {
       final success = await lifecycleService.completeTaskWithAction(
         'task_002',
         action: action,
-        actionPayload: {'checkedItems': ['Item 1', 'Item 2']},
+        actionPayload: {
+          'checkedItems': ['Item 1', 'Item 2']
+        },
       );
       expect(success, isTrue);
       expect(lifecycleService.getTaskById('task_002')!.isCompleted, isTrue);

@@ -9,7 +9,8 @@ class TasksHomeScreen extends StatefulWidget {
   State<TasksHomeScreen> createState() => _TasksHomeScreenState();
 }
 
-class _TasksHomeScreenState extends State<TasksHomeScreen> with SingleTickerProviderStateMixin {
+class _TasksHomeScreenState extends State<TasksHomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   final List<Map<String, dynamic>> _activeTasks = [
@@ -62,14 +63,16 @@ class _TasksHomeScreenState extends State<TasksHomeScreen> with SingleTickerProv
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('DISCIPLINE TASKS'),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.amberFocus,
           labelColor: AppColors.amberFocus,
-          unselectedLabelColor: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+          unselectedLabelColor:
+              isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
           tabs: const [
             Tab(text: 'ACTIVE (3)'),
             Tab(text: 'PAUSED (0)'),
@@ -91,7 +94,8 @@ class _TasksHomeScreenState extends State<TasksHomeScreen> with SingleTickerProv
                 child: AppCard(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Opening ${task['name']} details...')),
+                      SnackBar(
+                          content: Text('Opening ${task['name']} details...')),
                     );
                   },
                   child: Row(
@@ -102,14 +106,16 @@ class _TasksHomeScreenState extends State<TasksHomeScreen> with SingleTickerProv
                           color: AppColors.amberFocusSubtle,
                           borderRadius: AppRadii.radiusMedium,
                         ),
-                        child: Icon(task['icon'] as IconData, color: AppColors.amberFocus, size: 24),
+                        child: Icon(task['icon'] as IconData,
+                            color: AppColors.amberFocus, size: 24),
                       ),
                       const SizedBox(width: AppSpacing.lg),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(task['name'] as String, style: AppTypography.titleLarge),
+                            Text(task['name'] as String,
+                                style: AppTypography.titleLarge),
                             const SizedBox(height: AppSpacing.xxs),
                             Text(
                               '${task['category']} • ${task['proofType']} PROOF',
@@ -136,14 +142,16 @@ class _TasksHomeScreenState extends State<TasksHomeScreen> with SingleTickerProv
           // 2. Paused Tab
           const EmptyStateWidget(
             title: 'NO PAUSED TASKS',
-            message: 'Paused discipline tasks stop scheduling future wake-up alarms.',
+            message:
+                'Paused discipline tasks stop scheduling future wake-up alarms.',
             icon: Icons.pause_circle_outline,
           ),
 
           // 3. Archived Tab
           const EmptyStateWidget(
             title: 'NO ARCHIVED TASKS',
-            message: 'Archived tasks retain all past mission audit logs forever.',
+            message:
+                'Archived tasks retain all past mission audit logs forever.',
             icon: Icons.archive_outlined,
           ),
         ],
@@ -152,7 +160,8 @@ class _TasksHomeScreenState extends State<TasksHomeScreen> with SingleTickerProv
         backgroundColor: AppColors.amberFocus,
         foregroundColor: Colors.black,
         icon: const Icon(Icons.add),
-        label: const Text('ADD TASK', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+        label: const Text('ADD TASK',
+            style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
         onPressed: () {
           Navigator.of(context).pushNamed('/tasks/templates');
         },

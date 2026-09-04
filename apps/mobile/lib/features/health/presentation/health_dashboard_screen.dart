@@ -26,7 +26,8 @@ class HealthDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final waterProgress = (currentWaterLiters / targetWaterLiters).clamp(0.0, 1.0);
+    final waterProgress =
+        (currentWaterLiters / targetWaterLiters).clamp(0.0, 1.0);
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0E11),
@@ -62,7 +63,8 @@ class HealthDashboardScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF15181E),
                   borderRadius: AppRadii.radiusLarge,
-                  border: Border.all(color: AppColors.cyanDiscovery.withOpacity(0.3)),
+                  border: Border.all(
+                      color: AppColors.cyanDiscovery.withOpacity(0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,23 +74,38 @@ class HealthDashboardScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: const [
-                            Icon(Icons.water_drop, color: AppColors.cyanDiscovery, size: 20),
+                            Icon(Icons.water_drop,
+                                color: AppColors.cyanDiscovery, size: 20),
                             SizedBox(width: 8),
-                            Text('HYDRATION', style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                            Text('HYDRATION',
+                                style: TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2)),
                           ],
                         ),
-                        Text('${(waterProgress * 100).toInt()}%', style: const TextStyle(color: AppColors.cyanDiscovery, fontWeight: FontWeight.bold)),
+                        Text('${(waterProgress * 100).toInt()}%',
+                            style: const TextStyle(
+                                color: AppColors.cyanDiscovery,
+                                fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text('${currentWaterLiters.toStringAsFixed(1)} / ${targetWaterLiters.toStringAsFixed(1)} L', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                    Text(
+                        '${currentWaterLiters.toStringAsFixed(1)} / ${targetWaterLiters.toStringAsFixed(1)} L',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     ClipRRect(
                       borderRadius: AppRadii.radiusSmall,
                       child: LinearProgressIndicator(
                         value: waterProgress,
                         backgroundColor: Colors.white10,
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.cyanDiscovery),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            AppColors.cyanDiscovery),
                         minHeight: 6,
                       ),
                     ),
@@ -120,7 +137,9 @@ class HealthDashboardScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
 
               // Active Goals Section
-              Text('PERSONAL WELLNESS GOALS', style: AppTypography.titleSmall.copyWith(color: Colors.white70, letterSpacing: 1.5)),
+              Text('PERSONAL WELLNESS GOALS',
+                  style: AppTypography.titleSmall
+                      .copyWith(color: Colors.white70, letterSpacing: 1.5)),
               const SizedBox(height: AppSpacing.md),
 
               ...wellnessGoals.map((g) => Container(
@@ -137,8 +156,17 @@ class HealthDashboardScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(g['name'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
-                            Text('${((g['progress'] as double) * 100).toInt()}%', style: const TextStyle(color: AppColors.emeraldVictory, fontWeight: FontWeight.bold, fontSize: 12)),
+                            Text(g['name'] as String,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14)),
+                            Text(
+                                '${((g['progress'] as double) * 100).toInt()}%',
+                                style: const TextStyle(
+                                    color: AppColors.emeraldVictory,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12)),
                           ],
                         ),
                         const SizedBox(height: 6),
@@ -147,7 +175,8 @@ class HealthDashboardScreen extends StatelessWidget {
                           child: LinearProgressIndicator(
                             value: (g['progress'] as double).clamp(0.0, 1.0),
                             backgroundColor: Colors.white10,
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.emeraldVictory),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                AppColors.emeraldVictory),
                             minHeight: 4,
                           ),
                         ),
@@ -182,13 +211,23 @@ class HealthDashboardScreen extends StatelessWidget {
             children: [
               Icon(icon, color: iconColor, size: 20),
               const SizedBox(width: 8),
-              Text(title, style: const TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+              Text(title,
+                  style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2)),
             ],
           ),
           const SizedBox(height: 8),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(value,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+          Text(subtitle,
+              style: const TextStyle(color: Colors.white54, fontSize: 12)),
         ],
       ),
     );
@@ -203,7 +242,11 @@ class HealthDashboardScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: AppRadii.radiusSmall),
         ),
         onPressed: () {},
-        child: Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+                fontWeight: FontWeight.bold)),
       ),
     );
   }

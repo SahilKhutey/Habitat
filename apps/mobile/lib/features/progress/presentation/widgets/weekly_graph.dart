@@ -45,7 +45,6 @@ class WeeklyGraph extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
           ...List.generate(monthlySummary.weeks.length, (index) {
             final week = monthlySummary.weeks[index];
             final avg = week.averageCompletionPercentage.toInt();
@@ -85,7 +84,9 @@ class WeeklyGraph extends StatelessWidget {
                       minHeight: 6,
                       backgroundColor: HabitatTheme.surfaceSecondary,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        avg >= 70 ? HabitatTheme.growthGreen : HabitatTheme.youngLeaf,
+                        avg >= 70
+                            ? HabitatTheme.growthGreen
+                            : HabitatTheme.youngLeaf,
                       ),
                     ),
                   ),

@@ -26,7 +26,8 @@ class HabitatProgressBar extends StatelessWidget {
         value: value.clamp(0.0, 1.0),
         minHeight: height,
         backgroundColor: backgroundColor ?? HabitatColors.surfaceSecondary,
-        valueColor: AlwaysStoppedAnimation<Color>(color ?? HabitatColors.growthGreen),
+        valueColor:
+            AlwaysStoppedAnimation<Color>(color ?? HabitatColors.growthGreen),
       ),
     );
   }
@@ -60,7 +61,8 @@ class HabitatProgressRing extends StatelessWidget {
             value: value.clamp(0.0, 1.0),
             strokeWidth: strokeWidth,
             backgroundColor: HabitatColors.surfaceSecondary,
-            valueColor: AlwaysStoppedAnimation<Color>(color ?? HabitatColors.growthGreen),
+            valueColor: AlwaysStoppedAnimation<Color>(
+                color ?? HabitatColors.growthGreen),
           ),
           if (child != null) child!,
         ],

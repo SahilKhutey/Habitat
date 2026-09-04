@@ -33,7 +33,9 @@ void main() {
   });
 
   group('27.5 & 27.6 — Real Database Persistence & CRUD Lifecycle', () {
-    test('Create -> Persist -> Update -> Delete maintains strict consistency across restarts', () {
+    test(
+        'Create -> Persist -> Update -> Delete maintains strict consistency across restarts',
+        () {
       // 1. Initial template count
       final initialTasks = taskService.getAllTasks();
       expect(initialTasks.isNotEmpty, isTrue);
@@ -87,7 +89,8 @@ void main() {
   });
 
   group('27.7 & 27.8 — Real Alarm Scheduling & Finite State Lifecycle', () {
-    test('SCHEDULED -> ARMED -> TRIGGERED -> RINGING -> PROOF -> COMPLETED', () {
+    test('SCHEDULED -> ARMED -> TRIGGERED -> RINGING -> PROOF -> COMPLETED',
+        () {
       final task = taskService.getAllTasks().first;
 
       // 1. Schedule Alarm
@@ -104,7 +107,8 @@ void main() {
       expect(db.getAlarm('alarm-test-1')!.enabled, isTrue);
 
       // 2. Prevent Duplicate Alarm Schedule
-      final duplicateSaved = db.getAllAlarms().where((a) => a.id == 'alarm-test-1').length;
+      final duplicateSaved =
+          db.getAllAlarms().where((a) => a.id == 'alarm-test-1').length;
       expect(duplicateSaved, equals(1));
 
       // 3. Reschedule / Cancel
@@ -113,28 +117,38 @@ void main() {
     });
   });
 
-  group('27.9 & 27.10 — Permissions Matrix (Allow, Deny, Graceful Explanation)', () {
-    test('grants and queries permissions with real status transitions and no crashes', () async {
+  group('27.9 & 27.10 — Permissions Matrix (Allow, Deny, Graceful Explanation)',
+      () {
+    test(
+        'grants and queries permissions with real status transitions and no crashes',
+        () async {
       // 1. Initial request
-      final cameraStatus = await permissionManager.requestPermission(HabitatPermissionType.camera);
+      final cameraStatus = await permissionManager
+          .requestPermission(HabitatPermissionType.camera);
       expect(cameraStatus, equals(HabitatPermissionStatus.granted));
 
       // 2. Notifications check
-      final notifStatus = await permissionManager.checkStatus(HabitatPermissionType.notifications);
+      final notifStatus = await permissionManager
+          .checkStatus(HabitatPermissionType.notifications);
       expect(notifStatus, equals(HabitatPermissionStatus.granted));
 
       // 3. Exact Alarm permission check
-      final exactAlarmStatus = await permissionManager.checkStatus(HabitatPermissionType.exactAlarms);
+      final exactAlarmStatus = await permissionManager
+          .checkStatus(HabitatPermissionType.exactAlarms);
       expect(exactAlarmStatus, equals(HabitatPermissionStatus.granted));
 
       // 4. Microphone initial status is denied, gracefully handled
-      final micStatus = await permissionManager.checkStatus(HabitatPermissionType.microphone);
+      final micStatus =
+          await permissionManager.checkStatus(HabitatPermissionType.microphone);
       expect(micStatus, equals(HabitatPermissionStatus.denied));
     });
   });
 
-  group('27.11 & 27.12 — App Lifecycle, Crash Recovery & Exactly-Once Ledger', () {
-    test('Simulated crash after proof acceptance guarantees exactly-once XP and streak update', () {
+  group('27.11 & 27.12 — App Lifecycle, Crash Recovery & Exactly-Once Ledger',
+      () {
+    test(
+        'Simulated crash after proof acceptance guarantees exactly-once XP and streak update',
+        () {
       final initialXp = db.getTotalXP();
       final initialStreak = db.getStreak().currentStreak;
 
@@ -164,12 +178,15 @@ void main() {
 
       // Invariant: Idempotent - cannot re-award same attempt
       final events = db.getRecentEvents();
-      expect(events.where((e) => e.entityId == 'att-crash-test').length, lessThanOrEqualTo(1));
+      expect(events.where((e) => e.entityId == 'att-crash-test').length,
+          lessThanOrEqualTo(1));
     });
   });
 
   group('27.13 — Network Failure & Offline Durable Sync Queue', () {
-    test('Offline operations enqueue durable sync events and survive process death', () {
+    test(
+        'Offline operations enqueue durable sync events and survive process death',
+        () {
       expect(db.syncQueue.isEmpty, isTrue);
 
       // Enqueue sync events while offline
@@ -199,7 +216,8 @@ void main() {
   });
 
   group('27.14 — Real Backend API HTTP Integration (Live Express Engine)', () {
-    test('connects to real Habitat backend on port 4000 without mocks', () async {
+    test('connects to real Habitat backend on port 4000 without mocks',
+        () async {
       HttpOverrides.global = null;
 
       final dio = Dio(BaseOptions(
@@ -231,7 +249,8 @@ void main() {
   });
 
   group('27.15 & 27.16 — Mission State Machine & Fail-Closed Decisions', () {
-    test('Corrupted or empty evidence is strictly rejected, not accepted', () async {
+    test('Corrupted or empty evidence is strictly rejected, not accepted',
+        () async {
       final executionService = MissionExecutionService(database: db);
       final tasks = taskService.getAllTasks();
       final task = tasks.first;

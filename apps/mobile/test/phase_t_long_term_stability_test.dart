@@ -5,6 +5,8 @@ import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
@@ -12,15 +14,19 @@ void main() {
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
+    scheduler.reset();
   });
 
   group('Phase T: Storage Growth & Proof Media Lifecycle (T8, T9)', () {
-    test('T8 & T9: Detects orphaned and missing proof media records accurately', () async {
+    test('T8 & T9: Detects orphaned and missing proof media records accurately',
+        () async {
       // 1. Create valid task and attempt
       final task = LocalTask(
         id: 'task_storage_audit',
@@ -41,7 +47,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/audit_photo_1.jpg',
-          sha256Checksum: 'abcdef112233445566778899aabbccddeeff00112233445566778899aabbccdd',
+          sha256Checksum:
+              'abcdef112233445566778899aabbccddeeff00112233445566778899aabbccdd',
         ),
       );
       expect(proof.isPassed, isTrue);
@@ -64,7 +71,9 @@ void main() {
   });
 
   group('Phase T: Persistence Stress & Large-Scale Durability (T11, T12)', () {
-    test('T11 & T12: Survives 1,000-entity stress test with zero data loss or corruption', () async {
+    test(
+        'T11 & T12: Survives 1,000-entity stress test with zero data loss or corruption',
+        () async {
       final now = DateTime.now();
 
       // Seed 200 tasks, 200 alarms, 300 attempts, 300 proofs (1000 total entities)
@@ -121,7 +130,7 @@ void main() {
       expect(stopwatch.elapsedMilliseconds, lessThan(500)); // Under 500ms
 
       // Wipe and restore from cold persistence
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       expect(db.getAllTasks().isEmpty, isTrue);
 
       db.restoreFromStateJson(exportedState);
@@ -134,7 +143,9 @@ void main() {
   });
 
   group('Phase T: Concurrency & Duplicate Callback Invariants (T13, T14)', () {
-    test('T13 & T14: Concurrent triple completion calls yield exactly 1 completion and 1 XP award', () async {
+    test(
+        'T13 & T14: Concurrent triple completion calls yield exactly 1 completion and 1 XP award',
+        () async {
       final task = LocalTask(
         id: 'task_race_condition',
         title: 'Push-up Set',
@@ -153,7 +164,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/race_proof.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -165,7 +177,8 @@ void main() {
       ]);
 
       // Exactly one awarded XP
-      final totalXpAwarded = results.fold<int>(0, (sum, res) => sum + res.earnedXp);
+      final totalXpAwarded =
+          results.fold<int>(0, (sum, res) => sum + res.earnedXp);
       expect(totalXpAwarded, equals(20));
       expect(db.getTotalXP(), equals(20));
 
@@ -175,7 +188,9 @@ void main() {
   });
 
   group('Phase T: Alarm Scheduling & Startup Reconciliation (T5, T6)', () {
-    test('T5 & T6: Reconciles valid unexpired alarms and disarms retries upon completion', () async {
+    test(
+        'T5 & T6: Reconciles valid unexpired alarms and disarms retries upon completion',
+        () async {
       final task = LocalTask(
         id: 'task_alarm_stress',
         title: 'Morning Awakening',

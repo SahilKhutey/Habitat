@@ -8,7 +8,8 @@ class MockTelemetryClient implements ITelemetryClient {
   final Map<String, String> tags = {};
 
   @override
-  Future<void> recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false}) async {
+  Future<void> recordError(dynamic error, StackTrace? stackTrace,
+      {String? reason, bool fatal = false}) async {
     errors.add({'error': error, 'reason': reason, 'fatal': fatal});
   }
 
@@ -16,6 +17,10 @@ class MockTelemetryClient implements ITelemetryClient {
   Future<void> recordBreadcrumb(TelemetryBreadcrumb breadcrumb) async {
     breadcrumbs.add(breadcrumb);
   }
+
+  @override
+  Future<void> recordDiagnosticEvent(DiagnosticEventType event,
+      {Map<String, dynamic>? metadata}) async {}
 
   @override
   Future<void> setCustomTag(String key, String value) async {
@@ -40,7 +45,8 @@ void main() {
       telemetry.recordBreadcrumb('alarm', 'Alarm scheduled for mission_001');
       expect(telemetry.breadcrumbs.length, equals(1));
       expect(telemetry.breadcrumbs.first.category, equals('alarm'));
-      expect(telemetry.breadcrumbs.first.message, equals('Alarm scheduled for mission_001'));
+      expect(telemetry.breadcrumbs.first.message,
+          equals('Alarm scheduled for mission_001'));
       expect(mockClient.breadcrumbs.length, equals(1));
     });
 
@@ -58,8 +64,8 @@ void main() {
       expect(json['message'], isNot(contains('192.168.1.1')));
     });
 
-    test('records errors through telemetry client', () async {
-      await telemetry.recordError(
+    test('records errors through telemetry client', () {
+      telemetry.recordError(
         Exception('Network timeout'),
         null,
         reason: 'Sync retry failure',

@@ -63,7 +63,8 @@ class TaskTemplateLibraryScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('STARTER TEMPLATES'),
       ),
@@ -76,7 +77,8 @@ class TaskTemplateLibraryScreen extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: AppCard(
               onTap: () {
-                Navigator.of(context).pushNamed('/tasks/create-wizard', arguments: tpl);
+                Navigator.of(context)
+                    .pushNamed('/tasks/create-wizard', arguments: tpl);
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,12 +88,17 @@ class TaskTemplateLibraryScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(tpl['icon'] as IconData, color: AppColors.amberFocus, size: 22),
+                          Icon(tpl['icon'] as IconData,
+                              color: AppColors.amberFocus, size: 22),
                           const SizedBox(width: AppSpacing.sm),
-                          Text(tpl['name'] as String, style: AppTypography.titleLarge),
+                          Text(tpl['name'] as String,
+                              style: AppTypography.titleLarge),
                         ],
                       ),
-                      Text('+${tpl['baseXp']} XP', style: const TextStyle(color: AppColors.emeraldVictory, fontWeight: FontWeight.w900)),
+                      Text('+${tpl['baseXp']} XP',
+                          style: const TextStyle(
+                              color: AppColors.emeraldVictory,
+                              fontWeight: FontWeight.w900)),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -100,12 +107,15 @@ class TaskTemplateLibraryScreen extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xxs),
                         decoration: BoxDecoration(
                           color: AppColors.surfaceElevated,
                           borderRadius: AppRadii.radiusSmall,
                         ),
-                        child: Text('${tpl['category']} • ${tpl['proofType']}', style: AppTypography.labelSmall),
+                        child: Text('${tpl['category']} • ${tpl['proofType']}',
+                            style: AppTypography.labelSmall),
                       ),
                     ],
                   ),

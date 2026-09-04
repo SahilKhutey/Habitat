@@ -13,7 +13,8 @@ class AlarmListScreen extends StatefulWidget {
 }
 
 class _AlarmListScreenState extends State<AlarmListScreen> {
-  final AlarmReliabilityService _reliabilityService = AlarmReliabilityService.instance;
+  final AlarmReliabilityService _reliabilityService =
+      AlarmReliabilityService.instance;
 
   final List<Map<String, dynamic>> _alarms = [
     {
@@ -47,7 +48,8 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isVerified = _reliabilityService.persistedState?.isVerifiedViaTest ?? false;
+    final isVerified =
+        _reliabilityService.persistedState?.isVerifiedViaTest ?? false;
 
     return Scaffold(
       backgroundColor: HabitatTheme.background,
@@ -57,22 +59,28 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
           IconButton(
             icon: Icon(
               isVerified ? Icons.verified_user : Icons.security,
-              color: isVerified ? const Color(0xFF10B981) : HabitatTheme.amberFocus,
+              color: isVerified
+                  ? const Color(0xFF10B981)
+                  : HabitatTheme.amberFocus,
             ),
             tooltip: 'Alarm Reliability & Diagnostics',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AlarmReliabilityScreen(isFromSettings: true),
-                ),
-              ).then((_) => setState(() {}));
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const AlarmReliabilityScreen(isFromSettings: true),
+                    ),
+                  )
+                  .then((_) => setState(() {}));
             },
           ),
           IconButton(
             icon: const Icon(Icons.add, color: HabitatTheme.amberFocus),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const EditAlarmScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const EditAlarmScreen()),
               );
             },
           ),
@@ -96,11 +104,14 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
   Widget _buildReliabilityBanner(bool isVerified) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const AlarmReliabilityScreen(isFromSettings: true),
-          ),
-        ).then((_) => setState(() {}));
+        Navigator.of(context)
+            .push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const AlarmReliabilityScreen(isFromSettings: true),
+              ),
+            )
+            .then((_) => setState(() {}));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -120,7 +131,9 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
             Icon(
               isVerified ? Icons.verified : Icons.warning_amber_rounded,
               size: 20,
-              color: isVerified ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+              color: isVerified
+                  ? const Color(0xFF10B981)
+                  : const Color(0xFFF59E0B),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -131,7 +144,9 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isVerified ? const Color(0xFF10B981) : const Color(0xFFFBBF24),
+                  color: isVerified
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFFFBBF24),
                 ),
               ),
             ),

@@ -51,7 +51,8 @@ void main() {
   }
 
   group('ProfilePage Widget Tests', () {
-    testWidgets('renders profile hub with header and all settings sections', (tester) async {
+    testWidgets('renders profile hub with header and all settings sections',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 

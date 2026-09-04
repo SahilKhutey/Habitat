@@ -19,7 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      AppFeedback.showToast(context, message: 'Please enter email and password', isError: true);
+      AppFeedback.showToast(context,
+          message: 'Please enter email and password', isError: true);
       return;
     }
 
@@ -37,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -54,7 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: AppRadii.radiusMedium,
                 ),
                 alignment: Alignment.center,
-                child: const Icon(Icons.lock_clock, color: Colors.black, size: 28),
+                child:
+                    const Icon(Icons.lock_clock, color: Colors.black, size: 28),
               ),
               const SizedBox(height: AppSpacing.lg),
               const Text('DISCIPLINE', style: AppTypography.displayLarge),
@@ -62,7 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'Enter credentials to access your daily mission protocol.',
                 style: AppTypography.bodyMedium.copyWith(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.lightTextSecondary,
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
@@ -98,7 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () => Navigator.of(context).pushNamed('/register'),
                   child: const Text(
                     "DON'T HAVE AN ACCOUNT? REGISTER",
-                    style: TextStyle(color: AppColors.amberFocus, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: AppColors.amberFocus,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

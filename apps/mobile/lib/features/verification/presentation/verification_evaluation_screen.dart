@@ -27,10 +27,12 @@ class VerificationEvaluationScreen extends StatefulWidget {
   });
 
   @override
-  State<VerificationEvaluationScreen> createState() => _VerificationEvaluationScreenState();
+  State<VerificationEvaluationScreen> createState() =>
+      _VerificationEvaluationScreenState();
 }
 
-class _VerificationEvaluationScreenState extends State<VerificationEvaluationScreen> {
+class _VerificationEvaluationScreenState
+    extends State<VerificationEvaluationScreen> {
   @override
   Widget build(BuildContext context) {
     final passed = widget.isValid == true;
@@ -63,14 +65,18 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.verified_user_outlined, color: AppColors.amberFocus, size: 24),
+                    const Icon(Icons.verified_user_outlined,
+                        color: AppColors.amberFocus, size: 24),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('EVALUATING MISSION', style: AppTypography.labelSmall.copyWith(color: Colors.white54)),
-                          Text(widget.taskTitle, style: AppTypography.titleSmall),
+                          Text('EVALUATING MISSION',
+                              style: AppTypography.labelSmall
+                                  .copyWith(color: Colors.white54)),
+                          Text(widget.taskTitle,
+                              style: AppTypography.titleSmall),
                         ],
                       ),
                     ),
@@ -89,7 +95,9 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                     border: Border.all(
                       color: passed
                           ? AppColors.emeraldVictory
-                          : (failed ? AppColors.crimsonAlert : AppColors.amberFocus.withOpacity(0.4)),
+                          : (failed
+                              ? AppColors.crimsonAlert
+                              : AppColors.amberFocus.withOpacity(0.4)),
                       width: 2,
                     ),
                   ),
@@ -103,7 +111,8 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                             height: 64,
                             child: CircularProgressIndicator(
                               strokeWidth: 4,
-                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.amberFocus),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.amberFocus),
                             ),
                           ),
                           const SizedBox(height: AppSpacing.lg),
@@ -116,7 +125,8 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                             ),
                           ),
                         ] else if (passed) ...[
-                          const Icon(Icons.check_circle, color: AppColors.emeraldVictory, size: 80),
+                          const Icon(Icons.check_circle,
+                              color: AppColors.emeraldVictory, size: 80),
                           const SizedBox(height: AppSpacing.md),
                           const Text(
                             'PROOF VERIFIED',
@@ -130,10 +140,12 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                           const SizedBox(height: 8),
                           Text(
                             'Confidence: ${(widget.confidenceScore * 100).toInt()}% • Strategy: ${widget.strategyUsed}',
-                            style: const TextStyle(color: Colors.white70, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 12),
                           ),
                         ] else if (failed) ...[
-                          const Icon(Icons.error_outline, color: AppColors.crimsonAlert, size: 80),
+                          const Icon(Icons.error_outline,
+                              color: AppColors.crimsonAlert, size: 80),
                           const SizedBox(height: AppSpacing.md),
                           const Text(
                             'VERIFICATION REJECTED',
@@ -146,17 +158,21 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                           ),
                           const SizedBox(height: 8),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.lg),
                             child: Text(
-                              widget.rejectionReason ?? 'Proof did not meet task truth criteria.',
+                              widget.rejectionReason ??
+                                  'Proof did not meet task truth criteria.',
                               textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.white70, fontSize: 13),
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 13),
                             ),
                           ),
                           if (widget.actionableAdvice != null) ...[
                             const SizedBox(height: 8),
                             Container(
-                              margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md),
                               padding: const EdgeInsets.all(AppSpacing.sm),
                               decoration: BoxDecoration(
                                 color: Colors.black26,
@@ -164,7 +180,8 @@ class _VerificationEvaluationScreenState extends State<VerificationEvaluationScr
                               ),
                               child: Text(
                                 '💡 ${widget.actionableAdvice}',
-                                style: const TextStyle(color: AppColors.amberFocus, fontSize: 12),
+                                style: const TextStyle(
+                                    color: AppColors.amberFocus, fontSize: 12),
                               ),
                             ),
                           ],

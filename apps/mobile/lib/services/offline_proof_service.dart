@@ -18,7 +18,9 @@ class OfflineProofService {
     bool isValid = false;
     if (type == 'PHOTO' && localPath.isNotEmpty) {
       isValid = true;
-    } else if (type == 'VIDEO' && localPath.isNotEmpty && durationSeconds >= 3) {
+    } else if (type == 'VIDEO' &&
+        localPath.isNotEmpty &&
+        durationSeconds >= 3) {
       isValid = true;
     }
 

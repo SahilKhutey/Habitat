@@ -32,7 +32,8 @@ void main() {
   }
 
   group('TasksPage Widget Tests', () {
-    testWidgets('renders filter chips, task cards, and create task CTA', (tester) async {
+    testWidgets('renders filter chips, task cards, and create task CTA',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -44,7 +45,8 @@ void main() {
       expect(find.byType(TaskCard), findsWidgets);
     });
 
-    testWidgets('switching filter updates active filter selection', (tester) async {
+    testWidgets('switching filter updates active filter selection',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 

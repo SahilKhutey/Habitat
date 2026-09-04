@@ -20,7 +20,8 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
   final List<String> _days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   void _saveAlarm() {
-    AppFeedback.showToast(context, message: 'Alarm Committed for ${_selectedTime.format(context)}');
+    AppFeedback.showToast(context,
+        message: 'Alarm Committed for ${_selectedTime.format(context)}');
     final persisted = AlarmReliabilityService.instance.persistedState;
     if (persisted == null) {
       Navigator.of(context).pushReplacement(
@@ -40,7 +41,8 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('COMMIT ALARM PROTOCOL'),
       ),
@@ -62,7 +64,8 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xl),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xxl, vertical: AppSpacing.xl),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceElevated,
                     borderRadius: AppRadii.radiusLarge,
@@ -70,7 +73,10 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
                   ),
                   child: Text(
                     _selectedTime.format(context),
-                    style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: 2),
+                    style: const TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2),
                   ),
                 ),
               ),
@@ -99,7 +105,9 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.amberFocus : AppColors.surfaceElevated,
+                      color: isSelected
+                          ? AppColors.amberFocus
+                          : AppColors.surfaceElevated,
                       shape: BoxShape.circle,
                     ),
                     alignment: Alignment.center,
@@ -117,7 +125,8 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
             const SizedBox(height: AppSpacing.xxl),
 
             // Discipline Escalation Mode
-            const Text('DISCIPLINE ESCALATION LEVEL', style: AppTypography.labelLarge),
+            const Text('DISCIPLINE ESCALATION LEVEL',
+                style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.md),
             Row(
               children: ['GENTLE', 'DISCIPLINE', 'HARDCORE'].map((mode) {
@@ -136,14 +145,17 @@ class _CreateAlarmScreenState extends State<CreateAlarmScreen> {
             const SizedBox(height: AppSpacing.xxl),
 
             // Bound Task Selection
-            const Text('BOUND DISCIPLINE TASK', style: AppTypography.labelLarge),
+            const Text('BOUND DISCIPLINE TASK',
+                style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.md),
             AppCard(
               child: Row(
                 children: [
                   const Icon(Icons.fitness_center, color: AppColors.amberFocus),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(child: Text(_selectedTask, style: AppTypography.titleMedium)),
+                  Expanded(
+                      child: Text(_selectedTask,
+                          style: AppTypography.titleMedium)),
                   const Icon(Icons.arrow_forward_ios, size: 14),
                 ],
               ),

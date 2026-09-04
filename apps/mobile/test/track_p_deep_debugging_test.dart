@@ -5,6 +5,8 @@ import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
@@ -12,15 +14,20 @@ void main() {
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
+    scheduler.reset();
   });
 
   group('Track P5: Persistence Failure Modes & Corruption Defense', () {
-    test('P5.1: Malformed JSON payload safely triggers fallback template seeding', () {
+    test(
+        'P5.1: Malformed JSON payload safely triggers fallback template seeding',
+        () {
       const corruptPayload = 'INVALID_NON_JSON_DATA_###';
       db.restoreFromStateJson(corruptPayload);
 
@@ -29,7 +36,9 @@ void main() {
       expect(db.getTotalXP(), equals(0));
     });
 
-    test('P5.2: Missing entity collections in JSON payload defaults to empty collections', () {
+    test(
+        'P5.2: Missing entity collections in JSON payload defaults to empty collections',
+        () {
       const partialJson = '{"version": 3, "tasks": []}';
       db.restoreFromStateJson(partialJson);
 
@@ -40,7 +49,8 @@ void main() {
   });
 
   group('Track P7 & P8: Alarm Scheduling Idempotency & Deduplication', () {
-    test('P7: Scheduling same alarm 3 times results in single active schedule', () {
+    test('P7: Scheduling same alarm 3 times results in single active schedule',
+        () {
       final now = DateTime.now().add(const Duration(hours: 1));
       final occ1 = scheduler.scheduleExactAlarm(
         alarmId: 'alm_p7_1',
@@ -64,8 +74,11 @@ void main() {
     });
   });
 
-  group('Track P12, P14, P15 & P16: Proof Integrity, Idempotent XP, Streak & Retry Cancellation', () {
-    test('P12: Proof with mismatched sha256 checksum format is rejected', () async {
+  group(
+      'Track P12, P14, P15 & P16: Proof Integrity, Idempotent XP, Streak & Retry Cancellation',
+      () {
+    test('P12: Proof with mismatched sha256 checksum format is rejected',
+        () async {
       final task = LocalTask(
         id: 'task_p12_1',
         title: 'Pushups',
@@ -91,7 +104,9 @@ void main() {
       );
     });
 
-    test('P14, P15 & P16: Full Mission Lifecycle — XP, Streak, and Retry cancellation', () async {
+    test(
+        'P14, P15 & P16: Full Mission Lifecycle — XP, Streak, and Retry cancellation',
+        () async {
       final task = LocalTask(
         id: 'task_p14_1',
         title: 'Deep Meditation',
@@ -103,7 +118,8 @@ void main() {
       );
       db.saveTask(task);
 
-      final attempt = await missionService.start('task_p14_1', alarmId: 'alm_p14_1');
+      final attempt =
+          await missionService.start('task_p14_1', alarmId: 'alm_p14_1');
       final occ = scheduler.scheduleExactAlarm(
         alarmId: 'alm_p14_1',
         missionId: attempt.id,
@@ -116,7 +132,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/meditation.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 

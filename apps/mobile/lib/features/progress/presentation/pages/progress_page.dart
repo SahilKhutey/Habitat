@@ -89,7 +89,8 @@ class _ProgressPageState extends State<ProgressPage> {
             backgroundColor: HabitatTheme.background,
             actions: [
               IconButton(
-                icon: const Icon(Icons.emoji_events_outlined, color: Colors.white),
+                icon: const Icon(Icons.emoji_events_outlined,
+                    color: Colors.white),
                 tooltip: 'Achievements Gallery',
                 onPressed: _openAchievementsPage,
               ),
@@ -194,9 +195,11 @@ class _ProgressPageState extends State<ProgressPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildBannerMetric('Total Done', '${week.totalCompleted} Actions', HabitatTheme.growthGreen),
+          _buildBannerMetric('Total Done', '${week.totalCompleted} Actions',
+              HabitatTheme.growthGreen),
           _buildBannerMetric('Best Day', week.bestDay, Colors.white),
-          _buildBannerMetric('Lowest Day', week.lowestDay, HabitatTheme.textMuted),
+          _buildBannerMetric(
+              'Lowest Day', week.lowestDay, HabitatTheme.textMuted),
         ],
       ),
     );
@@ -205,9 +208,18 @@ class _ProgressPageState extends State<ProgressPage> {
   Widget _buildBannerMetric(String label, String value, Color valueColor) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(fontFamily: HabitatTheme.fontBody, fontSize: 11, color: HabitatTheme.textSecondary)),
+        Text(label,
+            style: const TextStyle(
+                fontFamily: HabitatTheme.fontBody,
+                fontSize: 11,
+                color: HabitatTheme.textSecondary)),
         const SizedBox(height: 4),
-        Text(value, style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 14, fontWeight: FontWeight.w800, color: valueColor)),
+        Text(value,
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: valueColor)),
       ],
     );
   }

@@ -70,11 +70,13 @@ class _AlarmPageState extends State<AlarmPage> {
                     decoration: BoxDecoration(
                       color: HabitatTheme.surfacePrimary,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.5)),
+                      border: Border.all(
+                          color: HabitatTheme.growthGreen.withOpacity(0.5)),
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.timer_outlined, color: HabitatTheme.growthGreen, size: 32),
+                        Icon(Icons.timer_outlined,
+                            color: HabitatTheme.growthGreen, size: 32),
                         SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -140,7 +142,8 @@ class _AlarmPageState extends State<AlarmPage> {
                       return AlarmCard(
                         alarm: alarm,
                         taskTitle: task?.title ?? 'Discipline Task',
-                        onToggle: (val) => _controller.toggleAlarm(alarm.id, val),
+                        onToggle: (val) =>
+                            _controller.toggleAlarm(alarm.id, val),
                       );
                     }),
                 ],
@@ -153,7 +156,9 @@ class _AlarmPageState extends State<AlarmPage> {
             icon: const Icon(Icons.add_alarm),
             label: const Text(
               'SET NEW ALARM',
-              style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontWeight: FontWeight.w800),
+              style: TextStyle(
+                  fontFamily: HabitatTheme.fontHeading,
+                  fontWeight: FontWeight.w800),
             ),
             onPressed: () {
               Navigator.of(context).push(

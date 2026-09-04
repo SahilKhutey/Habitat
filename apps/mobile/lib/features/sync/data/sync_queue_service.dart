@@ -23,19 +23,22 @@ class SyncQueueItem {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'idempotencyKey': idempotencyKey,
-    'timestamp': timestamp.toIso8601String(),
-    'payload': payload,
-  };
+        'id': id,
+        'type': type,
+        'idempotencyKey': idempotencyKey,
+        'timestamp': timestamp.toIso8601String(),
+        'payload': payload,
+      };
 }
 
 class SyncQueueService {
   static final List<SyncQueueItem> _queue = [];
 
-  static List<SyncQueueItem> get pendingItems =>
-      _queue.where((item) => item.status == SyncItemStatus.pending || item.status == SyncItemStatus.failed).toList();
+  static List<SyncQueueItem> get pendingItems => _queue
+      .where((item) =>
+          item.status == SyncItemStatus.pending ||
+          item.status == SyncItemStatus.failed)
+      .toList();
 
   static List<SyncQueueItem> get allItems => List.unmodifiable(_queue);
 

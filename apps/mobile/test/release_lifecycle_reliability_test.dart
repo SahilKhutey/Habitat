@@ -16,8 +16,11 @@ void main() {
     alarmService = AlarmService(db);
   });
 
-  group('Track N3 & N8: Explicit Startup Ordering & Offline-First Operations', () {
-    test('N3: Startup sequence preserves persisted tasks, alarms, XP, and streak without duplicates', () async {
+  group('Track N3 & N8: Explicit Startup Ordering & Offline-First Operations',
+      () {
+    test(
+        'N3: Startup sequence preserves persisted tasks, alarms, XP, and streak without duplicates',
+        () async {
       // Step A: Seed initial data
       db.saveTask(LocalTask(
         id: 'task_rc_1',
@@ -61,7 +64,9 @@ void main() {
       expect(reconciled, equals(1));
     });
 
-    test('N8: Offline execution executes complete Mission -> Proof -> XP -> Streak flow without network', () async {
+    test(
+        'N8: Offline execution executes complete Mission -> Proof -> XP -> Streak flow without network',
+        () async {
       final task = LocalTask(
         id: 'task_offline_flow',
         title: 'Morning Sunlight',
@@ -79,7 +84,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'app_storage://proofs/sunlight.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
       expect(verification.isPassed, isTrue);
@@ -92,8 +98,12 @@ void main() {
     });
   });
 
-  group('Track N7, N11 & N12: Interrupted Mission, Idempotency & Resource Safety', () {
-    test('N7: Interrupted mission remains in AWAITING_ACTION without premature completion', () async {
+  group(
+      'Track N7, N11 & N12: Interrupted Mission, Idempotency & Resource Safety',
+      () {
+    test(
+        'N7: Interrupted mission remains in AWAITING_ACTION without premature completion',
+        () async {
       final task = LocalTask(
         id: 'task_interrupted',
         title: 'Cold Shower',
@@ -115,7 +125,9 @@ void main() {
       expect(db.getTotalXP(), equals(0)); // 0 XP awarded
     });
 
-    test('N11: Idempotent mission completion invariant across repeated restarts', () async {
+    test(
+        'N11: Idempotent mission completion invariant across repeated restarts',
+        () async {
       final task = LocalTask(
         id: 'task_repeat_flow',
         title: '50 Squats',
@@ -133,7 +145,8 @@ void main() {
         const ProofSubmission(
           type: 'VIDEO',
           filePath: 'app_storage://proofs/squats.mp4',
-          sha256Checksum: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+          sha256Checksum:
+              'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
           durationSeconds: 15,
         ),
       );

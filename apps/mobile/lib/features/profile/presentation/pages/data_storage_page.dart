@@ -33,7 +33,11 @@ class _DataStoragePageState extends State<DataStoragePage> {
         backgroundColor: HabitatTheme.surfacePrimary,
         title: const Text(
           'PORTABLE JSON BACKUP',
-          style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white),
+          style: TextStyle(
+              fontFamily: HabitatTheme.fontHeading,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Colors.white),
         ),
         content: Container(
           width: double.maxFinite,
@@ -47,7 +51,10 @@ class _DataStoragePageState extends State<DataStoragePage> {
           child: SingleChildScrollView(
             child: Text(
               json,
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: HabitatTheme.youngLeaf),
+              style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 11,
+                  color: HabitatTheme.youngLeaf),
             ),
           ),
         ),
@@ -56,11 +63,16 @@ class _DataStoragePageState extends State<DataStoragePage> {
             onPressed: () {
               Navigator.of(ctx).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('✓ Data payload generated and ready for export.')),
+                const SnackBar(
+                    content:
+                        Text('✓ Data payload generated and ready for export.')),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: HabitatTheme.growthGreen, foregroundColor: HabitatTheme.forest),
-            child: const Text('Done', style: TextStyle(fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: HabitatTheme.growthGreen,
+                foregroundColor: HabitatTheme.forest),
+            child: const Text('Done',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -74,16 +86,22 @@ class _DataStoragePageState extends State<DataStoragePage> {
         backgroundColor: HabitatTheme.surfacePrimary,
         title: const Text(
           'DELETE ALL LOCAL DATA',
-          style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 16, fontWeight: FontWeight.w800, color: Colors.redAccent),
+          style: TextStyle(
+              fontFamily: HabitatTheme.fontHeading,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Colors.redAccent),
         ),
         content: const Text(
           'Are you sure you want to delete all local Habitat data? This will permanently erase your completed tasks, water history, nap sessions, and streaks.',
-          style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
+          style: TextStyle(
+              color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: HabitatTheme.textSecondary)),
+            child: const Text('Cancel',
+                style: TextStyle(color: HabitatTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -97,8 +115,11 @@ class _DataStoragePageState extends State<DataStoragePage> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
-            child: const Text('Delete Permanently', style: TextStyle(fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white),
+            child: const Text('Delete Permanently',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -121,20 +142,21 @@ class _DataStoragePageState extends State<DataStoragePage> {
           children: [
             StorageSummary(info: info),
             const SizedBox(height: 20),
-
             SettingsSection(
               title: 'DATA EXPORT & BACKUPS',
               children: [
                 SettingsTile(
                   icon: Icons.file_download_outlined,
                   title: 'Export My Data (JSON)',
-                  subtitle: 'Generate portable JSON backup of all tasks and history',
+                  subtitle:
+                      'Generate portable JSON backup of all tasks and history',
                   onTap: _showExportDialog,
                 ),
                 SettingsTile(
                   icon: Icons.cleaning_services_outlined,
                   title: 'Clear Cache & Temp Artifacts',
-                  subtitle: 'Removes temporary files without affecting your tasks',
+                  subtitle:
+                      'Removes temporary files without affecting your tasks',
                   onTap: () {
                     _storageService.clearCache();
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -144,14 +166,14 @@ class _DataStoragePageState extends State<DataStoragePage> {
                 ),
               ],
             ),
-
             SettingsSection(
               title: 'DANGER ZONE',
               children: [
                 SettingsTile(
                   icon: Icons.delete_forever_outlined,
                   title: 'Delete All Local Data',
-                  subtitle: 'Irreversibly wipe all tasks, history, and streak progress',
+                  subtitle:
+                      'Irreversibly wipe all tasks, history, and streak progress',
                   isDestructive: true,
                   onTap: _showDeleteDataDialog,
                 ),

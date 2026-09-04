@@ -26,10 +26,12 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   @override
   void initState() {
     super.initState();
-    _controller = CreateTaskController(taskService: TaskService(LocalDatabase.instance));
+    _controller =
+        CreateTaskController(taskService: TaskService(LocalDatabase.instance));
     _titleController = TextEditingController(text: _controller.title);
     _descController = TextEditingController(text: _controller.description);
-    _instructionController = TextEditingController(text: _controller.actionInstruction);
+    _instructionController =
+        TextEditingController(text: _controller.actionInstruction);
   }
 
   @override
@@ -94,7 +96,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                       value: progress,
                       minHeight: 6,
                       backgroundColor: HabitatTheme.surfaceSecondary,
-                      valueColor: const AlwaysStoppedAnimation<Color>(HabitatTheme.growthGreen),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          HabitatTheme.growthGreen),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -117,9 +120,11 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                             onPressed: _controller.previousStep,
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,
-                              side: const BorderSide(color: HabitatTheme.surfaceBorder),
+                              side: const BorderSide(
+                                  color: HabitatTheme.surfaceBorder),
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
                             ),
                             child: const Text('Back'),
                           ),
@@ -134,7 +139,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                             backgroundColor: HabitatTheme.growthGreen,
                             foregroundColor: HabitatTheme.forest,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
                           ),
                           child: Text(
                             step == 6 ? 'CONFIRM & SCHEDULE TASK' : 'CONTINUE',
@@ -183,11 +189,21 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 1: BASIC INFORMATION', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 1: BASIC INFORMATION',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('What discipline will you practice?', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('What discipline will you practice?',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         TextField(
           controller: _titleController,
           decoration: InputDecoration(
@@ -195,13 +211,20 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
             labelStyle: const TextStyle(color: HabitatTheme.textSecondary),
             filled: true,
             fillColor: HabitatTheme.surfacePrimary,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
           ),
         ),
         const SizedBox(height: 14),
-
         TextField(
           controller: _descController,
           maxLines: 2,
@@ -210,16 +233,28 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
             labelStyle: const TextStyle(color: HabitatTheme.textSecondary),
             filled: true,
             fillColor: HabitatTheme.surfacePrimary,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
           ),
         ),
         const SizedBox(height: 20),
-
-        const Text('CATEGORY', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('CATEGORY',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 8),
-
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -249,16 +284,27 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 2: SCHEDULE & TIMING', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 2: SCHEDULE & TIMING',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('When should this happen?', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('When should this happen?',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         SchedulePicker(
           selectedRecurrence: _controller.recurrence,
           timeOfDay: _controller.timeOfDay,
           repeatDays: _controller.repeatDays,
-          onRecurrenceChanged: (rec) => _controller.updateSchedule(newRecurrence: rec),
+          onRecurrenceChanged: (rec) =>
+              _controller.updateSchedule(newRecurrence: rec),
           onTimeChanged: (t) => _controller.updateSchedule(newTime: t),
           onDaysChanged: (days) => _controller.updateSchedule(newDays: days),
         ),
@@ -271,11 +317,21 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 3: ACTION SPECIFICATION', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 3: ACTION SPECIFICATION',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('What must you perform?', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('What must you perform?',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         TextField(
           controller: _instructionController,
           maxLines: 3,
@@ -284,9 +340,17 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
             labelStyle: const TextStyle(color: HabitatTheme.textSecondary),
             filled: true,
             fillColor: HabitatTheme.surfacePrimary,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: HabitatTheme.growthGreen)),
           ),
         ),
       ],
@@ -298,16 +362,28 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 4: PROOF VERIFICATION', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 4: PROOF VERIFICATION',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('How will completion be verified?', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('How will completion be verified?',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         VerificationSelector(
           selectedActionType: _controller.actionType,
           selectedVerificationType: _controller.verificationType,
-          onActionTypeChanged: (type) => _controller.updateActionAndVerification(newActionType: type),
-          onVerificationTypeChanged: (vType) => _controller.updateActionAndVerification(newVerificationType: vType),
+          onActionTypeChanged: (type) =>
+              _controller.updateActionAndVerification(newActionType: type),
+          onVerificationTypeChanged: (vType) => _controller
+              .updateActionAndVerification(newVerificationType: vType),
         ),
       ],
     );
@@ -318,11 +394,21 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 5: ALARM & REMINDER', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 5: ALARM & REMINDER',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('Wake-up siren configuration', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('Wake-up siren configuration',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -336,9 +422,18 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('ARM NATIVE WAKE-UP ALARM', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 12, fontWeight: FontWeight.w800, color: Colors.white)),
+                  Text('ARM NATIVE WAKE-UP ALARM',
+                      style: TextStyle(
+                          fontFamily: HabitatTheme.fontHeading,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white)),
                   SizedBox(height: 2),
-                  Text('Rings device at exact scheduled time', style: TextStyle(fontFamily: HabitatTheme.fontBody, fontSize: 11, color: HabitatTheme.textSecondary)),
+                  Text('Rings device at exact scheduled time',
+                      style: TextStyle(
+                          fontFamily: HabitatTheme.fontBody,
+                          fontSize: 11,
+                          color: HabitatTheme.textSecondary)),
                 ],
               ),
               Switch(
@@ -350,10 +445,14 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           ),
         ),
         const SizedBox(height: 16),
-
-        const Text('DISCIPLINE MODE', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('DISCIPLINE MODE',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 8),
-
         Row(
           children: DisciplineMode.values.map((mode) {
             final isSelected = _controller.disciplineMode == mode;
@@ -386,18 +485,30 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 6: ESCALATION RETRY RULES', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 6: ESCALATION RETRY RULES',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('Anti-snooze retry protocol', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('Anti-snooze retry protocol',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         RetryConfiguration(
           retryEnabled: _controller.retryEnabled,
           retryIntervalMinutes: _controller.retryIntervalMinutes,
           maxAttempts: _controller.maxAttempts,
           onEnabledChanged: (val) => _controller.updateRetryRules(enabled: val),
-          onIntervalChanged: (val) => _controller.updateRetryRules(intervalMinutes: val),
-          onMaxAttemptsChanged: (val) => _controller.updateRetryRules(maxRetries: val),
+          onIntervalChanged: (val) =>
+              _controller.updateRetryRules(intervalMinutes: val),
+          onMaxAttemptsChanged: (val) =>
+              _controller.updateRetryRules(maxRetries: val),
         ),
       ],
     );
@@ -408,33 +519,62 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('STEP 7: REVIEW & CONFIRM', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 11, fontWeight: FontWeight.w800, color: HabitatTheme.youngLeaf, letterSpacing: 1.2)),
+        const Text('STEP 7: REVIEW & CONFIRM',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: HabitatTheme.youngLeaf,
+                letterSpacing: 1.2)),
         const SizedBox(height: 4),
-        const Text('Review Discipline Commitment', style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+        const Text('Review Discipline Commitment',
+            style: TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white)),
         const SizedBox(height: 20),
-
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: HabitatTheme.surfacePrimary,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.5)),
+            border:
+                Border.all(color: HabitatTheme.growthGreen.withOpacity(0.5)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _titleController.text.isEmpty ? 'Daily Discipline' : _titleController.text,
-                style: const TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
+                _titleController.text.isEmpty
+                    ? 'Daily Discipline'
+                    : _titleController.text,
+                style: const TextStyle(
+                    fontFamily: HabitatTheme.fontHeading,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white),
               ),
               const SizedBox(height: 4),
-              Text('${_controller.timeOfDay} • ${_controller.recurrence.name.toUpperCase()}', style: const TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 13, color: HabitatTheme.youngLeaf, fontWeight: FontWeight.w700)),
+              Text(
+                  '${_controller.timeOfDay} • ${_controller.recurrence.name.toUpperCase()}',
+                  style: const TextStyle(
+                      fontFamily: HabitatTheme.fontHeading,
+                      fontSize: 13,
+                      color: HabitatTheme.youngLeaf,
+                      fontWeight: FontWeight.w700)),
               const Divider(height: 24, color: HabitatTheme.surfaceBorder),
-
-              _buildReviewRow('Category', _controller.category.name.toUpperCase()),
-              _buildReviewRow('Proof Method', _controller.actionType.name.toUpperCase()),
-              _buildReviewRow('Alarm State', _controller.alarmEnabled ? 'Armed (Siren Enabled)' : 'Disabled'),
-              _buildReviewRow('Retry Escalation', '${_controller.retryIntervalMinutes} Min (Max ${_controller.maxAttempts} Attempts)'),
+              _buildReviewRow(
+                  'Category', _controller.category.name.toUpperCase()),
+              _buildReviewRow(
+                  'Proof Method', _controller.actionType.name.toUpperCase()),
+              _buildReviewRow(
+                  'Alarm State',
+                  _controller.alarmEnabled
+                      ? 'Armed (Siren Enabled)'
+                      : 'Disabled'),
+              _buildReviewRow('Retry Escalation',
+                  '${_controller.retryIntervalMinutes} Min (Max ${_controller.maxAttempts} Attempts)'),
               _buildReviewRow('Base Reward', '+${_controller.calculatedXp} XP'),
             ],
           ),
@@ -449,8 +589,17 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontFamily: HabitatTheme.fontBody, fontSize: 12, color: HabitatTheme.textSecondary)),
-          Text(value, style: const TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white)),
+          Text(label,
+              style: const TextStyle(
+                  fontFamily: HabitatTheme.fontBody,
+                  fontSize: 12,
+                  color: HabitatTheme.textSecondary)),
+          Text(value,
+              style: const TextStyle(
+                  fontFamily: HabitatTheme.fontHeading,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white)),
         ],
       ),
     );

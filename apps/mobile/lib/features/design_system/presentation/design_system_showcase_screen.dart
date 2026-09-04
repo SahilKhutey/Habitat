@@ -6,10 +6,12 @@ class DesignSystemShowcaseScreen extends StatefulWidget {
   const DesignSystemShowcaseScreen({super.key});
 
   @override
-  State<DesignSystemShowcaseScreen> createState() => _DesignSystemShowcaseScreenState();
+  State<DesignSystemShowcaseScreen> createState() =>
+      _DesignSystemShowcaseScreenState();
 }
 
-class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen> {
+class _DesignSystemShowcaseScreenState
+    extends State<DesignSystemShowcaseScreen> {
   int _counterSeconds = 85;
   bool _isLoadingButton = false;
 
@@ -26,7 +28,8 @@ class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Color Palette Tokens
-            const Text('COLOR PALETTE (HIGH-CONTRAST TACTICAL)', style: HabitatTypography.label),
+            const Text('COLOR PALETTE (HIGH-CONTRAST TACTICAL)',
+                style: HabitatTypography.label),
             const SizedBox(height: HabitatSpacing.m),
             Row(
               children: [
@@ -43,15 +46,19 @@ class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen>
             // 2. Typography Scale
             const Text('TYPOGRAPHY SCALE', style: HabitatTypography.label),
             const SizedBox(height: HabitatSpacing.m),
-            const Text('Display Large (32pt)', style: HabitatTypography.displayLarge),
+            const Text('Display Large (32pt)',
+                style: HabitatTypography.displayLarge),
             const SizedBox(height: HabitatSpacing.xs),
             const Text('Headline (18pt)', style: HabitatTypography.headline),
             const SizedBox(height: HabitatSpacing.xs),
             const Text('Title (15pt)', style: HabitatTypography.title),
             const SizedBox(height: HabitatSpacing.xs),
-            const Text('Body Text (13pt) - Tactical legibility for groggy morning states.', style: HabitatTypography.body),
+            const Text(
+                'Body Text (13pt) - Tactical legibility for groggy morning states.',
+                style: HabitatTypography.body),
             const SizedBox(height: HabitatSpacing.xs),
-            const Text('MONOSPACE COUNTER 01:25', style: HabitatTypography.monospaceCounter),
+            const Text('MONOSPACE COUNTER 01:25',
+                style: HabitatTypography.monospaceCounter),
             const SizedBox(height: HabitatSpacing.xxl),
 
             // 3. Mission Status Badges
@@ -71,12 +78,14 @@ class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen>
             const SizedBox(height: HabitatSpacing.xxl),
 
             // 4. Resistance Counter (ΔtR)
-            const Text('RESISTANCE COUNTER COMPONENT (ΔtR)', style: HabitatTypography.label),
+            const Text('RESISTANCE COUNTER COMPONENT (ΔtR)',
+                style: HabitatTypography.label),
             const SizedBox(height: HabitatSpacing.m),
             Row(
               children: [
                 Expanded(
-                  child: ResistanceCounterWidget(elapsedSeconds: _counterSeconds),
+                  child:
+                      ResistanceCounterWidget(elapsedSeconds: _counterSeconds),
                 ),
                 const SizedBox(width: HabitatSpacing.m),
                 ElevatedButton(
@@ -88,7 +97,8 @@ class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen>
             const SizedBox(height: HabitatSpacing.xxl),
 
             // 5. Button Variants
-            const Text('DISCIPLINE BUTTON VARIANTS', style: HabitatTypography.label),
+            const Text('DISCIPLINE BUTTON VARIANTS',
+                style: HabitatTypography.label),
             const SizedBox(height: HabitatSpacing.m),
             DisciplineButton(
               label: 'PRIMARY AMBER ACTION',
@@ -124,7 +134,8 @@ class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen>
             const SizedBox(height: HabitatSpacing.xxl),
 
             // 6. Tactical Shutter Button
-            const Text('CAMERA SHUTTER COMPONENT', style: HabitatTypography.label),
+            const Text('CAMERA SHUTTER COMPONENT',
+                style: HabitatTypography.label),
             const SizedBox(height: HabitatSpacing.m),
             Center(
               child: TacticalShutterButton(
@@ -157,7 +168,8 @@ class _DesignSystemShowcaseScreenState extends State<DesignSystemShowcaseScreen>
         child: Text(
           name,
           style: TextStyle(
-            color: color == HabitatColors.background ? Colors.white : Colors.black,
+            color:
+                color == HabitatColors.background ? Colors.white : Colors.black,
             fontSize: 7,
             fontWeight: FontWeight.bold,
           ),

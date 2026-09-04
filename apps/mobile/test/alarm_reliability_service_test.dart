@@ -7,7 +7,9 @@ void main() {
   group('Milestone C2 / C3: Alarm Reliability & Exact Alarm Capabilities', () {
     final service = AlarmReliabilityService.instance;
 
-    test('C2.1: Diagnoses Pixel devices with standard unrestricted battery profile', () {
+    test(
+        'C2.1: Diagnoses Pixel devices with standard unrestricted battery profile',
+        () {
       final health = service.diagnose(
         canScheduleExact: true,
         notificationsEnabled: true,
@@ -21,7 +23,9 @@ void main() {
       expect(health.oemGuidance?.oemName, OEMVendor.pixel);
     });
 
-    test('C2.2: Generates critical alert and high-risk guidance for Samsung One UI', () {
+    test(
+        'C2.2: Generates critical alert and high-risk guidance for Samsung One UI',
+        () {
       final health = service.diagnose(
         canScheduleExact: true,
         notificationsEnabled: true,
@@ -29,13 +33,19 @@ void main() {
         manufacturerOverride: 'Samsung',
       );
 
-      expect(health.batteryOptimizationStatus, DiagnosticStatus.actionRecommended);
+      expect(
+          health.batteryOptimizationStatus, DiagnosticStatus.actionRecommended);
       expect(health.overallReliability, ReliabilityTier.needsAttention);
       expect(health.oemGuidance?.oemName, OEMVendor.samsung);
-      expect(health.oemGuidance?.specificSteps.any((s) => s.contains('Never Sleeping Apps')), true);
+      expect(
+          health.oemGuidance?.specificSteps
+              .any((s) => s.contains('Never Sleeping Apps')),
+          true);
     });
 
-    test('C2.3: Generates Autostart & No Restrictions guidance for Xiaomi HyperOS / MIUI', () {
+    test(
+        'C2.3: Generates Autostart & No Restrictions guidance for Xiaomi HyperOS / MIUI',
+        () {
       final health = service.diagnose(
         canScheduleExact: true,
         notificationsEnabled: true,
@@ -44,11 +54,18 @@ void main() {
       );
 
       expect(health.oemGuidance?.oemName, OEMVendor.xiaomi);
-      expect(health.oemGuidance?.specificSteps.any((s) => s.contains('Autostart')), true);
-      expect(health.oemGuidance?.specificSteps.any((s) => s.contains('No Restrictions')), true);
+      expect(
+          health.oemGuidance?.specificSteps.any((s) => s.contains('Autostart')),
+          true);
+      expect(
+          health.oemGuidance?.specificSteps
+              .any((s) => s.contains('No Restrictions')),
+          true);
     });
 
-    test('C3.1: Flags critical degradation warning when exact alarm capability is disabled', () {
+    test(
+        'C3.1: Flags critical degradation warning when exact alarm capability is disabled',
+        () {
       final health = service.diagnose(
         canScheduleExact: false,
         notificationsEnabled: true,

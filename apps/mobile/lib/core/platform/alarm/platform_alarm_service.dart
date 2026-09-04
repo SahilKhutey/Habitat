@@ -24,13 +24,18 @@ class NativeAlarmEvent {
   });
 
   factory NativeAlarmEvent.fromMap(Map<dynamic, dynamic> map) {
-    final missionId = map['missionId'] as String? ?? map['mission_id'] as String? ?? '';
+    final missionId =
+        map['missionId'] as String? ?? map['mission_id'] as String? ?? '';
     return NativeAlarmEvent(
       missionId: missionId,
       taskId: map['taskId'] as String? ?? map['task_id'] as String? ?? '',
       alarmId: map['alarmId'] as String? ?? map['alarm_id'] as String? ?? '',
-      taskTitle: map['taskTitle'] as String? ?? map['task_title'] as String? ?? 'Morning Mission',
-      attemptIndex: (map['attemptIndex'] as num?)?.toInt() ?? (map['attempt_index'] as num?)?.toInt() ?? 1,
+      taskTitle: map['taskTitle'] as String? ??
+          map['task_title'] as String? ??
+          'Morning Mission',
+      attemptIndex: (map['attemptIndex'] as num?)?.toInt() ??
+          (map['attempt_index'] as num?)?.toInt() ??
+          1,
       route: map['route'] as String? ?? '/mission/$missionId/active',
     );
   }
@@ -38,7 +43,8 @@ class NativeAlarmEvent {
 
 abstract interface class PlatformAlarmService {
   static PlatformAlarmService? _instance;
-  static PlatformAlarmService get instance => _instance ??= PlatformAlarmService.create();
+  static PlatformAlarmService get instance =>
+      _instance ??= PlatformAlarmService.create();
   static set instance(PlatformAlarmService value) => _instance = value;
 
   Stream<NativeAlarmEvent> get alarmEvents;
@@ -63,8 +69,10 @@ abstract interface class PlatformAlarmService {
 }
 
 class AndroidAlarmService implements PlatformAlarmService {
-  static const MethodChannel _channel = MethodChannel('com.habitat.app/native_alarm');
-  final StreamController<NativeAlarmEvent> _eventController = StreamController<NativeAlarmEvent>.broadcast();
+  static const MethodChannel _channel =
+      MethodChannel('com.habitat.app/native_alarm');
+  final StreamController<NativeAlarmEvent> _eventController =
+      StreamController<NativeAlarmEvent>.broadcast();
   final Map<String, HabitatAlarm> _scheduledAlarms = {};
   NativeAlarmEvent? _pendingColdStartEvent;
 
@@ -91,7 +99,8 @@ class AndroidAlarmService implements PlatformAlarmService {
   @override
   Future<bool> requestPermission() async {
     try {
-      final canExact = await _channel.invokeMethod<bool>('canScheduleExactAlarms') ?? true;
+      final canExact =
+          await _channel.invokeMethod<bool>('canScheduleExactAlarms') ?? true;
       return canExact;
     } catch (_) {
       return true;
@@ -102,7 +111,8 @@ class AndroidAlarmService implements PlatformAlarmService {
   Future<void> schedule(HabitatAlarm alarm) async {
     _scheduledAlarms[alarm.id] = alarm;
     final now = DateTime.now();
-    var target = DateTime(now.year, now.month, now.day, alarm.scheduledTime.hour, alarm.scheduledTime.minute);
+    var target = DateTime(now.year, now.month, now.day,
+        alarm.scheduledTime.hour, alarm.scheduledTime.minute);
     if (target.isBefore(now)) {
       target = target.add(const Duration(days: 1));
     }
@@ -154,7 +164,8 @@ class AndroidAlarmService implements PlatformAlarmService {
 
 class IOSAlarmService implements PlatformAlarmService {
   static const MethodChannel _channel = MethodChannel('habitat/native_alarm');
-  final StreamController<NativeAlarmEvent> _eventController = StreamController<NativeAlarmEvent>.broadcast();
+  final StreamController<NativeAlarmEvent> _eventController =
+      StreamController<NativeAlarmEvent>.broadcast();
   final Map<String, HabitatAlarm> _scheduledAlarms = {};
 
   @override
@@ -176,7 +187,9 @@ class IOSAlarmService implements PlatformAlarmService {
 
     final now = DateTime.now();
     var target = DateTime(
-      now.year, now.month, now.day,
+      now.year,
+      now.month,
+      now.day,
       alarm.scheduledTime.hour,
       alarm.scheduledTime.minute,
     );
@@ -188,11 +201,11 @@ class IOSAlarmService implements PlatformAlarmService {
       // Triggers AppDelegate.scheduleAlarmChain() — 6 notifications at
       // T+0, T+5, T+10, T+15, T+20, T+25 min with Time Sensitive level.
       await _channel.invokeMethod<bool>('scheduleExactAlarm', {
-        'missionId':      alarm.id,
-        'taskTitle':      alarm.taskTitle,
+        'missionId': alarm.id,
+        'taskTitle': alarm.taskTitle,
         'triggerEpochMs': target.millisecondsSinceEpoch,
-        'sirenVolume':    70,
-        'attemptIndex':   1,
+        'sirenVolume': 70,
+        'attemptIndex': 1,
       });
     } catch (e) {
       // Graceful degradation — log but do not crash
@@ -237,7 +250,8 @@ class IOSAlarmService implements PlatformAlarmService {
 }
 
 class WebAlarmService implements PlatformAlarmService {
-  final StreamController<NativeAlarmEvent> _eventController = StreamController<NativeAlarmEvent>.broadcast();
+  final StreamController<NativeAlarmEvent> _eventController =
+      StreamController<NativeAlarmEvent>.broadcast();
   final Map<String, HabitatAlarm> _scheduledAlarms = {};
 
   @override

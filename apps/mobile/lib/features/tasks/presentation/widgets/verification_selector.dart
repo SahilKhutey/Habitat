@@ -34,7 +34,8 @@ class VerificationSelector extends StatelessWidget {
           type: ActionType.video,
           verificationType: VerificationType.videoProof,
           title: 'Video AI Pose Validation',
-          description: 'Record repetitions with automated MoveNet pose estimation.',
+          description:
+              'Record repetitions with automated MoveNet pose estimation.',
           icon: Icons.videocam_outlined,
         ),
         const SizedBox(height: 10),
@@ -50,7 +51,8 @@ class VerificationSelector extends StatelessWidget {
           type: ActionType.confirmation,
           verificationType: VerificationType.manualConfirm,
           title: 'Manual Commitment Check-in',
-          description: 'Simple one-tap verified confirmation upon completing action.',
+          description:
+              'Simple one-tap verified confirmation upon completing action.',
           icon: Icons.touch_app_outlined,
         ),
       ],
@@ -68,10 +70,14 @@ class VerificationSelector extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isSelected ? HabitatTheme.surfaceSecondary : HabitatTheme.surfacePrimary,
+        color: isSelected
+            ? HabitatTheme.surfaceSecondary
+            : HabitatTheme.surfacePrimary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? HabitatTheme.growthGreen : HabitatTheme.surfaceBorder,
+          color: isSelected
+              ? HabitatTheme.growthGreen
+              : HabitatTheme.surfaceBorder,
         ),
       ),
       child: Material(
@@ -89,10 +95,16 @@ class VerificationSelector extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: isSelected ? HabitatTheme.habitatGreen : HabitatTheme.surfaceSecondary,
+                    color: isSelected
+                        ? HabitatTheme.habitatGreen
+                        : HabitatTheme.surfaceSecondary,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: isSelected ? HabitatTheme.growthGreen : HabitatTheme.textSecondary, size: 20),
+                  child: Icon(icon,
+                      color: isSelected
+                          ? HabitatTheme.growthGreen
+                          : HabitatTheme.textSecondary,
+                      size: 20),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -121,7 +133,8 @@ class VerificationSelector extends StatelessWidget {
                   ),
                 ),
                 if (isSelected)
-                  const Icon(Icons.check_circle, color: HabitatTheme.growthGreen, size: 20),
+                  const Icon(Icons.check_circle,
+                      color: HabitatTheme.growthGreen, size: 20),
               ],
             ),
           ),

@@ -43,7 +43,11 @@ class SettingsSection extends StatelessWidget {
               return Column(
                 children: [
                   children[index],
-                  if (!isLast) const Divider(height: 1, indent: 52, color: HabitatTheme.surfaceBorder),
+                  if (!isLast)
+                    const Divider(
+                        height: 1,
+                        indent: 52,
+                        color: HabitatTheme.surfaceBorder),
                 ],
               );
             }),

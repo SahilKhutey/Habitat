@@ -39,7 +39,8 @@ class HealthHistory extends StatelessWidget {
                 children: [
                   _buildPillarMetric(
                     label: 'Water',
-                    value: '${daySummary.water.consumedLiters.toStringAsFixed(1)} L',
+                    value:
+                        '${daySummary.water.consumedLiters.toStringAsFixed(1)} L',
                     color: const Color(0xFF4CC9F0),
                     icon: Icons.water_drop_outlined,
                   ),
@@ -106,10 +107,25 @@ class HealthHistory extends StatelessWidget {
       return 'Today';
     }
     final yesterday = now.subtract(const Duration(days: 1));
-    if (dt.year == yesterday.year && dt.month == yesterday.month && dt.day == yesterday.day) {
+    if (dt.year == yesterday.year &&
+        dt.month == yesterday.month &&
+        dt.day == yesterday.day) {
       return 'Yesterday';
     }
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return '${months[dt.month - 1]} ${dt.day}';
   }
 }

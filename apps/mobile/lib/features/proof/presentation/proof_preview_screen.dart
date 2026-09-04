@@ -32,7 +32,8 @@ class _ProofPreviewScreenState extends State<ProofPreviewScreen> {
     setState(() => _isSubmitting = true);
 
     final isVideo = widget.proofData['proofType'] == 'VIDEO';
-    final duration = widget.proofData['durationSeconds'] as int? ?? (isVideo ? 12 : 0);
+    final duration =
+        widget.proofData['durationSeconds'] as int? ?? (isVideo ? 12 : 0);
     final taskId = widget.proofData['taskId'] as String? ?? 'task-1';
     final missionId = widget.proofData['missionId'] as String? ?? taskId;
     final proofPath = widget.proofData['proofPath'] as String? ?? 'proof.jpg';
@@ -40,7 +41,8 @@ class _ProofPreviewScreenState extends State<ProofPreviewScreen> {
     final result = await _verificationService.verifyProof(
       taskId: taskId,
       missionId: missionId,
-      verificationType: isVideo ? VerificationType.videoProof : VerificationType.photoProof,
+      verificationType:
+          isVideo ? VerificationType.videoProof : VerificationType.photoProof,
       proofPath: proofPath,
       durationSeconds: duration,
     );
@@ -63,7 +65,8 @@ class _ProofPreviewScreenState extends State<ProofPreviewScreen> {
   @override
   Widget build(BuildContext context) {
     final proofType = widget.proofData['proofType'] as String? ?? 'PHOTO';
-    final taskName = widget.proofData['taskName'] as String? ?? 'Discipline Task';
+    final taskName =
+        widget.proofData['taskName'] as String? ?? 'Discipline Task';
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -91,7 +94,9 @@ class _ProofPreviewScreenState extends State<ProofPreviewScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        proofType == 'VIDEO' ? Icons.play_circle_fill : Icons.image,
+                        proofType == 'VIDEO'
+                            ? Icons.play_circle_fill
+                            : Icons.image,
                         color: AppColors.amberFocus,
                         size: 72,
                       ),
@@ -116,7 +121,8 @@ class _ProofPreviewScreenState extends State<ProofPreviewScreen> {
                       children: const [
                         CircularProgressIndicator(color: AppColors.amberFocus),
                         SizedBox(height: AppSpacing.md),
-                        Text('Uploading securely and auditing telemetry...', style: TextStyle(color: Colors.white70)),
+                        Text('Uploading securely and auditing telemetry...',
+                            style: TextStyle(color: Colors.white70)),
                       ],
                     )
                   : Row(

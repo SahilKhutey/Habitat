@@ -20,7 +20,8 @@ class SettingsService {
 
   // 2. Notifications
   NotificationSettingsModel getNotificationSettings() {
-    return NotificationSettingsModel.fromMap(_repository.getNotificationSettings());
+    return NotificationSettingsModel.fromMap(
+        _repository.getNotificationSettings());
   }
 
   void updateNotificationSettings(NotificationSettingsModel settings) {

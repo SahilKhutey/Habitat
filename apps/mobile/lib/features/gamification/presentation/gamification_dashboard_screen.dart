@@ -10,7 +10,8 @@ class GamificationDashboardScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('DISCIPLINE ECONOMY & STATS'),
         actions: [
@@ -41,7 +42,8 @@ class GamificationDashboardScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.surfaceElevated,
                 borderRadius: AppRadii.radiusLarge,
-                border: Border.all(color: AppColors.amberFocus.withOpacity(0.4)),
+                border:
+                    Border.all(color: AppColors.amberFocus.withOpacity(0.4)),
               ),
               child: Row(
                 children: [
@@ -57,8 +59,16 @@ class GamificationDashboardScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Text('LVL', style: TextStyle(color: AppColors.amberFocus, fontSize: 10, fontWeight: FontWeight.bold)),
-                        Text('4', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
+                        Text('LVL',
+                            style: TextStyle(
+                                color: AppColors.amberFocus,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold)),
+                        Text('4',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w900)),
                       ],
                     ),
                   ),
@@ -67,21 +77,25 @@ class GamificationDashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('DISCIPLINE RANK', style: AppTypography.labelSmall),
+                        const Text('DISCIPLINE RANK',
+                            style: AppTypography.labelSmall),
                         const SizedBox(height: 2),
-                        const Text('Spartan Initiate', style: AppTypography.titleLarge),
+                        const Text('Spartan Initiate',
+                            style: AppTypography.titleLarge),
                         const SizedBox(height: AppSpacing.xs),
                         const ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           child: LinearProgressIndicator(
                             value: 0.68,
                             backgroundColor: Colors.white12,
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.amberFocus),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.amberFocus),
                             minHeight: 6,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text('680 / 1,000 XP (320 XP to Level 5)', style: AppTypography.bodySmall),
+                        Text('680 / 1,000 XP (320 XP to Level 5)',
+                            style: AppTypography.bodySmall),
                       ],
                     ),
                   ),
@@ -106,13 +120,18 @@ class GamificationDashboardScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: const [
-                            Icon(Icons.local_fire_department, color: Colors.orange, size: 20),
+                            Icon(Icons.local_fire_department,
+                                color: Colors.orange, size: 20),
                             SizedBox(width: 4),
                             Text('STREAK', style: AppTypography.labelSmall),
                           ],
                         ),
                         const SizedBox(height: AppSpacing.sm),
-                        const Text('14 Days', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
+                        const Text('14 Days',
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white)),
                         const SizedBox(height: 2),
                         Text('Best: 21 Days', style: AppTypography.bodySmall),
                       ],
@@ -133,15 +152,22 @@ class GamificationDashboardScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: const [
-                            Icon(Icons.security, color: AppColors.emeraldVictory, size: 20),
+                            Icon(Icons.security,
+                                color: AppColors.emeraldVictory, size: 20),
                             SizedBox(width: 4),
-                            Text('GRACE VAULT', style: AppTypography.labelSmall),
+                            Text('GRACE VAULT',
+                                style: AppTypography.labelSmall),
                           ],
                         ),
                         const SizedBox(height: AppSpacing.sm),
-                        const Text('2 / 3 Shields', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
+                        const Text('2 / 3 Shields',
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white)),
                         const SizedBox(height: 2),
-                        Text('Auto-saves missed days', style: AppTypography.bodySmall),
+                        Text('Auto-saves missed days',
+                            style: AppTypography.bodySmall),
                       ],
                     ),
                   ),
@@ -164,13 +190,20 @@ class GamificationDashboardScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Text('DAILY DISCIPLINE SCORE', style: AppTypography.labelSmall),
+                      Text('DAILY DISCIPLINE SCORE',
+                          style: AppTypography.labelSmall),
                       SizedBox(height: 4),
-                      Text('94 / 100', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppColors.emeraldVictory)),
-                      Text('Based on 00:45s avg resistance speed', style: AppTypography.bodySmall),
+                      Text('94 / 100',
+                          style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.emeraldVictory)),
+                      Text('Based on 00:45s avg resistance speed',
+                          style: AppTypography.bodySmall),
                     ],
                   ),
-                  const Icon(Icons.speed, color: AppColors.emeraldVictory, size: 48),
+                  const Icon(Icons.speed,
+                      color: AppColors.emeraldVictory, size: 48),
                 ],
               ),
             ),

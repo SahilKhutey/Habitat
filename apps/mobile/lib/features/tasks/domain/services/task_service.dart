@@ -16,7 +16,9 @@ class TaskService {
     final alarms = _database.getAllAlarms();
     final attempts = _database.getAllAttempts();
 
-    return localTasks.map((lt) => _mapLocalToModel(lt, alarms, attempts)).toList();
+    return localTasks
+        .map((lt) => _mapLocalToModel(lt, alarms, attempts))
+        .toList();
   }
 
   TaskModel? getTaskById(String id) {
@@ -32,12 +34,24 @@ class TaskService {
     final today = DateTime.now();
 
     return switch (filter.toUpperCase()) {
-      'ACTIVE' => all.where((t) => t.active && t.status != TaskStatus.archived && t.status != TaskStatus.paused).toList(),
-      'SCHEDULED' => all.where((t) => t.active && t.alarm != null && t.alarm!.isEnabled).toList(),
-      'COMPLETED' => all.where((t) => t.status == TaskStatus.completed).toList(),
-      'MISSED' => all.where((t) => t.status == TaskStatus.missed || t.status == TaskStatus.failed).toList(),
+      'ACTIVE' => all
+          .where((t) =>
+              t.active &&
+              t.status != TaskStatus.archived &&
+              t.status != TaskStatus.paused)
+          .toList(),
+      'SCHEDULED' => all
+          .where((t) => t.active && t.alarm != null && t.alarm!.isEnabled)
+          .toList(),
+      'COMPLETED' =>
+        all.where((t) => t.status == TaskStatus.completed).toList(),
+      'MISSED' => all
+          .where((t) =>
+              t.status == TaskStatus.missed || t.status == TaskStatus.failed)
+          .toList(),
       'PAUSED' => all.where((t) => t.status == TaskStatus.paused).toList(),
-      'ARCHIVED' => all.where((t) => t.status == TaskStatus.archived || !t.active).toList(),
+      'ARCHIVED' =>
+        all.where((t) => t.status == TaskStatus.archived || !t.active).toList(),
       _ => all.where((t) => t.status != TaskStatus.archived).toList(),
     };
   }
@@ -150,7 +164,8 @@ class TaskService {
         id: 'action-${lt.id}',
         type: actionType,
         title: lt.title,
-        instruction: 'Complete ${lt.title} and capture required proof evidence.',
+        instruction:
+            'Complete ${lt.title} and capture required proof evidence.',
         verificationType: verificationType,
       ),
       alarm: associatedAlarm != null

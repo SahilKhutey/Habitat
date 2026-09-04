@@ -90,14 +90,16 @@ class _StreakPageState extends State<StreakPage> {
                     decoration: BoxDecoration(
                       color: HabitatTheme.surfacePrimary,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: HabitatTheme.youngLeaf.withOpacity(0.4)),
+                      border: Border.all(
+                          color: HabitatTheme.youngLeaf.withOpacity(0.4)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.shield_outlined, color: HabitatTheme.youngLeaf, size: 20),
+                            Icon(Icons.shield_outlined,
+                                color: HabitatTheme.youngLeaf, size: 20),
                             SizedBox(width: 8),
                             Text(
                               'GRACE VAULT RECOVERY',
@@ -136,11 +138,14 @@ class _StreakPageState extends State<StreakPage> {
                           OutlinedButton.icon(
                             onPressed: _handleUseGraceToken,
                             icon: const Icon(Icons.shield, size: 16),
-                            label: const Text('Consume Grace Token To Protect Streak'),
+                            label: const Text(
+                                'Consume Grace Token To Protect Streak'),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: HabitatTheme.youngLeaf,
-                              side: const BorderSide(color: HabitatTheme.youngLeaf),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              side: const BorderSide(
+                                  color: HabitatTheme.youngLeaf),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
                             ),
                           ),
                         ],
@@ -171,10 +176,14 @@ class _StreakPageState extends State<StreakPage> {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        _buildStageRow('Sprout Stage', '1 - 2 Days', streak.currentStreak >= 1),
-                        _buildStageRow('Sapling Stage', '3 - 6 Days', streak.currentStreak >= 3),
-                        _buildStageRow('Canopy Stage', '7 - 20 Days', streak.currentStreak >= 7),
-                        _buildStageRow('Ancient Forest', '21+ Days', streak.currentStreak >= 21),
+                        _buildStageRow('Sprout Stage', '1 - 2 Days',
+                            streak.currentStreak >= 1),
+                        _buildStageRow('Sapling Stage', '3 - 6 Days',
+                            streak.currentStreak >= 3),
+                        _buildStageRow('Canopy Stage', '7 - 20 Days',
+                            streak.currentStreak >= 7),
+                        _buildStageRow('Ancient Forest', '21+ Days',
+                            streak.currentStreak >= 21),
                       ],
                     ),
                   ),
@@ -198,7 +207,9 @@ class _StreakPageState extends State<StreakPage> {
               Icon(
                 isReached ? Icons.check_circle : Icons.radio_button_unchecked,
                 size: 16,
-                color: isReached ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+                color: isReached
+                    ? HabitatTheme.growthGreen
+                    : HabitatTheme.textMuted,
               ),
               const SizedBox(width: 10),
               Text(
@@ -217,7 +228,8 @@ class _StreakPageState extends State<StreakPage> {
             style: TextStyle(
               fontFamily: HabitatTheme.fontBody,
               fontSize: 12,
-              color: isReached ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+              color:
+                  isReached ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
             ),
           ),
         ],

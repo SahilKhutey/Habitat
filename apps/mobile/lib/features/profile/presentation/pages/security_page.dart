@@ -23,7 +23,8 @@ class _SecurityPageState extends State<SecurityPage> {
   @override
   void initState() {
     super.initState();
-    _securityService = SecurityService(ProfileRepository(LocalDatabase.instance));
+    _securityService =
+        SecurityService(ProfileRepository(LocalDatabase.instance));
     _security = _securityService.getSecuritySettings();
   }
 
@@ -41,7 +42,11 @@ class _SecurityPageState extends State<SecurityPage> {
         backgroundColor: HabitatTheme.surfacePrimary,
         title: const Text(
           'CONFIGURE APP PIN',
-          style: TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white),
+          style: TextStyle(
+              fontFamily: HabitatTheme.fontHeading,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Colors.white),
         ),
         content: TextField(
           controller: pinController,
@@ -54,13 +59,17 @@ class _SecurityPageState extends State<SecurityPage> {
             labelStyle: const TextStyle(color: HabitatTheme.textSecondary),
             filled: true,
             fillColor: HabitatTheme.surfaceSecondary,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: HabitatTheme.surfaceBorder)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: HabitatTheme.surfaceBorder)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: HabitatTheme.textSecondary)),
+            child: const Text('Cancel',
+                style: TextStyle(color: HabitatTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -70,12 +79,17 @@ class _SecurityPageState extends State<SecurityPage> {
                 _update(_security.copyWith(pinCode: pin, appLockEnabled: true));
                 Navigator.of(ctx).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('✓ Security PIN configured! App Lock is now active.')),
+                  const SnackBar(
+                      content: Text(
+                          '✓ Security PIN configured! App Lock is now active.')),
                 );
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: HabitatTheme.growthGreen, foregroundColor: HabitatTheme.forest),
-            child: const Text('Save PIN', style: TextStyle(fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: HabitatTheme.growthGreen,
+                foregroundColor: HabitatTheme.forest),
+            child: const Text('Save PIN',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -96,7 +110,6 @@ class _SecurityPageState extends State<SecurityPage> {
           children: [
             SecurityStatus(security: _security),
             const SizedBox(height: 20),
-
             SettingsSection(
               title: 'AUTHENTICATION CONTROLS',
               children: [
@@ -118,7 +131,9 @@ class _SecurityPageState extends State<SecurityPage> {
                 SettingsTile(
                   icon: Icons.pin_outlined,
                   title: 'Configure Security PIN',
-                  subtitle: _security.hasPinSet ? 'PIN is active • Tap to change' : 'No PIN configured',
+                  subtitle: _security.hasPinSet
+                      ? 'PIN is active • Tap to change'
+                      : 'No PIN configured',
                   onTap: _showSetPinDialog,
                 ),
                 SettingsTile(
@@ -126,7 +141,8 @@ class _SecurityPageState extends State<SecurityPage> {
                   title: 'Biometric Unlock (Fingerprint / Face ID)',
                   subtitle: 'Use native hardware sensors when supported',
                   toggleValue: _security.biometricEnabled,
-                  onToggleChanged: (val) => _update(_security.copyWith(biometricEnabled: val)),
+                  onToggleChanged: (val) =>
+                      _update(_security.copyWith(biometricEnabled: val)),
                 ),
               ],
             ),

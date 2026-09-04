@@ -48,7 +48,8 @@ class BadgesGalleryScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('ACHIEVEMENTS & TROPHIES'),
       ),
@@ -106,7 +107,8 @@ class BadgesGalleryScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: isUnlocked ? AppColors.emeraldVictory : Colors.white24,
+                    color:
+                        isUnlocked ? AppColors.emeraldVictory : Colors.white24,
                   ),
                 ),
               ],

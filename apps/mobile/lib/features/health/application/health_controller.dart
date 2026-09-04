@@ -71,7 +71,8 @@ class HealthController extends ChangeNotifier {
 
     final napSummary = _napService.getTodaySummary();
     todayNaps = napSummary.todayNaps;
-    final totalNapMinutes = todayNaps.fold<int>(0, (sum, i) => sum + i.durationMinutes);
+    final totalNapMinutes =
+        todayNaps.fold<int>(0, (sum, i) => sum + i.durationMinutes);
 
     summary = HealthSummary(
       waterMl: waterTotal,
@@ -89,7 +90,8 @@ class HealthController extends ChangeNotifier {
     _waterService.addWater(amountMl);
   }
 
-  void addMeal({MealType type = MealType.snack, String? name, int calories = 400}) {
+  void addMeal(
+      {MealType type = MealType.snack, String? name, int calories = 400}) {
     _mealService.logMeal(type: type, notes: name);
   }
 

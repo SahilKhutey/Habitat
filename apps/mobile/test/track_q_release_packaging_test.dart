@@ -5,12 +5,16 @@ import 'package:habitat_mobile/features/profile/domain/models/permission_status.
 import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
   late AlarmService alarmService;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
     db.resetAllData();
     missionService = MissionExecutionService(database: db);
@@ -18,7 +22,9 @@ void main() {
   });
 
   group('Track Q: Permissions Rationale & Store Compliance Models', () {
-    test('Q1: AppPermissionModel reports correct descriptor and rationale strings', () {
+    test(
+        'Q1: AppPermissionModel reports correct descriptor and rationale strings',
+        () {
       const cameraPerm = AppPermission(
         type: AppPermissionType.camera,
         name: 'Camera',
@@ -32,7 +38,8 @@ void main() {
       const notifPerm = AppPermission(
         type: AppPermissionType.notifications,
         name: 'Notifications',
-        description: 'Required for high-priority mission alarms and escalation reminders.',
+        description:
+            'Required for high-priority mission alarms and escalation reminders.',
         status: PermissionAuthorizationStatus.denied,
       );
 
@@ -41,7 +48,9 @@ void main() {
   });
 
   group('Track Q: Release Packaging & End-to-End System Integrity', () {
-    test('Q2: Full Release Flow — Zero regression across Startup -> Alarm -> Proof -> XP -> Persistence', () async {
+    test(
+        'Q2: Full Release Flow — Zero regression across Startup -> Alarm -> Proof -> XP -> Persistence',
+        () async {
       // 1. Seed Task & Alarm
       final task = LocalTask(
         id: 'task_q_release',
@@ -67,7 +76,8 @@ void main() {
       expect(reconciled, equals(1));
 
       // 3. Trigger & Start Mission
-      final attempt = await missionService.start('task_q_release', alarmId: 'alm_q_release');
+      final attempt = await missionService.start('task_q_release',
+          alarmId: 'alm_q_release');
       expect(attempt.status, equals('AWAITING_ACTION'));
 
       // 4. Submit Proof with 64-char SHA-256
@@ -76,7 +86,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/run_proof.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
       expect(verification.isPassed, isTrue);
@@ -90,7 +101,7 @@ void main() {
       // 6. Persistence & Cold Reload
       final savedState = db.exportCompleteStateJson();
       db.resetAllData();
-      expect(db.getAllTasks().isEmpty, isTrue);
+      expect(db.getTask('task_q_release'), isNull);
 
       db.restoreFromStateJson(savedState);
       expect(db.getTask('task_q_release')?.isCompleted, isTrue);

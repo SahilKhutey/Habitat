@@ -30,7 +30,8 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: HabitatTheme.emeraldVictory.withOpacity(0.4)),
+                border: Border.all(
+                    color: HabitatTheme.emeraldVictory.withOpacity(0.4)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,10 +39,19 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('PHYSIOLOGICAL RECOVERY', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                      Text('PHYSIOLOGICAL RECOVERY',
+                          style: TextStyle(
+                              color: HabitatTheme.textSecondary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2)),
                       Chip(
                         backgroundColor: Color(0xFF1E2822),
-                        label: Text('OPTIMAL READINESS', style: TextStyle(color: HabitatTheme.emeraldVictory, fontSize: 10, fontWeight: FontWeight.bold)),
+                        label: Text('OPTIMAL READINESS',
+                            style: TextStyle(
+                                color: HabitatTheme.emeraldVictory,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -50,14 +60,25 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
                     children: [
-                      Text('88', style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900)),
-                      Text('/100', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text('88',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 48,
+                              fontWeight: FontWeight.w900)),
+                      Text('/100',
+                          style: TextStyle(
+                              color: HabitatTheme.textSecondary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                   const SizedBox(height: 6),
                   const Text(
                     'High deep sleep (1h 45m) and low waking resting heart rate. Your nervous system is primed for high-output physical routines.',
-                    style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
+                    style: TextStyle(
+                        color: HabitatTheme.textSecondary,
+                        fontSize: 13,
+                        height: 1.4),
                   ),
                 ],
               ),
@@ -65,7 +86,12 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
             const SizedBox(height: 24),
 
             // 2. Sleep Architecture Breakdown
-            const Text('OVERNIGHT SLEEP ARCHITECTURE (7h 45m)', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+            const Text('OVERNIGHT SLEEP ARCHITECTURE (7h 45m)',
+                style: TextStyle(
+                    color: HabitatTheme.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2)),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(18),
@@ -81,9 +107,21 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
                     borderRadius: BorderRadius.circular(8),
                     child: Row(
                       children: [
-                        Expanded(flex: 25, child: Container(height: 16, color: const Color(0xFF5856D6))), // Deep
-                        Expanded(flex: 30, child: Container(height: 16, color: const Color(0xFF0A84FF))), // REM
-                        Expanded(flex: 45, child: Container(height: 16, color: const Color(0xFF64D2FF))), // Core
+                        Expanded(
+                            flex: 25,
+                            child: Container(
+                                height: 16,
+                                color: const Color(0xFF5856D6))), // Deep
+                        Expanded(
+                            flex: 30,
+                            child: Container(
+                                height: 16,
+                                color: const Color(0xFF0A84FF))), // REM
+                        Expanded(
+                            flex: 45,
+                            child: Container(
+                                height: 16,
+                                color: const Color(0xFF64D2FF))), // Core
                       ],
                     ),
                   ),
@@ -91,9 +129,12 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _StageIndicator(color: Color(0xFF5856D6), label: 'Deep (1h 45m)'),
-                      _StageIndicator(color: Color(0xFF0A84FF), label: 'REM (2h 10m)'),
-                      _StageIndicator(color: Color(0xFF64D2FF), label: 'Core (3h 50m)'),
+                      _StageIndicator(
+                          color: Color(0xFF5856D6), label: 'Deep (1h 45m)'),
+                      _StageIndicator(
+                          color: Color(0xFF0A84FF), label: 'REM (2h 10m)'),
+                      _StageIndicator(
+                          color: Color(0xFF64D2FF), label: 'Core (3h 50m)'),
                     ],
                   ),
                 ],
@@ -107,21 +148,29 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: HabitatTheme.amberFocus.withOpacity(0.3)),
+                border:
+                    Border.all(color: HabitatTheme.amberFocus.withOpacity(0.3)),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.insights, color: HabitatTheme.amberFocus, size: 32),
+                  Icon(Icons.insights,
+                      color: HabitatTheme.amberFocus, size: 32),
                   SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('CORRELATION INSIGHT', style: TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.2)),
+                        Text('CORRELATION INSIGHT',
+                            style: TextStyle(
+                                color: HabitatTheme.amberFocus,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                                letterSpacing: 1.2)),
                         SizedBox(height: 4),
                         Text(
                           'Over the last 14 days, nights with 7.5h+ sleep reduced your wake-up resistance by 42% (from 3.1m down to 1.8m).',
-                          style: TextStyle(color: Colors.white, fontSize: 13, height: 1.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 13, height: 1.3),
                         ),
                       ],
                     ),
@@ -146,11 +195,16 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Adaptive Alarm Protocol', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                        Text('Adaptive Alarm Protocol',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                         SizedBox(height: 4),
                         Text(
                           'Automatically selects Hardcore vs Gentle mode based on overnight recovery score.',
-                          style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 12),
+                          style: TextStyle(
+                              color: HabitatTheme.textSecondary, fontSize: 12),
                         ),
                       ],
                     ),
@@ -158,7 +212,8 @@ class _SleepResistanceScreenState extends State<SleepResistanceScreen> {
                   Switch(
                     value: _adaptiveAlarmEnabled,
                     activeColor: HabitatTheme.amberFocus,
-                    onChanged: (val) => setState(() => _adaptiveAlarmEnabled = val),
+                    onChanged: (val) =>
+                        setState(() => _adaptiveAlarmEnabled = val),
                   ),
                 ],
               ),
@@ -180,9 +235,16 @@ class _StageIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(label,
+            style: const TextStyle(
+                color: HabitatTheme.textSecondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w600)),
       ],
     );
   }

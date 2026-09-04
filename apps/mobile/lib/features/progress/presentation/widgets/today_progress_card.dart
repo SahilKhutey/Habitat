@@ -30,7 +30,8 @@ class TodayProgressCard extends StatelessWidget {
             children: [
               const Row(
                 children: [
-                  Icon(Icons.pie_chart_outline, color: HabitatTheme.growthGreen, size: 18),
+                  Icon(Icons.pie_chart_outline,
+                      color: HabitatTheme.growthGreen, size: 18),
                   SizedBox(width: 8),
                   Text(
                     "TODAY'S DISCIPLINE SCORE",
@@ -58,7 +59,8 @@ class TodayProgressCard extends StatelessWidget {
                           color: HabitatTheme.growthGreen,
                         ),
                       ),
-                      Icon(Icons.chevron_right, size: 16, color: HabitatTheme.growthGreen),
+                      Icon(Icons.chevron_right,
+                          size: 16, color: HabitatTheme.growthGreen),
                     ],
                   ),
                 ),
@@ -130,7 +132,8 @@ class TodayProgressCard extends StatelessWidget {
               value: summary.completionRatio,
               minHeight: 8,
               backgroundColor: HabitatTheme.surfaceSecondary,
-              valueColor: const AlwaysStoppedAnimation<Color>(HabitatTheme.growthGreen),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(HabitatTheme.growthGreen),
             ),
           ),
         ],

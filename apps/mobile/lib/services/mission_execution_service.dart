@@ -29,13 +29,15 @@ class MissionCompletionResult {
   final int earnedXp;
   final int currentStreak;
   final String? message;
+  final String? errorMessage;
 
   const MissionCompletionResult({
     required this.isSuccess,
     this.earnedXp = 0,
     this.currentStreak = 0,
     this.message,
-  });
+    String? errorMessage,
+  }) : errorMessage = errorMessage ?? message;
 }
 
 class MissionExecutionService {
@@ -48,7 +50,8 @@ class MissionExecutionService {
     EvidenceVerificationEngine? verificationEngine,
     PlatformAlarmService? alarmService,
   })  : _database = database,
-        _verificationEngine = verificationEngine ?? EvidenceVerificationEngine(),
+        _verificationEngine =
+            verificationEngine ?? EvidenceVerificationEngine(),
         _alarmService = alarmService ?? PlatformAlarmService.create();
 
   Future<LocalTaskAttempt> start(String taskId, {String? alarmId}) async {
@@ -89,11 +92,11 @@ class MissionExecutionService {
 
     // Proof checksum validation (must be 64-character SHA-256)
     if (submission.sha256Checksum.trim().length != 64) {
-      throw ArgumentError('Invalid proof SHA-256 checksum: ${submission.sha256Checksum}');
+      return VerificationResult.failed('Invalid proof SHA-256 checksum format');
     }
 
     if (submission.filePath.trim().isEmpty) {
-      throw ArgumentError('Proof media file path cannot be empty');
+      return VerificationResult.failed('Proof media file path cannot be empty');
     }
 
     // Prevent proof reuse across distinct tasks
@@ -102,7 +105,8 @@ class MissionExecutionService {
       (p) => p.localPath == submission.filePath && p.attemptId != attemptId,
     );
     if (alreadyUsed) {
-      throw StateError('Proof media has already been submitted for another attempt.');
+      throw StateError(
+          'Proof media has already been submitted for another attempt.');
     }
 
     _database.updateAttemptStatus(attemptId: attemptId, status: 'VERIFYING');
@@ -136,7 +140,8 @@ class MissionExecutionService {
     _database.saveProof(proof);
 
     if (verification.isPassed) {
-      _database.updateAttemptStatus(attemptId: attemptId, status: 'PROOF_VERIFIED');
+      _database.updateAttemptStatus(
+          attemptId: attemptId, status: 'PROOF_VERIFIED');
     } else {
       _database.updateAttemptStatus(attemptId: attemptId, status: 'FAILED');
     }
@@ -170,9 +175,18 @@ class MissionExecutionService {
     // Proof requirement guard: must have verified proof attached
     if (task.requiresPhoto || task.requiresVideo) {
       final attemptProofs = _database.getProofsForAttempt(attemptId);
-      final hasVerifiedProof = attemptProofs.any((p) => p.isVerified && p.taskId == task.id);
+      final hasVerifiedProof =
+          attemptProofs.any((p) => p.isVerified && p.taskId == task.id);
       if (!hasVerifiedProof) {
-        throw StateError('Cannot complete mission: valid verified proof is required.');
+        return const MissionCompletionResult(
+          isSuccess: false,
+          earnedXp: 0,
+          currentStreak: 0,
+          message:
+              'Unverified proof: valid verified proof is required to complete mission.',
+          errorMessage:
+              'Unverified proof: valid verified proof is required to complete mission.',
+        );
       }
     }
 
@@ -235,7 +249,10 @@ class MissionExecutionService {
       _database.recordEvent(
         eventType: 'MISSION_FAILED',
         entityId: attempt.taskId,
-        metadata: {'attemptId': attemptId, 'reason': reason ?? 'Verification failed'},
+        metadata: {
+          'attemptId': attemptId,
+          'reason': reason ?? 'Verification failed'
+        },
       );
     }
   }

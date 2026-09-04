@@ -71,7 +71,9 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: HabitatTheme.amberFocus.withOpacity(0.5), width: 1.5),
+                border: Border.all(
+                    color: HabitatTheme.amberFocus.withOpacity(0.5),
+                    width: 1.5),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,25 +81,44 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('🏆 14-DAY MORNING ORDER', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                      const Text('🏆 14-DAY MORNING ORDER',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900)),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(color: const Color(0xFF262214), borderRadius: BorderRadius.circular(6)),
-                        child: const Text('SEASON 1', style: TextStyle(color: HabitatTheme.amberFocus, fontSize: 10, fontWeight: FontWeight.bold)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF262214),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: const Text('SEASON 1',
+                            style: TextStyle(
+                                color: HabitatTheme.amberFocus,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Execute Make Bed & Morning Sunlight every day for 14 consecutive days. Maintain average wake-up resistance under 2.0 minutes.',
-                    style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
+                    style: TextStyle(
+                        color: HabitatTheme.textSecondary,
+                        fontSize: 13,
+                        height: 1.4),
                   ),
                   const SizedBox(height: 16),
                   const Row(
                     children: [
-                      Icon(Icons.military_tech, color: HabitatTheme.amberFocus, size: 20),
+                      Icon(Icons.military_tech,
+                          color: HabitatTheme.amberFocus, size: 20),
                       SizedBox(width: 6),
-                      Text('+500 XP PRIZE • MORNING SOVEREIGN TROPHY', style: TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold, fontSize: 11)),
+                      Text('+500 XP PRIZE • MORNING SOVEREIGN TROPHY',
+                          style: TextStyle(
+                              color: HabitatTheme.amberFocus,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11)),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -116,14 +137,18 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
                         decoration: BoxDecoration(
                           color: isDone
                               ? HabitatTheme.emeraldVictory
-                              : (isCurrent ? HabitatTheme.amberFocus : const Color(0xFF1E1E26)),
+                              : (isCurrent
+                                  ? HabitatTheme.amberFocus
+                                  : const Color(0xFF1E1E26)),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         alignment: Alignment.center,
                         child: Text(
                           '$dayNum',
                           style: TextStyle(
-                            color: isDone || isCurrent ? Colors.black : Colors.white38,
+                            color: isDone || isCurrent
+                                ? Colors.black
+                                : Colors.white38,
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                           ),
@@ -137,7 +162,12 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
             const SizedBox(height: 28),
 
             // 2. Tournament Leaderboard
-            const Text('TOURNAMENT PODIUM & LEADERBOARD', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+            const Text('TOURNAMENT PODIUM & LEADERBOARD',
+                style: TextStyle(
+                    color: HabitatTheme.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2)),
             const SizedBox(height: 12),
 
             ..._getLeaderboard().map((player) {
@@ -149,11 +179,15 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: HabitatTheme.surfacePrimary,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: rank <= 3 ? rankColor.withOpacity(0.3) : HabitatTheme.surfaceBorder),
+                  border: Border.all(
+                      color: rank <= 3
+                          ? rankColor.withOpacity(0.3)
+                          : HabitatTheme.surfaceBorder),
                 ),
                 child: Row(
                   children: [
@@ -161,13 +195,18 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: rank <= 3 ? rankColor.withOpacity(0.15) : const Color(0xFF1E1E26),
+                        color: rank <= 3
+                            ? rankColor.withOpacity(0.15)
+                            : const Color(0xFF1E1E26),
                         shape: BoxShape.circle,
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         '#$rank',
-                        style: TextStyle(color: rank <= 3 ? rankColor : Colors.white70, fontWeight: FontWeight.bold, fontSize: 12),
+                        style: TextStyle(
+                            color: rank <= 3 ? rankColor : Colors.white70,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -175,20 +214,30 @@ class _ChallengeArenaScreenState extends State<ChallengeArenaScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(player['name'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                          Text('Resistance: ${player['resistance']}', style: const TextStyle(color: HabitatTheme.textMuted, fontSize: 11)),
+                          Text(player['name'] as String,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
+                          Text('Resistance: ${player['resistance']}',
+                              style: const TextStyle(
+                                  color: HabitatTheme.textMuted, fontSize: 11)),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: const Color(0xFF191922),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         player['days'] as String,
-                        style: const TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold, fontSize: 12),
+                        style: const TextStyle(
+                            color: HabitatTheme.amberFocus,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12),
                       ),
                     ),
                   ],

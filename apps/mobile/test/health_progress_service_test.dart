@@ -14,7 +14,9 @@ void main() {
   });
 
   group('HealthProgressService Phase 16 Tests', () {
-    test('16.1: Water logging aggregates milliliters and converts to liters accurately', () {
+    test(
+        '16.1: Water logging aggregates milliliters and converts to liters accurately',
+        () {
       expect(service.todayWaterLiters, equals(0.0));
 
       service.addWaterMl(500);
@@ -45,7 +47,9 @@ void main() {
       expect(service.todayNapMinutes, equals(50));
     });
 
-    test('16.4: Unified summary combines health, XP, streak, and daily completions', () {
+    test(
+        '16.4: Unified summary combines health, XP, streak, and daily completions',
+        () {
       service.addWaterMl(500);
       service.logMeal('BREAKFAST');
       service.logNap(const Duration(minutes: 30));
@@ -82,7 +86,8 @@ void main() {
       db.saveAttempt(attempt);
 
       final completions = service.dailyCompletions;
-      final todayKey = '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, "0")}-${DateTime.now().day.toString().padLeft(2, "0")}';
+      final todayKey =
+          '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, "0")}-${DateTime.now().day.toString().padLeft(2, "0")}';
       expect(completions[todayKey], equals(1));
     });
   });

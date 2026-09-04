@@ -21,7 +21,8 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
   String _difficulty = 'MEDIUM';
   String _proofType = 'PHOTO';
 
-  int get _calculatedXp => _difficulty == 'HARD' ? 80 : (_difficulty == 'MEDIUM' ? 60 : 40);
+  int get _calculatedXp =>
+      _difficulty == 'HARD' ? 80 : (_difficulty == 'MEDIUM' ? 60 : 40);
 
   void _addInstructionStep() {
     setState(() {
@@ -52,13 +53,17 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
 
     if (instructions.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add at least one execution instruction step.')),
+        const SnackBar(
+            content:
+                Text('Please add at least one execution instruction step.')),
       );
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Custom mission "${_titleController.text}" created successfully!')),
+      SnackBar(
+          content: Text(
+              'Custom mission "${_titleController.text}" created successfully!')),
     );
     Navigator.of(context).pop();
   }
@@ -84,7 +89,8 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                   hintText: 'e.g. 20 Jumping Jacks, Make Green Smoothie...',
                   filled: true,
                   fillColor: HabitatTheme.surfacePrimary,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -98,7 +104,8 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                   hintText: 'Why is this habit important for your discipline?',
                   filled: true,
                   fillColor: HabitatTheme.surfacePrimary,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
               ),
               const SizedBox(height: 24),
@@ -114,16 +121,23 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                         labelText: 'Category',
                         filled: true,
                         fillColor: HabitatTheme.surfacePrimary,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14)),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'morning', child: Text('🌅 Morning')),
-                        DropdownMenuItem(value: 'physical', child: Text('💪 Physical')),
-                        DropdownMenuItem(value: 'personal', child: Text('🧼 Personal')),
+                        DropdownMenuItem(
+                            value: 'morning', child: Text('🌅 Morning')),
+                        DropdownMenuItem(
+                            value: 'physical', child: Text('💪 Physical')),
+                        DropdownMenuItem(
+                            value: 'personal', child: Text('🧼 Personal')),
                         DropdownMenuItem(value: 'mind', child: Text('🧠 Mind')),
-                        DropdownMenuItem(value: 'environment', child: Text('🧹 Environment')),
+                        DropdownMenuItem(
+                            value: 'environment',
+                            child: Text('🧹 Environment')),
                       ],
-                      onChanged: (val) => setState(() => _category = val ?? 'physical'),
+                      onChanged: (val) =>
+                          setState(() => _category = val ?? 'physical'),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -135,13 +149,17 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                         labelText: 'Proof Method',
                         filled: true,
                         fillColor: HabitatTheme.surfacePrimary,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14)),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'PHOTO', child: Text('📸 Photo')),
-                        DropdownMenuItem(value: 'VIDEO', child: Text('🎥 Video')),
+                        DropdownMenuItem(
+                            value: 'PHOTO', child: Text('📸 Photo')),
+                        DropdownMenuItem(
+                            value: 'VIDEO', child: Text('🎥 Video')),
                       ],
-                      onChanged: (val) => setState(() => _proofType = val ?? 'PHOTO'),
+                      onChanged: (val) =>
+                          setState(() => _proofType = val ?? 'PHOTO'),
                     ),
                   ),
                 ],
@@ -149,7 +167,11 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
               const SizedBox(height: 20),
 
               // Difficulty Selector
-              const Text('DIFFICULTY & BASE XP REWARD', style: TextStyle(color: HabitatTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
+              const Text('DIFFICULTY & BASE XP REWARD',
+                  style: TextStyle(
+                      color: HabitatTheme.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -166,11 +188,18 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('EXECUTION INSTRUCTIONS', style: TextStyle(color: HabitatTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
+                  const Text('EXECUTION INSTRUCTIONS',
+                      style: TextStyle(
+                          color: HabitatTheme.textSecondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12)),
                   TextButton.icon(
                     onPressed: _addInstructionStep,
-                    icon: const Icon(Icons.add, size: 16, color: HabitatTheme.amberFocus),
-                    label: const Text('Add Step', style: TextStyle(color: HabitatTheme.amberFocus, fontSize: 12)),
+                    icon: const Icon(Icons.add,
+                        size: 16, color: HabitatTheme.amberFocus),
+                    label: const Text('Add Step',
+                        style: TextStyle(
+                            color: HabitatTheme.amberFocus, fontSize: 12)),
                   ),
                 ],
               ),
@@ -186,7 +215,11 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                       CircleAvatar(
                         radius: 12,
                         backgroundColor: HabitatTheme.surfaceSecondary,
-                        child: Text('${idx + 1}', style: const TextStyle(color: HabitatTheme.amberFocus, fontSize: 11, fontWeight: FontWeight.bold)),
+                        child: Text('${idx + 1}',
+                            style: const TextStyle(
+                                color: HabitatTheme.amberFocus,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -196,14 +229,17 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                             hintText: 'Step ${idx + 1} action...',
                             filled: true,
                             fillColor: HabitatTheme.surfacePrimary,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
                       ),
                       if (_instructionControllers.length > 1)
                         IconButton(
-                          icon: const Icon(Icons.close, color: HabitatTheme.textMuted, size: 18),
+                          icon: const Icon(Icons.close,
+                              color: HabitatTheme.textMuted, size: 18),
                           onPressed: () => _removeInstructionStep(idx),
                         ),
                     ],
@@ -220,12 +256,16 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.amberFocus,
                     foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: _handleSave,
                   child: Text(
                     'CREATE MISSION (+$_calculatedXp XP)',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1),
                   ),
                 ),
               ),
@@ -244,15 +284,22 @@ class _CreateCustomTaskScreenState extends State<CreateCustomTaskScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? HabitatTheme.amberFocus.withOpacity(0.15) : HabitatTheme.surfacePrimary,
+            color: isSelected
+                ? HabitatTheme.amberFocus.withOpacity(0.15)
+                : HabitatTheme.surfacePrimary,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? HabitatTheme.amberFocus : HabitatTheme.surfaceBorder),
+            border: Border.all(
+                color: isSelected
+                    ? HabitatTheme.amberFocus
+                    : HabitatTheme.surfaceBorder),
           ),
           child: Center(
             child: Text(
               value,
               style: TextStyle(
-                color: isSelected ? HabitatTheme.amberFocus : HabitatTheme.textSecondary,
+                color: isSelected
+                    ? HabitatTheme.amberFocus
+                    : HabitatTheme.textSecondary,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),

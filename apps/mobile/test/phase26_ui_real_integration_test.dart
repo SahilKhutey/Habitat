@@ -35,7 +35,8 @@ void main() {
   });
 
   group('Phase 26.1 - Real Task Controller & Persistence', () {
-    test('loads real tasks from LocalDatabase and updates on filter change', () {
+    test('loads real tasks from LocalDatabase and updates on filter change',
+        () {
       taskController.load();
       expect(taskController.tasks.isNotEmpty, isTrue);
       final initialCount = taskController.tasks.length;
@@ -64,7 +65,9 @@ void main() {
   });
 
   group('Phase 26.2 - Real Progression & XP Event Ledger', () {
-    test('XP balance derives strictly from sum of ledger events, not fake UI counters', () {
+    test(
+        'XP balance derives strictly from sum of ledger events, not fake UI counters',
+        () {
       expect(progressionController.xpBalance, equals(0));
       expect(progressionController.level, equals(1));
 
@@ -116,8 +119,10 @@ void main() {
     });
   });
 
-  group('Phase 26.4 - Mission Completion Boundary (No Synthetic Completion)', () {
-    test('mission cannot be marked completed without proof verification', () async {
+  group('Phase 26.4 - Mission Completion Boundary (No Synthetic Completion)',
+      () {
+    test('mission cannot be marked completed without proof verification',
+        () async {
       final executionService = MissionExecutionService(database: db);
       final tasks = taskService.getAllTasks();
       final task = tasks.first;
@@ -139,7 +144,8 @@ void main() {
   group('Phase 26.5 - State Durability & Restart Recovery', () {
     test('all real state survives database serialization and restore', () {
       // 1. Create real state
-      db.updateProfile(displayName: 'Commander Vanguard', bio: 'Discipline is destiny.');
+      db.updateProfile(
+          displayName: 'Commander Vanguard', bio: 'Discipline is destiny.');
       db.awardXP(taskId: 'task-1', attemptId: 'att-1', amount: 150);
       db.saveJournalEntry(LocalJournalEntry(
         id: 'journal-durable-1',
@@ -167,7 +173,8 @@ void main() {
 
       final restoredJournal = db.getJournalEntryForDay(DateTime(2026, 9, 3));
       expect(restoredJournal, isNotNull);
-      expect(restoredJournal!.sentence, equals('Durable discipline execution verified.'));
+      expect(restoredJournal!.sentence,
+          equals('Durable discipline execution verified.'));
     });
   });
 }

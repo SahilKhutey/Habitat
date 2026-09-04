@@ -59,7 +59,8 @@ class EvidenceVerificationEngine {
     // 1. Checksum Format & Integrity Rule
     final hexRegex = RegExp(r'^[a-fA-F0-9]{64}$');
     final isChecksumValid = capture.sha256Checksum.isNotEmpty &&
-        (capture.sha256Checksum.length == 64 && hexRegex.hasMatch(capture.sha256Checksum));
+        (capture.sha256Checksum.length == 64 &&
+            hexRegex.hasMatch(capture.sha256Checksum));
 
     if (!isChecksumValid) {
       failedRules.add('INVALID_SHA256_CHECKSUM');
@@ -117,15 +118,13 @@ class EvidenceVerificationEngine {
     if (failedRules.isNotEmpty) {
       final primaryFailure = switch (failedRules.first) {
         'DUPLICATE_PROOF_REPLAY_DETECTED' =>
-          'Duplicate proof detected (replay attack prevention)',
+          'Duplicate proof detected: proof reuse rejected (replay attack prevention)',
         'VIDEO_DURATION_TOO_SHORT' =>
           'Video duration must be at least 3 seconds (got ${capture.durationSeconds}s)',
         'PROOF_EXPIRED_STALE' =>
           'Proof expired or captured outside active mission window',
-        'INVALID_SHA256_CHECKSUM' =>
-          'Invalid media integrity checksum',
-        'REQUIRED_VIDEO_PROOF_MISSING' =>
-          'Task requires motion video proof',
+        'INVALID_SHA256_CHECKSUM' => 'Invalid media integrity checksum',
+        'REQUIRED_VIDEO_PROOF_MISSING' => 'Task requires motion video proof',
         _ => 'Evidence verification failed: ${failedRules.join(", ")}',
       };
 

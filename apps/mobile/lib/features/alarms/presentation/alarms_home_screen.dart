@@ -36,7 +36,8 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('WAKE-UP PROTOCOLS'),
         actions: [
@@ -60,20 +61,25 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
               decoration: BoxDecoration(
                 color: AppColors.surfaceElevated,
                 borderRadius: AppRadii.radiusLarge,
-                border: Border.all(color: AppColors.amberFocus.withOpacity(0.5)),
+                border:
+                    Border.all(color: AppColors.amberFocus.withOpacity(0.5)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.timer_outlined, color: AppColors.amberFocus, size: 32),
+                  const Icon(Icons.timer_outlined,
+                      color: AppColors.amberFocus, size: 32),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('NEXT PROTOCOL IN', style: AppTypography.labelSmall),
+                        const Text('NEXT PROTOCOL IN',
+                            style: AppTypography.labelSmall),
                         const SizedBox(height: AppSpacing.xxs),
-                        const Text('7h 23m (Tomorrow 07:00 AM)', style: AppTypography.titleLarge),
-                        Text('10 Morning Push-Ups • +30 XP', style: AppTypography.bodySmall),
+                        const Text('7h 23m (Tomorrow 07:00 AM)',
+                            style: AppTypography.titleLarge),
+                        Text('10 Morning Push-Ups • +30 XP',
+                            style: AppTypography.bodySmall),
                       ],
                     ),
                   ),
@@ -82,7 +88,8 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
             ),
             const SizedBox(height: AppSpacing.xxl),
 
-            const Text('ACTIVE ALARM COMMITMENTS', style: AppTypography.labelMedium),
+            const Text('ACTIVE ALARM COMMITMENTS',
+                style: AppTypography.labelMedium),
             const SizedBox(height: AppSpacing.md),
 
             // Alarms List
@@ -101,8 +108,12 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
                             alarm['time'] as String,
                             style: AppTypography.displayLarge.copyWith(
                               color: isEnabled
-                                  ? (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary)
-                                  : (isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted),
+                                  ? (isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary)
+                                  : (isDark
+                                      ? AppColors.darkTextMuted
+                                      : AppColors.lightTextMuted),
                             ),
                           ),
                           const SizedBox(height: AppSpacing.xxs),
@@ -123,7 +134,9 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
                           });
                           AppFeedback.showToast(
                             context,
-                            message: val ? 'Alarm Armed & Scheduled' : 'Alarm Disarmed',
+                            message: val
+                                ? 'Alarm Armed & Scheduled'
+                                : 'Alarm Disarmed',
                           );
                         },
                       ),
@@ -139,7 +152,8 @@ class _AlarmsHomeScreenState extends State<AlarmsHomeScreen> {
         backgroundColor: AppColors.amberFocus,
         foregroundColor: Colors.black,
         icon: const Icon(Icons.add_alarm),
-        label: const Text('SET ALARM', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+        label: const Text('SET ALARM',
+            style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
         onPressed: () {
           Navigator.of(context).pushNamed('/alarms/create');
         },

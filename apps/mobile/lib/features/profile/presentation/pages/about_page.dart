@@ -25,7 +25,8 @@ class AboutPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.3)),
+                border: Border.all(
+                    color: HabitatTheme.growthGreen.withOpacity(0.3)),
               ),
               child: Column(
                 children: [
@@ -36,7 +37,8 @@ class AboutPage extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: HabitatTheme.habitatGreen,
                     ),
-                    child: const Icon(Icons.eco, color: HabitatTheme.growthGreen, size: 40),
+                    child: const Icon(Icons.eco,
+                        color: HabitatTheme.growthGreen, size: 40),
                   ),
                   const SizedBox(height: 16),
                   const Text(

@@ -12,7 +12,9 @@ void main() {
   });
 
   group('NativeCameraProofPipeline Tests', () {
-    test('capturePhotoProof() generates real metadata and non-empty SHA-256 hash', () async {
+    test(
+        'capturePhotoProof() generates real metadata and non-empty SHA-256 hash',
+        () async {
       final photo = await pipeline.capturePhotoProof(
         taskId: 'task_001',
         attemptId: 'attempt_001',
@@ -25,7 +27,8 @@ void main() {
       expect(photo.metadata['width'], equals(1920));
     });
 
-    test('captureVideoProof() generates video metadata with duration', () async {
+    test('captureVideoProof() generates video metadata with duration',
+        () async {
       final video = await pipeline.captureVideoProof(
         taskId: 'task_002',
         attemptId: 'attempt_002',
@@ -47,12 +50,15 @@ void main() {
         capturedAt: DateTime.now(),
       );
 
-      final result = await engine.verifyProof(invalidFile, requiredType: 'PHOTO');
+      final result =
+          await engine.verifyProof(invalidFile, requiredType: 'PHOTO');
       expect(result.isPassed, isFalse);
       expect(result.failureReason, contains('empty checksum or zero bytes'));
     });
 
-    test('verifyProof() marks local integrity valid with serverVerificationPending', () async {
+    test(
+        'verifyProof() marks local integrity valid with serverVerificationPending',
+        () async {
       final validFile = CapturedProofFile(
         filePath: 'test.jpg',
         mimeType: 'image/jpeg',

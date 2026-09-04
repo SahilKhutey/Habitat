@@ -45,7 +45,8 @@ class _WeeklyProgressPageState extends State<WeeklyProgressPage> {
                 weekSummary: week,
                 onSelectDay: (day) {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => DailyProgressPage(date: day.date)),
+                    MaterialPageRoute(
+                        builder: (_) => DailyProgressPage(date: day.date)),
                   );
                 },
               ),

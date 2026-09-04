@@ -4,20 +4,28 @@ import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     scheduler = NativeAlarmScheduler.instance;
+    scheduler.reset();
   });
 
-  group('Phase V: Proof Tampering & Integrity Hardening (SEC-001, SEC-004)', () {
-    test('SEC-004: Tampered proof with invalid SHA-256 hash or empty file is strictly rejected', () async {
+  group('Phase V: Proof Tampering & Integrity Hardening (SEC-001, SEC-004)',
+      () {
+    test(
+        'SEC-004: Tampered proof with invalid SHA-256 hash or empty file is strictly rejected',
+        () async {
       final task = LocalTask(
         id: 'task_sec_tamper',
         title: 'Morning Pushup Set',
@@ -37,7 +45,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: '',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
       expect(resEmpty.isPassed, isFalse);
@@ -60,7 +69,8 @@ void main() {
       expect(db.getTask('task_sec_tamper')?.isCompleted, isFalse);
     });
 
-    test('SEC-001: Proof Replay Attack across different attempts is rejected', () async {
+    test('SEC-001: Proof Replay Attack across different attempts is rejected',
+        () async {
       final taskA = LocalTask(
         id: 'task_sec_a',
         title: 'Task A',
@@ -86,18 +96,21 @@ void main() {
       const validProofSubmission = ProofSubmission(
         type: 'PHOTO',
         filePath: 'habitat_storage://proofs/shared_proof.jpg',
-        sha256Checksum: 'aaaabbbbccccddddeeeeffff0000111122223333444455556666777788889999',
+        sha256Checksum:
+            'aaaabbbbccccddddeeeeffff0000111122223333444455556666777788889999',
       );
 
       // Attempt A succeeds
-      final proofA = await missionService.submitProof(attemptA.id, validProofSubmission);
+      final proofA =
+          await missionService.submitProof(attemptA.id, validProofSubmission);
       expect(proofA.isPassed, isTrue);
       final compA = await missionService.complete(attemptA.id);
       expect(compA.isSuccess, isTrue);
 
       // Attack: Attempt B tries to reuse the exact same local proof path
       final attemptB = await missionService.start('task_sec_b');
-      final proofB = await missionService.submitProof(attemptB.id, validProofSubmission);
+      final proofB =
+          await missionService.submitProof(attemptB.id, validProofSubmission);
       expect(proofB.isPassed, isFalse); // Proof reuse rejected
       expect(proofB.failureReason, contains('reuse'));
 
@@ -107,7 +120,9 @@ void main() {
   });
 
   group('Phase V: XP, Streak & Alarm Replay Defense (SEC-002, SEC-005)', () {
-    test('SEC-002: Replayed completion requests cannot duplicate XP or streak rewards', () async {
+    test(
+        'SEC-002: Replayed completion requests cannot duplicate XP or streak rewards',
+        () async {
       final task = LocalTask(
         id: 'task_sec_replay',
         title: 'Cold Shower',
@@ -125,7 +140,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/shower_valid.jpg',
-          sha256Checksum: '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+          sha256Checksum:
+              '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
         ),
       );
 
@@ -146,7 +162,9 @@ void main() {
       expect(db.getStreak().currentStreak, equals(1));
     });
 
-    test('SEC-005: Stale alarm callbacks cannot mutate state once mission is complete', () {
+    test(
+        'SEC-005: Stale alarm callbacks cannot mutate state once mission is complete',
+        () {
       final occurrence = scheduler.scheduleExactAlarm(
         alarmId: 'alm_sec_stale',
         missionId: 'task_sec_stale',

@@ -22,7 +22,8 @@ class _MonthlyProgressPageState extends State<MonthlyProgressPage> {
   void initState() {
     super.initState();
     final repo = ProgressRepository(LocalDatabase.instance);
-    _monthlyService = MonthlySummaryService(WeeklySummaryService(DailySummaryService(repo)));
+    _monthlyService =
+        MonthlySummaryService(WeeklySummaryService(DailySummaryService(repo)));
   }
 
   @override
@@ -43,21 +44,26 @@ class _MonthlyProgressPageState extends State<MonthlyProgressPage> {
             children: [
               WeeklyGraph(monthlySummary: monthly),
               const SizedBox(height: 20),
-
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: HabitatTheme.surfacePrimary,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.3)),
+                  border: Border.all(
+                      color: HabitatTheme.growthGreen.withOpacity(0.3)),
                 ),
                 child: Column(
                   children: [
-                    _buildSummaryRow('Monthly Adherence', '${monthly.averageCompletionPercentage.toInt()}%'),
-                    const Divider(height: 20, color: HabitatTheme.surfaceBorder),
-                    _buildSummaryRow('Total Completed Actions', '${monthly.totalCompleted}'),
-                    const Divider(height: 20, color: HabitatTheme.surfaceBorder),
-                    _buildSummaryRow('Best Consistency Window', monthly.bestWeek),
+                    _buildSummaryRow('Monthly Adherence',
+                        '${monthly.averageCompletionPercentage.toInt()}%'),
+                    const Divider(
+                        height: 20, color: HabitatTheme.surfaceBorder),
+                    _buildSummaryRow(
+                        'Total Completed Actions', '${monthly.totalCompleted}'),
+                    const Divider(
+                        height: 20, color: HabitatTheme.surfaceBorder),
+                    _buildSummaryRow(
+                        'Best Consistency Window', monthly.bestWeek),
                   ],
                 ),
               ),

@@ -40,7 +40,8 @@ class ProfilePreferencesModel {
         'defaultProgressRange': defaultProgressRange,
       };
 
-  factory ProfilePreferencesModel.fromMap(Map<String, dynamic> map) => ProfilePreferencesModel(
+  factory ProfilePreferencesModel.fromMap(Map<String, dynamic> map) =>
+      ProfilePreferencesModel(
         language: map['language'] ?? 'English',
         timeFormat24h: map['timeFormat24h'] ?? false,
         weekStartsOnMonday: map['weekStartsOnMonday'] ?? true,

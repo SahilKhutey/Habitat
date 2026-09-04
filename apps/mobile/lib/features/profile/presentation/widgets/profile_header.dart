@@ -28,7 +28,8 @@ class ProfileHeader extends StatelessWidget {
           CircleAvatar(
             radius: 32,
             backgroundColor: HabitatTheme.habitatGreen,
-            child: const Icon(Icons.person, color: HabitatTheme.growthGreen, size: 36),
+            child: const Icon(Icons.person,
+                color: HabitatTheme.growthGreen, size: 36),
           ),
           const SizedBox(width: 16),
 
@@ -59,7 +60,8 @@ class ProfileHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: HabitatTheme.habitatGreen,
                     borderRadius: BorderRadius.circular(6),
@@ -80,7 +82,8 @@ class ProfileHeader extends StatelessWidget {
 
           if (onEdit != null)
             IconButton(
-              icon: const Icon(Icons.edit_outlined, color: HabitatTheme.growthGreen, size: 20),
+              icon: const Icon(Icons.edit_outlined,
+                  color: HabitatTheme.growthGreen, size: 20),
               tooltip: 'Edit Profile',
               onPressed: onEdit,
             ),

@@ -20,10 +20,14 @@ class ActionCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isSelected ? HabitatTheme.surfaceSecondary : HabitatTheme.surfacePrimary,
+        color: isSelected
+            ? HabitatTheme.surfaceSecondary
+            : HabitatTheme.surfacePrimary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? HabitatTheme.growthGreen : HabitatTheme.surfaceBorder,
+          color: isSelected
+              ? HabitatTheme.growthGreen
+              : HabitatTheme.surfaceBorder,
         ),
       ),
       child: Material(
@@ -75,7 +79,8 @@ class ActionCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: HabitatTheme.surfaceSecondary,
                           borderRadius: BorderRadius.circular(6),
@@ -94,7 +99,8 @@ class ActionCard extends StatelessWidget {
                   ),
                 ),
                 if (isSelected)
-                  const Icon(Icons.check_circle, color: HabitatTheme.growthGreen, size: 20),
+                  const Icon(Icons.check_circle,
+                      color: HabitatTheme.growthGreen, size: 20),
               ],
             ),
           ),

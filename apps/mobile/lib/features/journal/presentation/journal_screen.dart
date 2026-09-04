@@ -119,10 +119,13 @@ class _JournalScreenState extends State<JournalScreen> {
                       TextField(
                         controller: _sentenceController,
                         maxLines: 3,
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 14),
                         decoration: InputDecoration(
-                          hintText: 'What defined your discipline and focus today?',
-                          hintStyle: const TextStyle(color: HabitatTheme.textMuted),
+                          hintText:
+                              'What defined your discipline and focus today?',
+                          hintStyle:
+                              const TextStyle(color: HabitatTheme.textMuted),
                           filled: true,
                           fillColor: const Color(0xFF141419),
                           border: OutlineInputBorder(
@@ -141,13 +144,15 @@ class _JournalScreenState extends State<JournalScreen> {
                             children: _emojis.map((emoji) {
                               final isSelected = _selectedEmoji == emoji;
                               return GestureDetector(
-                                onTap: () => setState(() => _selectedEmoji = emoji),
+                                onTap: () =>
+                                    setState(() => _selectedEmoji = emoji),
                                 child: Container(
                                   margin: const EdgeInsets.only(right: 8),
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? HabitatTheme.amberFocus.withOpacity(0.3)
+                                        ? HabitatTheme.amberFocus
+                                            .withOpacity(0.3)
                                         : Colors.transparent,
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
@@ -156,7 +161,8 @@ class _JournalScreenState extends State<JournalScreen> {
                                           : Colors.transparent,
                                     ),
                                   ),
-                                  child: Text(emoji, style: const TextStyle(fontSize: 18)),
+                                  child: Text(emoji,
+                                      style: const TextStyle(fontSize: 18)),
                                 ),
                               );
                             }).toList(),
@@ -170,12 +176,15 @@ class _JournalScreenState extends State<JournalScreen> {
                                 value: r,
                                 child: Text(
                                   '★ $r / 5',
-                                  style: const TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      color: HabitatTheme.amberFocus,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               );
                             }).toList(),
                             onChanged: (val) {
-                              if (val != null) setState(() => _selectedRating = val);
+                              if (val != null)
+                                setState(() => _selectedRating = val);
                             },
                           ),
                         ],
@@ -192,7 +201,8 @@ class _JournalScreenState extends State<JournalScreen> {
                             backgroundColor: HabitatTheme.amberFocus,
                             foregroundColor: Colors.black,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
                       ),
@@ -226,13 +236,17 @@ class _JournalScreenState extends State<JournalScreen> {
                       child: Text(
                         'No reflections recorded yet.\nWrite today\'s one sentence above to begin your discipline log.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: HabitatTheme.textMuted, fontSize: 13, height: 1.5),
+                        style: TextStyle(
+                            color: HabitatTheme.textMuted,
+                            fontSize: 13,
+                            height: 1.5),
                       ),
                     ),
                   )
                 else
                   ...entries.map((e) {
-                    final dateStr = '${e.date.year}-${e.date.month.toString().padLeft(2, '0')}-${e.date.day.toString().padLeft(2, '0')}';
+                    final dateStr =
+                        '${e.date.year}-${e.date.month.toString().padLeft(2, '0')}-${e.date.day.toString().padLeft(2, '0')}';
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
@@ -251,22 +265,32 @@ class _JournalScreenState extends State<JournalScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       dateStr,
-                                      style: const TextStyle(color: HabitatTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                          color: HabitatTheme.textSecondary,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       '★ ${e.rating}/5',
-                                      style: const TextStyle(color: HabitatTheme.amberFocus, fontSize: 11, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                          color: HabitatTheme.amberFocus,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
                                   e.sentence,
-                                  style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      height: 1.4),
                                 ),
                               ],
                             ),

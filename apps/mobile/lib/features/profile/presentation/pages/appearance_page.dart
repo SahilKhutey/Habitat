@@ -22,7 +22,8 @@ class _AppearancePageState extends State<AppearancePage> {
   @override
   void initState() {
     super.initState();
-    _settingsService = SettingsService(ProfileRepository(LocalDatabase.instance));
+    _settingsService =
+        SettingsService(ProfileRepository(LocalDatabase.instance));
     _appearance = _settingsService.getAppearanceSettings();
   }
 
@@ -46,9 +47,12 @@ class _AppearancePageState extends State<AppearancePage> {
             SettingsSection(
               title: 'THEME MODE',
               children: [
-                _buildThemeTile('System Default', ThemeModePreference.system, Icons.brightness_auto),
-                _buildThemeTile('Dark Theme (Botanical Obsidian)', ThemeModePreference.dark, Icons.dark_mode_outlined),
-                _buildThemeTile('Light Theme', ThemeModePreference.light, Icons.light_mode_outlined),
+                _buildThemeTile('System Default', ThemeModePreference.system,
+                    Icons.brightness_auto),
+                _buildThemeTile('Dark Theme (Botanical Obsidian)',
+                    ThemeModePreference.dark, Icons.dark_mode_outlined),
+                _buildThemeTile('Light Theme', ThemeModePreference.light,
+                    Icons.light_mode_outlined),
               ],
             ),
             SettingsSection(
@@ -59,21 +63,24 @@ class _AppearancePageState extends State<AppearancePage> {
                   title: 'Reduce Motion',
                   subtitle: 'Minimizes animated HUD transitions',
                   toggleValue: _appearance.reduceMotion,
-                  onToggleChanged: (val) => _update(_appearance.copyWith(reduceMotion: val)),
+                  onToggleChanged: (val) =>
+                      _update(_appearance.copyWith(reduceMotion: val)),
                 ),
                 SettingsTile(
                   icon: Icons.contrast,
                   title: 'High Contrast Mode',
                   subtitle: 'Enhances borders and card separation',
                   toggleValue: _appearance.highContrast,
-                  onToggleChanged: (val) => _update(_appearance.copyWith(highContrast: val)),
+                  onToggleChanged: (val) =>
+                      _update(_appearance.copyWith(highContrast: val)),
                 ),
                 SettingsTile(
                   icon: Icons.text_fields,
                   title: 'Larger Text Display',
                   subtitle: 'Increases readability scale across HUDs',
                   toggleValue: _appearance.largerText,
-                  onToggleChanged: (val) => _update(_appearance.copyWith(largerText: val)),
+                  onToggleChanged: (val) =>
+                      _update(_appearance.copyWith(largerText: val)),
                 ),
               ],
             ),
@@ -83,11 +90,14 @@ class _AppearancePageState extends State<AppearancePage> {
     );
   }
 
-  Widget _buildThemeTile(String label, ThemeModePreference pref, IconData icon) {
+  Widget _buildThemeTile(
+      String label, ThemeModePreference pref, IconData icon) {
     final isSelected = _appearance.themeMode == pref;
 
     return ListTile(
-      leading: Icon(icon, color: isSelected ? HabitatTheme.growthGreen : HabitatTheme.textMuted),
+      leading: Icon(icon,
+          color:
+              isSelected ? HabitatTheme.growthGreen : HabitatTheme.textMuted),
       title: Text(
         label,
         style: TextStyle(

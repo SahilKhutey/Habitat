@@ -34,7 +34,8 @@ class PermissionTile extends StatelessWidget {
         children: [
           Icon(
             _resolveIcon(item.type),
-            color: isGranted ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
+            color:
+                isGranted ? HabitatTheme.growthGreen : HabitatTheme.textMuted,
             size: 22,
           ),
           const SizedBox(width: 14),
@@ -55,7 +56,8 @@ class PermissionTile extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: isGranted
                             ? HabitatTheme.growthGreen.withOpacity(0.2)
@@ -68,7 +70,9 @@ class PermissionTile extends StatelessWidget {
                           fontFamily: HabitatTheme.fontHeading,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
-                          color: isGranted ? HabitatTheme.growthGreen : Colors.redAccent,
+                          color: isGranted
+                              ? HabitatTheme.growthGreen
+                              : Colors.redAccent,
                         ),
                       ),
                     ),

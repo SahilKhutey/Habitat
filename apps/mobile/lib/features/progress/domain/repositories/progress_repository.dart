@@ -11,7 +11,10 @@ class ProgressRepository {
   List<LocalTaskAttempt> getAllAttempts() => _database.getAllAttempts();
 
   List<LocalTaskAttempt> getAttemptsForDay(DateTime day) {
-    return _database.getAllAttempts().where((a) => _sameDay(a.triggeredAt, day)).toList();
+    return _database
+        .getAllAttempts()
+        .where((a) => _sameDay(a.triggeredAt, day))
+        .toList();
   }
 
   LocalStreak getStreak() => _database.getStreak();
@@ -27,7 +30,10 @@ class ProgressRepository {
   void unlockAchievement(String code) => _database.unlockAchievement(code);
 
   void awardXp(int amount, String reason) {
-    _database.awardXP(taskId: 'system', attemptId: 'achieve-${DateTime.now().millisecondsSinceEpoch}', amount: amount);
+    _database.awardXP(
+        taskId: 'system',
+        attemptId: 'achieve-${DateTime.now().millisecondsSinceEpoch}',
+        amount: amount);
   }
 
   bool _sameDay(DateTime a, DateTime b) =>

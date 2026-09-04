@@ -17,10 +17,12 @@ class VerificationProcessingScreen extends StatefulWidget {
   });
 
   @override
-  State<VerificationProcessingScreen> createState() => _VerificationProcessingScreenState();
+  State<VerificationProcessingScreen> createState() =>
+      _VerificationProcessingScreenState();
 }
 
-class _VerificationProcessingScreenState extends State<VerificationProcessingScreen>
+class _VerificationProcessingScreenState
+    extends State<VerificationProcessingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _radarController;
   bool _isProcessing = true;
@@ -49,7 +51,8 @@ class _VerificationProcessingScreenState extends State<VerificationProcessingScr
           setState(() {
             _isProcessing = false;
             _hasFailed = true;
-            _errorMessage = 'Biomechanical verification failed. Motion criteria not satisfied.';
+            _errorMessage =
+                'Biomechanical verification failed. Motion criteria not satisfied.';
           });
         }
       } catch (e) {
@@ -111,9 +114,12 @@ class _VerificationProcessingScreenState extends State<VerificationProcessingScr
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.amberFocus.withOpacity(0.5), width: 2),
+                      border: Border.all(
+                          color: AppColors.amberFocus.withOpacity(0.5),
+                          width: 2),
                     ),
-                    child: const Icon(Icons.radar, color: AppColors.amberFocus, size: 60),
+                    child: const Icon(Icons.radar,
+                        color: AppColors.amberFocus, size: 60),
                   ),
                 )
               else if (_hasFailed)
@@ -124,7 +130,8 @@ class _VerificationProcessingScreenState extends State<VerificationProcessingScr
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.crimsonAlert, width: 2),
                   ),
-                  child: const Icon(Icons.error_outline, color: AppColors.crimsonAlert, size: 54),
+                  child: const Icon(Icons.error_outline,
+                      color: AppColors.crimsonAlert, size: 54),
                 )
               else
                 Container(
@@ -134,13 +141,16 @@ class _VerificationProcessingScreenState extends State<VerificationProcessingScr
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.amberFocus, width: 2),
                   ),
-                  child: const Icon(Icons.hourglass_top, color: AppColors.amberFocus, size: 54),
+                  child: const Icon(Icons.hourglass_top,
+                      color: AppColors.amberFocus, size: 54),
                 ),
               const SizedBox(height: AppSpacing.xxl),
               Text(
                 _hasFailed
                     ? 'VERIFICATION REJECTED'
-                    : (_isProcessing ? 'AUDITING PROOF TELEMETRY' : 'VERIFICATION PENDING'),
+                    : (_isProcessing
+                        ? 'AUDITING PROOF TELEMETRY'
+                        : 'VERIFICATION PENDING'),
                 style: AppTypography.titleLarge,
                 textAlign: TextAlign.center,
               ),

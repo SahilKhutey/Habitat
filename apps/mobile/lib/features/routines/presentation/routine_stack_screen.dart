@@ -61,12 +61,17 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: HabitatTheme.surfacePrimary,
-        title: const Text('🏆 MORNING TRINITY COMPLETE!', style: TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold)),
-        content: const Text('You executed all 3 stages without cognitive friction.\n\n+170 Total XP Deposited in Ledger\nStreak Maintained 🔥'),
+        title: const Text('🏆 MORNING TRINITY COMPLETE!',
+            style: TextStyle(
+                color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold)),
+        content: const Text(
+            'You executed all 3 stages without cognitive friction.\n\n+170 Total XP Deposited in Ledger\nStreak Maintained 🔥'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('ENTER DAY WITH DISCIPLINE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: const Text('ENTER DAY WITH DISCIPLINE',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -95,7 +100,8 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: HabitatTheme.amberFocus.withOpacity(0.4)),
+                border:
+                    Border.all(color: HabitatTheme.amberFocus.withOpacity(0.4)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,17 +109,28 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('🌅 THE MORNING TRINITY', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
+                      Text('🌅 THE MORNING TRINITY',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900)),
                       Chip(
                         backgroundColor: Color(0xFF1E1E26),
-                        label: Text('3 STEPS • +170 XP', style: TextStyle(color: HabitatTheme.amberFocus, fontSize: 11, fontWeight: FontWeight.bold)),
+                        label: Text('3 STEPS • +170 XP',
+                            style: TextStyle(
+                                color: HabitatTheme.amberFocus,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Eliminate morning decision fatigue: Smooth your bed, hydrate immediately, and activate neuromuscular energy in one unbroken sequence.',
-                    style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 13, height: 1.4),
+                    style: TextStyle(
+                        color: HabitatTheme.textSecondary,
+                        fontSize: 13,
+                        height: 1.4),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
@@ -121,10 +138,15 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                     height: 50,
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.play_arrow, color: Colors.black),
-                      label: const Text('START ROUTINE STACK', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                      label: const Text('START ROUTINE STACK',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: HabitatTheme.amberFocus,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
                       ),
                       onPressed: () {
                         setState(() {
@@ -139,7 +161,12 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
             ),
             const SizedBox(height: 28),
 
-            const Text('ROUTINE STACK SEQUENCE', style: TextStyle(color: HabitatTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+            const Text('ROUTINE STACK SEQUENCE',
+                style: TextStyle(
+                    color: HabitatTheme.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2)),
             const SizedBox(height: 12),
 
             ..._routineSteps.asMap().entries.map((entry) {
@@ -156,22 +183,38 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                   children: [
                     CircleAvatar(
                       radius: 14,
-                      backgroundColor: HabitatTheme.amberFocus.withOpacity(0.15),
-                      child: Text('${step['step']}', style: const TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold, fontSize: 13)),
+                      backgroundColor:
+                          HabitatTheme.amberFocus.withOpacity(0.15),
+                      child: Text('${step['step']}',
+                          style: const TextStyle(
+                              color: HabitatTheme.amberFocus,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13)),
                     ),
                     const SizedBox(width: 14),
-                    Icon(step['icon'] as IconData, color: HabitatTheme.amberFocus, size: 24),
+                    Icon(step['icon'] as IconData,
+                        color: HabitatTheme.amberFocus, size: 24),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(step['title'] as String, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-                          Text(step['category'] as String, style: const TextStyle(color: HabitatTheme.textMuted, fontSize: 12)),
+                          Text(step['title'] as String,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold)),
+                          Text(step['category'] as String,
+                              style: const TextStyle(
+                                  color: HabitatTheme.textMuted, fontSize: 12)),
                         ],
                       ),
                     ),
-                    Text('+${step['xp']} XP', style: const TextStyle(color: HabitatTheme.amberFocus, fontWeight: FontWeight.bold, fontSize: 13)),
+                    Text('+${step['xp']} XP',
+                        style: const TextStyle(
+                            color: HabitatTheme.amberFocus,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13)),
                   ],
                 ),
               );
@@ -204,9 +247,19 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('STEP ${_currentStepIndex + 1} OF ${_routineSteps.length}', style: const TextStyle(color: HabitatTheme.amberFocus, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                        Text(
+                            'STEP ${_currentStepIndex + 1} OF ${_routineSteps.length}',
+                            style: const TextStyle(
+                                color: HabitatTheme.amberFocus,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2)),
                         const SizedBox(height: 2),
-                        Text(currentStep['title'] as String, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                        Text(currentStep['title'] as String,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900)),
                       ],
                     ),
                   ),
@@ -227,7 +280,9 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                   children: [
                     Center(
                       child: Icon(
-                        isVideo ? Icons.accessibility_new : currentStep['icon'] as IconData,
+                        isVideo
+                            ? Icons.accessibility_new
+                            : currentStep['icon'] as IconData,
                         size: 100,
                         color: Colors.white24,
                       ),
@@ -244,19 +299,30 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                           decoration: BoxDecoration(
                             color: Colors.black87,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: HabitatTheme.emeraldVictory),
+                            border:
+                                Border.all(color: HabitatTheme.emeraldVictory),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Row(
                                 children: [
-                                  Icon(Icons.remove_red_eye, color: HabitatTheme.emeraldVictory, size: 18),
+                                  Icon(Icons.remove_red_eye,
+                                      color: HabitatTheme.emeraldVictory,
+                                      size: 18),
                                   SizedBox(width: 8),
-                                  Text('AI POSE ENGINE ACTIVE', style: TextStyle(color: HabitatTheme.emeraldVictory, fontWeight: FontWeight.bold, fontSize: 12)),
+                                  Text('AI POSE ENGINE ACTIVE',
+                                      style: TextStyle(
+                                          color: HabitatTheme.emeraldVictory,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12)),
                                 ],
                               ),
-                              Text('$_repsCounted / $_targetReps REPS', style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w900)),
+                              Text('$_repsCounted / $_targetReps REPS',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w900)),
                             ],
                           ),
                         ),
@@ -274,8 +340,12 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                   if (isVideo && _repsCounted < _targetReps)
                     ElevatedButton.icon(
                       icon: const Icon(Icons.add, color: Colors.black),
-                      label: const Text('SIMULATE REP DETECTED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(backgroundColor: HabitatTheme.amberFocus),
+                      label: const Text('SIMULATE REP DETECTED',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: HabitatTheme.amberFocus),
                       onPressed: () {
                         setState(() {
                           _repsCounted++;
@@ -288,14 +358,24 @@ class _RoutineStackScreenState extends State<RoutineStackScreen> {
                     height: 56,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: (isVideo && _repsCounted < _targetReps) ? Colors.grey : HabitatTheme.emeraldVictory,
+                        backgroundColor: (isVideo && _repsCounted < _targetReps)
+                            ? Colors.grey
+                            : HabitatTheme.emeraldVictory,
                         foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
                       ),
-                      onPressed: (isVideo && _repsCounted < _targetReps) ? null : _advanceStep,
+                      onPressed: (isVideo && _repsCounted < _targetReps)
+                          ? null
+                          : _advanceStep,
                       child: Text(
-                        _currentStepIndex < _routineSteps.length - 1 ? 'NEXT STAGE (STEP ${_currentStepIndex + 2})' : 'FINISH ROUTINE STACK',
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, letterSpacing: 1),
+                        _currentStepIndex < _routineSteps.length - 1
+                            ? 'NEXT STAGE (STEP ${_currentStepIndex + 2})'
+                            : 'FINISH ROUTINE STACK',
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1),
                       ),
                     ),
                   ),

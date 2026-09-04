@@ -65,11 +65,13 @@ class SchedulePicker extends StatelessWidget {
                 onTap: () async {
                   final parts = timeOfDay.split(':');
                   final initialHour = int.tryParse(parts[0]) ?? 7;
-                  final initialMinute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+                  final initialMinute =
+                      parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
 
                   final picked = await showTimePicker(
                     context: context,
-                    initialTime: TimeOfDay(hour: initialHour, minute: initialMinute),
+                    initialTime:
+                        TimeOfDay(hour: initialHour, minute: initialMinute),
                   );
 
                   if (picked != null) {
@@ -79,7 +81,8 @@ class SchedulePicker extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: HabitatTheme.habitatGreen,
                     borderRadius: BorderRadius.circular(10),

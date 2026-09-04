@@ -42,7 +42,11 @@ class HealthRepository {
     );
   }
 
-  void updateMeal({required String id, required MealType type, String? notes, DateTime? timestamp}) {
+  void updateMeal(
+      {required String id,
+      required MealType type,
+      String? notes,
+      DateTime? timestamp}) {
     _database.updateMealEntry(LocalMealEntry(
       id: id,
       type: type.name,

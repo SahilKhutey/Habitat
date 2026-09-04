@@ -28,11 +28,15 @@ class MissionScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.timer_outlined, color: AppColors.amberFocus, size: 20),
+                      const Icon(Icons.timer_outlined,
+                          color: AppColors.amberFocus, size: 20),
                       const SizedBox(width: AppSpacing.xs),
                       Text(
                         'SCHEDULED ${mission.scheduledAt.hour.toString().padLeft(2, '0')}:${mission.scheduledAt.minute.toString().padLeft(2, '0')}',
-                        style: const TextStyle(color: AppColors.amberFocus, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                        style: const TextStyle(
+                            color: AppColors.amberFocus,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5),
                       ),
                     ],
                   ),
@@ -40,7 +44,9 @@ class MissionScreen extends StatelessWidget {
                   Text(
                     mission.status == MissionStatus.retry
                         ? 'RETRY PROTOCOL ACTIVE'
-                        : (mission.status == MissionStatus.inProgress ? 'MISSION IN PROGRESS' : 'MISSION ACTIVE'),
+                        : (mission.status == MissionStatus.inProgress
+                            ? 'MISSION IN PROGRESS'
+                            : 'MISSION ACTIVE'),
                     style: AppTypography.displayMedium,
                   ),
                 ],
@@ -58,7 +64,9 @@ class MissionScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Icon(
-                      mission.taskProofType == 'VIDEO' ? Icons.videocam : Icons.camera_alt,
+                      mission.taskProofType == 'VIDEO'
+                          ? Icons.videocam
+                          : Icons.camera_alt,
                       color: AppColors.amberFocus,
                       size: 54,
                     ),
@@ -79,10 +87,12 @@ class MissionScreen extends StatelessWidget {
                       'Attempt ${mission.attemptCount + 1} • Retry Count: ${mission.retryCount}',
                       style: AppTypography.bodySmall,
                     ),
-                    if (mission.status == MissionStatus.retry && mission.nextRetryAt != null) ...[
+                    if (mission.status == MissionStatus.retry &&
+                        mission.nextRetryAt != null) ...[
                       const SizedBox(height: AppSpacing.sm),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.crimsonAlert.withOpacity(0.2),
                           borderRadius: AppRadii.radiusSmall,
@@ -90,7 +100,10 @@ class MissionScreen extends StatelessWidget {
                         ),
                         child: const Text(
                           'Next Alarm in 5 minutes unless completed',
-                          style: TextStyle(color: AppColors.crimsonAlert, fontSize: 12, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: AppColors.crimsonAlert,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -100,10 +113,13 @@ class MissionScreen extends StatelessWidget {
 
               // Action Button
               AppButton.primary(
-                label: mission.status == MissionStatus.inProgress ? 'CAPTURE PROOF' : 'START MISSION',
+                label: mission.status == MissionStatus.inProgress
+                    ? 'CAPTURE PROOF'
+                    : 'START MISSION',
                 icon: Icons.play_arrow,
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/missions/capture-proof', arguments: {
+                  Navigator.of(context)
+                      .pushNamed('/missions/capture-proof', arguments: {
                     'missionId': mission.id,
                     'taskTitle': mission.taskTitle,
                     'proofType': mission.taskProofType,

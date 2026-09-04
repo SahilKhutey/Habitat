@@ -90,7 +90,8 @@ class AchievementService {
   List<AchievementModel> getAllAchievements() {
     final unlockedCodes = _repository.getUnlockedAchievements();
     final allAttempts = _repository.getAllAttempts();
-    final completedCount = allAttempts.where((a) => a.status == 'COMPLETED').length;
+    final completedCount =
+        allAttempts.where((a) => a.status == 'COMPLETED').length;
     final streak = _repository.getStreak();
 
     return _definitions.map((def) {
@@ -125,7 +126,8 @@ class AchievementService {
   void evaluateAndUnlock() {
     final unlocked = _repository.getUnlockedAchievements();
     final allAttempts = _repository.getAllAttempts();
-    final completedCount = allAttempts.where((a) => a.status == 'COMPLETED').length;
+    final completedCount =
+        allAttempts.where((a) => a.status == 'COMPLETED').length;
     final streak = _repository.getStreak();
 
     for (final def in _definitions) {
@@ -137,7 +139,8 @@ class AchievementService {
       bool qualifies = false;
 
       if (reqType == 'TASK_COUNT' && completedCount >= target) qualifies = true;
-      if (reqType == 'STREAK' && streak.currentStreak >= target) qualifies = true;
+      if (reqType == 'STREAK' && streak.currentStreak >= target)
+        qualifies = true;
 
       if (qualifies) {
         _repository.unlockAchievement(code);

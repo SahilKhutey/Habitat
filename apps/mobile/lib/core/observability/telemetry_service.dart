@@ -94,28 +94,34 @@ class TelemetryBreadcrumb {
         'message': _sanitize(message),
         'level': level.name,
         'timestamp': timestamp.toIso8601String(),
-        if (data != null) 'data': data!.map((k, v) => MapEntry(k, _sanitize(v.toString()))),
+        if (data != null)
+          'data': data!.map((k, v) => MapEntry(k, _sanitize(v.toString()))),
       };
 
   /// Redacts potential PII, email addresses, IP addresses, and file paths containing user identity
   static String _sanitize(String input) {
     return input
-        .replaceAll(RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'), '[REDACTED_EMAIL]')
+        .replaceAll(RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'),
+            '[REDACTED_EMAIL]')
         .replaceAll(RegExp(r'(\d{1,3}\.){3}\d{1,3}'), '[REDACTED_IP]');
   }
 }
 
 abstract class ITelemetryClient {
-  Future<void> recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false});
+  Future<void> recordError(dynamic error, StackTrace? stackTrace,
+      {String? reason, bool fatal = false});
   Future<void> recordBreadcrumb(TelemetryBreadcrumb breadcrumb);
-  Future<void> recordDiagnosticEvent(DiagnosticEventType event, {Map<String, dynamic>? metadata});
+  Future<void> recordDiagnosticEvent(DiagnosticEventType event,
+      {Map<String, dynamic>? metadata});
   Future<void> setCustomTag(String key, String value);
 }
 
 class LocalConsoleTelemetryClient implements ITelemetryClient {
   @override
-  Future<void> recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false}) async {
-    debugPrint('[Telemetry] ${fatal ? "FATAL" : "ERROR"}: $error | reason: $reason');
+  Future<void> recordError(dynamic error, StackTrace? stackTrace,
+      {String? reason, bool fatal = false}) async {
+    debugPrint(
+        '[Telemetry] ${fatal ? "FATAL" : "ERROR"}: $error | reason: $reason');
     if (stackTrace != null) {
       debugPrint('[Telemetry StackTrace]:\n$stackTrace');
     }
@@ -123,11 +129,13 @@ class LocalConsoleTelemetryClient implements ITelemetryClient {
 
   @override
   Future<void> recordBreadcrumb(TelemetryBreadcrumb breadcrumb) async {
-    debugPrint('[Telemetry Breadcrumb][${breadcrumb.category}]: ${breadcrumb.message}');
+    debugPrint(
+        '[Telemetry Breadcrumb][${breadcrumb.category}]: ${breadcrumb.message}');
   }
 
   @override
-  Future<void> recordDiagnosticEvent(DiagnosticEventType event, {Map<String, dynamic>? metadata}) async {
+  Future<void> recordDiagnosticEvent(DiagnosticEventType event,
+      {Map<String, dynamic>? metadata}) async {
     debugPrint('[Diagnostic Event][${event.name}] metadata: $metadata');
   }
 
@@ -182,7 +190,9 @@ class TelemetryService {
     };
   }
 
-  void recordBreadcrumb(String category, String message, {TelemetryLevel level = TelemetryLevel.info, Map<String, dynamic>? data}) {
+  void recordBreadcrumb(String category, String message,
+      {TelemetryLevel level = TelemetryLevel.info,
+      Map<String, dynamic>? data}) {
     final crumb = TelemetryBreadcrumb(
       category: category,
       message: message,
@@ -198,12 +208,14 @@ class TelemetryService {
     _client.recordBreadcrumb(crumb);
   }
 
-  void recordDiagnosticEvent(DiagnosticEventType event, {Map<String, dynamic>? metadata}) {
+  void recordDiagnosticEvent(DiagnosticEventType event,
+      {Map<String, dynamic>? metadata}) {
     _eventLog.add(event);
     _client.recordDiagnosticEvent(event, metadata: metadata);
   }
 
-  void recordError(dynamic error, StackTrace? stackTrace, {String? reason, bool fatal = false}) {
+  void recordError(dynamic error, StackTrace? stackTrace,
+      {String? reason, bool fatal = false}) {
     _client.recordError(error, stackTrace, reason: reason, fatal: fatal);
   }
 

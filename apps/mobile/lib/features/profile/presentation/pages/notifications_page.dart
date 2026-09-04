@@ -22,7 +22,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   void initState() {
     super.initState();
-    _settingsService = SettingsService(ProfileRepository(LocalDatabase.instance));
+    _settingsService =
+        SettingsService(ProfileRepository(LocalDatabase.instance));
     _notifications = _settingsService.getNotificationSettings();
   }
 
@@ -51,28 +52,32 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   title: 'Task Reminders',
                   subtitle: 'Scheduled cue reminders before alarm triggers',
                   toggleValue: _notifications.taskRemindersEnabled,
-                  onToggleChanged: (val) => _update(_notifications.copyWith(taskRemindersEnabled: val)),
+                  onToggleChanged: (val) => _update(
+                      _notifications.copyWith(taskRemindersEnabled: val)),
                 ),
                 SettingsTile(
                   icon: Icons.alarm_on_outlined,
                   title: 'Alarm Notifications',
                   subtitle: 'High-priority discipline alarm notifications',
                   toggleValue: _notifications.alarmNotificationsEnabled,
-                  onToggleChanged: (val) => _update(_notifications.copyWith(alarmNotificationsEnabled: val)),
+                  onToggleChanged: (val) => _update(
+                      _notifications.copyWith(alarmNotificationsEnabled: val)),
                 ),
                 SettingsTile(
                   icon: Icons.trending_up,
                   title: 'Daily Progress Updates',
                   subtitle: 'Evening reflection and completion summary',
                   toggleValue: _notifications.progressUpdatesEnabled,
-                  onToggleChanged: (val) => _update(_notifications.copyWith(progressUpdatesEnabled: val)),
+                  onToggleChanged: (val) => _update(
+                      _notifications.copyWith(progressUpdatesEnabled: val)),
                 ),
                 SettingsTile(
                   icon: Icons.emoji_events_outlined,
                   title: 'Achievement Alerts',
                   subtitle: 'Instant toast when milestone rewards unlock',
                   toggleValue: _notifications.achievementAlertsEnabled,
-                  onToggleChanged: (val) => _update(_notifications.copyWith(achievementAlertsEnabled: val)),
+                  onToggleChanged: (val) => _update(
+                      _notifications.copyWith(achievementAlertsEnabled: val)),
                 ),
               ],
             ),
@@ -86,7 +91,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       ? '${_notifications.quietHoursStart} - ${_notifications.quietHoursEnd}'
                       : 'Disabled',
                   toggleValue: _notifications.quietHoursEnabled,
-                  onToggleChanged: (val) => _update(_notifications.copyWith(quietHoursEnabled: val)),
+                  onToggleChanged: (val) =>
+                      _update(_notifications.copyWith(quietHoursEnabled: val)),
                 ),
               ],
             ),

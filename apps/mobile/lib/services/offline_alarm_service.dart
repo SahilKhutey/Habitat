@@ -13,7 +13,8 @@ class OfflineAlarmService {
   int get retryIntervalMinutes => isTestMode ? 1 : 5;
 
   /// Trigger an alarm for a task and create an attempt
-  LocalTaskAttempt triggerAlarm({required String taskId, required String alarmId}) {
+  LocalTaskAttempt triggerAlarm(
+      {required String taskId, required String alarmId}) {
     // 1. Check existing attempts count
     final existingAttempts = LocalDatabase.instance.getAttemptsForTask(taskId);
     final attemptNumber = existingAttempts.length + 1;
@@ -30,15 +31,20 @@ class OfflineAlarmService {
     LocalDatabase.instance.recordAttempt(attempt);
 
     // 2. Schedule 5-minute escalation retry if not completed
-    _scheduleRetry(taskId: taskId, alarmId: alarmId, attemptNumber: attemptNumber);
+    _scheduleRetry(
+        taskId: taskId, alarmId: alarmId, attemptNumber: attemptNumber);
 
     return attempt;
   }
 
-  void _scheduleRetry({required String taskId, required String alarmId, required int attemptNumber}) {
+  void _scheduleRetry(
+      {required String taskId,
+      required String alarmId,
+      required int attemptNumber}) {
     _activeRetryTimers[taskId]?.cancel();
 
-    _activeRetryTimers[taskId] = Timer(Duration(minutes: retryIntervalMinutes), () {
+    _activeRetryTimers[taskId] =
+        Timer(Duration(minutes: retryIntervalMinutes), () {
       // Re-trigger alarm if task is still not completed
       final task = LocalDatabase.instance.getTask(taskId);
       if (task != null && task.active) {
@@ -48,7 +54,8 @@ class OfflineAlarmService {
   }
 
   /// Mark task completed and immediately cancel any pending retry timers
-  void cancelRetryAndComplete({required String taskId, required String attemptId}) {
+  void cancelRetryAndComplete(
+      {required String taskId, required String attemptId}) {
     _activeRetryTimers[taskId]?.cancel();
     _activeRetryTimers.remove(taskId);
 

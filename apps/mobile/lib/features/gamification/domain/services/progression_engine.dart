@@ -44,10 +44,12 @@ class StreakCalculator {
         .toList()
       ..sort((a, b) => b.compareTo(a));
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     final yesterday = today.subtract(const Duration(days: 1));
 
-    if (normalized.isEmpty || (normalized.first != today && normalized.first != yesterday)) {
+    if (normalized.isEmpty ||
+        (normalized.first != today && normalized.first != yesterday)) {
       return 0;
     }
 

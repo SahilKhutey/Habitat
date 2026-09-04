@@ -11,7 +11,8 @@ class ProofResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isAccepted = resultData['isAccepted'] as bool? ?? false;
     final taskName = resultData['taskName'] as String? ?? 'Discipline Task';
-    final reason = resultData['reason'] as String? ?? 'Proof did not meet verification criteria.';
+    final reason = resultData['reason'] as String? ??
+        'Proof did not meet verification criteria.';
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -30,17 +31,24 @@ class ProofResultScreen extends StatelessWidget {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: (isAccepted ? AppColors.emeraldVictory : AppColors.crimsonAlert).withOpacity(0.2),
+                      color: (isAccepted
+                              ? AppColors.emeraldVictory
+                              : AppColors.crimsonAlert)
+                          .withOpacity(0.2),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isAccepted ? AppColors.emeraldVictory : AppColors.crimsonAlert,
+                        color: isAccepted
+                            ? AppColors.emeraldVictory
+                            : AppColors.crimsonAlert,
                         width: 3,
                       ),
                     ),
                     alignment: Alignment.center,
                     child: Icon(
                       isAccepted ? Icons.check : Icons.close,
-                      color: isAccepted ? AppColors.emeraldVictory : AppColors.crimsonAlert,
+                      color: isAccepted
+                          ? AppColors.emeraldVictory
+                          : AppColors.crimsonAlert,
                       size: 54,
                     ),
                   ),
@@ -56,7 +64,8 @@ class ProofResultScreen extends StatelessWidget {
                         : reason,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: isAccepted ? Colors.white70 : AppColors.crimsonAlert,
+                      color:
+                          isAccepted ? Colors.white70 : AppColors.crimsonAlert,
                       fontSize: 14,
                     ),
                   ),
@@ -81,11 +90,13 @@ class ProofResultScreen extends StatelessWidget {
 
               // Bottom Action Button
               AppButton.primary(
-                label: isAccepted ? 'PROCEED TO REWARDS' : 'RECAPTURE PROOF NOW',
+                label:
+                    isAccepted ? 'PROCEED TO REWARDS' : 'RECAPTURE PROOF NOW',
                 icon: isAccepted ? Icons.arrow_forward : Icons.refresh,
                 onPressed: () {
                   if (isAccepted) {
-                    Navigator.of(context).pushReplacementNamed('/missions/success');
+                    Navigator.of(context)
+                        .pushReplacementNamed('/missions/success');
                   } else {
                     Navigator.of(context).pop();
                   }

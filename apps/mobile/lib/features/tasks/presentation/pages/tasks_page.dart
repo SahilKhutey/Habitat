@@ -83,7 +83,8 @@ class _TasksPageState extends State<TasksPage> {
                 // 1. Filter Chips Row
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Row(
                     children: _filters.map((filter) {
                       final isSelected = _controller.activeFilter == filter;
@@ -98,7 +99,8 @@ class _TasksPageState extends State<TasksPage> {
                             fontFamily: HabitatTheme.fontHeading,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: isSelected ? HabitatTheme.forest : Colors.white,
+                            color:
+                                isSelected ? HabitatTheme.forest : Colors.white,
                           ),
                           onSelected: (_) => _controller.setFilter(filter),
                         ),
@@ -121,9 +123,10 @@ class _TasksPageState extends State<TasksPage> {
                               task: task,
                               onTap: () => _openTaskDetails(task),
                               onStart: () => _startTask(task),
-                              onTogglePause: () => task.status == TaskStatus.paused
-                                  ? _controller.resumeTask(task.id)
-                                  : _controller.pauseTask(task.id),
+                              onTogglePause: () =>
+                                  task.status == TaskStatus.paused
+                                      ? _controller.resumeTask(task.id)
+                                      : _controller.pauseTask(task.id),
                               onArchive: () => _controller.archiveTask(task.id),
                             );
                           },
@@ -158,7 +161,8 @@ class _TasksPageState extends State<TasksPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.checklist_rtl, size: 56, color: HabitatTheme.youngLeaf),
+            const Icon(Icons.checklist_rtl,
+                size: 56, color: HabitatTheme.youngLeaf),
             const SizedBox(height: 16),
             Text(
               'NO ${_controller.activeFilter} TASKS',

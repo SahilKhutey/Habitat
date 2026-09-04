@@ -13,14 +13,16 @@ abstract class IBatteryOptimizationService {
 class BatteryOptimizationService implements IBatteryOptimizationService {
   static const MethodChannel _channel = MethodChannel('habitat/native_alarm');
 
-  static final BatteryOptimizationService instance = BatteryOptimizationService._internal();
+  static final BatteryOptimizationService instance =
+      BatteryOptimizationService._internal();
   BatteryOptimizationService._internal();
 
   @override
   Future<bool> isOptimizationIgnored() async {
     if (!Platform.isAndroid) return true;
     try {
-      final result = await _channel.invokeMethod<bool>('isIgnoringBatteryOptimizations');
+      final result =
+          await _channel.invokeMethod<bool>('isIgnoringBatteryOptimizations');
       return result ?? false;
     } catch (_) {
       return false;
@@ -41,7 +43,8 @@ class BatteryOptimizationService implements IBatteryOptimizationService {
   Future<bool> canScheduleExactAlarms() async {
     if (!Platform.isAndroid) return true;
     try {
-      final result = await _channel.invokeMethod<bool>('canScheduleExactAlarms');
+      final result =
+          await _channel.invokeMethod<bool>('canScheduleExactAlarms');
       return result ?? false;
     } catch (_) {
       return false;
@@ -63,7 +66,8 @@ class BatteryOptimizationService implements IBatteryOptimizationService {
     if (Platform.isIOS) return 'Apple';
     if (!Platform.isAndroid) return 'Generic';
     try {
-      final result = await _channel.invokeMethod<String>('getDeviceManufacturer');
+      final result =
+          await _channel.invokeMethod<String>('getDeviceManufacturer');
       return result ?? 'Android';
     } catch (_) {
       return 'Android';

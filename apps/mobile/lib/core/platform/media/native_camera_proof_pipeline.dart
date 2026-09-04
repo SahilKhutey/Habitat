@@ -107,7 +107,8 @@ class NativeCameraProofPipeline implements ICameraProofPipeline {
       mimeType: result.mimeType,
       byteSize: result.byteSize,
       sha256Checksum: result.sha256Checksum,
-      durationSeconds: result.durationSeconds > 0 ? result.durationSeconds : durationSeconds,
+      durationSeconds:
+          result.durationSeconds > 0 ? result.durationSeconds : durationSeconds,
       capturedAt: result.capturedAt,
       metadata: result.metadata,
     );
@@ -127,13 +128,15 @@ class MediaVerificationEngine {
   }) async {
     // 1. Validate Checksum & File integrity
     if (proofFile.sha256Checksum.isEmpty || proofFile.byteSize <= 0) {
-      return VerificationResult.failed('Invalid media file: empty checksum or zero bytes');
+      return VerificationResult.failed(
+          'Invalid media file: empty checksum or zero bytes');
     }
 
     // 2. Type-specific verification rules
     if (requiredType.toUpperCase() == 'VIDEO') {
       if (proofFile.durationSeconds < 3) {
-        return VerificationResult.failed('Video duration must be at least 3 seconds (got ${proofFile.durationSeconds}s)');
+        return VerificationResult.failed(
+            'Video duration must be at least 3 seconds (got ${proofFile.durationSeconds}s)');
       }
       return const VerificationResult(
         isPassed: true,
@@ -158,4 +161,3 @@ class MediaVerificationEngine {
     }
   }
 }
-

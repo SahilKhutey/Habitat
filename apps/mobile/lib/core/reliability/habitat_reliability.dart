@@ -56,7 +56,8 @@ class HabitatReliabilityCoordinator {
       taskCount: database.getAllTasks().length,
       alarmCount: database.getAllAlarms().length,
       attemptCount: database.getAllAttempts().length,
-      proofCount: database.getAllAttempts().fold<int>(0, (sum, a) => sum + database.getProofsForAttempt(a.id).length),
+      proofCount: database.getAllAttempts().fold<int>(
+          0, (sum, a) => sum + database.getProofsForAttempt(a.id).length),
       healthLogCount: database.getAllHealthLogs().length,
       revision: database.revision,
       lastPersist: database.lastSavedAt,

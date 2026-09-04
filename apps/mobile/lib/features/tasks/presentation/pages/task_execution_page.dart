@@ -22,7 +22,8 @@ class TaskExecutionPage extends StatefulWidget {
   State<TaskExecutionPage> createState() => _TaskExecutionPageState();
 }
 
-class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTickerProviderStateMixin {
+class _TaskExecutionPageState extends State<TaskExecutionPage>
+    with SingleTickerProviderStateMixin {
   late final ExecutionController _controller;
   late final AnimationController _radarAnim;
 
@@ -34,7 +35,9 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
       taskId: widget.taskId,
       taskTitle: widget.taskTitle,
     );
-    _radarAnim = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _radarAnim =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat();
   }
 
   @override
@@ -92,7 +95,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: HabitatTheme.habitatGreen,
                           borderRadius: BorderRadius.circular(8),
@@ -109,7 +113,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                       ),
                       if (_controller.isSpeedBonusActive)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: HabitatTheme.growthGreen.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
@@ -117,7 +122,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.bolt, size: 12, color: HabitatTheme.growthGreen),
+                              Icon(Icons.bolt,
+                                  size: 12, color: HabitatTheme.growthGreen),
                               SizedBox(width: 4),
                               Text(
                                 '+50% SPEED BONUS ACTIVE',
@@ -200,8 +206,11 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton.icon(
-                  onPressed: () => _controller.submitProof('local_proof_path_${DateTime.now().millisecondsSinceEpoch}.jpg'),
-                  icon: Icon(proofType == 'VIDEO' ? Icons.videocam : Icons.camera_alt, size: 20),
+                  onPressed: () => _controller.submitProof(
+                      'local_proof_path_${DateTime.now().millisecondsSinceEpoch}.jpg'),
+                  icon: Icon(
+                      proofType == 'VIDEO' ? Icons.videocam : Icons.camera_alt,
+                      size: 20),
                   label: Text(
                     'CAPTURE PROOF ($proofType)',
                     style: const TextStyle(
@@ -214,7 +223,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.growthGreen,
                     foregroundColor: HabitatTheme.forest,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
               ),
@@ -239,9 +249,12 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                 height: 110,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.5), width: 2),
+                  border: Border.all(
+                      color: HabitatTheme.growthGreen.withOpacity(0.5),
+                      width: 2),
                 ),
-                child: const Icon(Icons.radar, color: HabitatTheme.growthGreen, size: 50),
+                child: const Icon(Icons.radar,
+                    color: HabitatTheme.growthGreen, size: 50),
               ),
             ),
             const SizedBox(height: 28),
@@ -289,9 +302,11 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                     decoration: BoxDecoration(
                       color: HabitatTheme.growthGreen.withOpacity(0.2),
                       shape: BoxShape.circle,
-                      border: Border.all(color: HabitatTheme.growthGreen, width: 3),
+                      border:
+                          Border.all(color: HabitatTheme.growthGreen, width: 3),
                     ),
-                    child: const Icon(Icons.check, color: HabitatTheme.growthGreen, size: 48),
+                    child: const Icon(Icons.check,
+                        color: HabitatTheme.growthGreen, size: 48),
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -321,7 +336,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                     decoration: BoxDecoration(
                       color: HabitatTheme.surfacePrimary,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.5)),
+                      border: Border.all(
+                          color: HabitatTheme.growthGreen.withOpacity(0.5)),
                     ),
                     child: Column(
                       children: [
@@ -336,7 +352,9 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          execution.isSpeedBonus ? 'Includes +50% Instant Action Bonus' : 'Standard Routine Bonus',
+                          execution.isSpeedBonus
+                              ? 'Includes +50% Instant Action Bonus'
+                              : 'Standard Routine Bonus',
                           style: const TextStyle(
                             fontFamily: HabitatTheme.fontBody,
                             fontSize: 12,
@@ -368,7 +386,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.growthGreen,
                     foregroundColor: HabitatTheme.forest,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
               ),
@@ -389,10 +408,10 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(height: 20),
-
               Column(
                 children: [
-                  const Icon(Icons.replay_circle_filled, color: Colors.orangeAccent, size: 72),
+                  const Icon(Icons.replay_circle_filled,
+                      color: Colors.orangeAccent, size: 72),
                   const SizedBox(height: 20),
                   const Text(
                     'VERIFICATION RETRY ARMED',
@@ -416,12 +435,12 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                   ),
                 ],
               ),
-
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton.icon(
-                  onPressed: () => _controller.submitProof('retry_proof_${DateTime.now().millisecondsSinceEpoch}.jpg'),
+                  onPressed: () => _controller.submitProof(
+                      'retry_proof_${DateTime.now().millisecondsSinceEpoch}.jpg'),
                   icon: const Icon(Icons.refresh, size: 20),
                   label: const Text(
                     'RETRY PROOF NOW',
@@ -434,7 +453,8 @@ class _TaskExecutionPageState extends State<TaskExecutionPage> with SingleTicker
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HabitatTheme.growthGreen,
                     foregroundColor: HabitatTheme.forest,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
               ),

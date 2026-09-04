@@ -22,7 +22,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
   @override
   void initState() {
     super.initState();
-    _settingsService = SettingsService(ProfileRepository(LocalDatabase.instance));
+    _settingsService =
+        SettingsService(ProfileRepository(LocalDatabase.instance));
     _preferences = _settingsService.getPreferences();
   }
 
@@ -49,16 +50,22 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 SettingsTile(
                   icon: Icons.schedule,
                   title: '24-Hour Time Format',
-                  subtitle: _preferences.timeFormat24h ? 'e.g. 14:30' : 'e.g. 02:30 PM',
+                  subtitle: _preferences.timeFormat24h
+                      ? 'e.g. 14:30'
+                      : 'e.g. 02:30 PM',
                   toggleValue: _preferences.timeFormat24h,
-                  onToggleChanged: (val) => _update(_preferences.copyWith(timeFormat24h: val)),
+                  onToggleChanged: (val) =>
+                      _update(_preferences.copyWith(timeFormat24h: val)),
                 ),
                 SettingsTile(
                   icon: Icons.calendar_today_outlined,
                   title: 'Week Starts on Monday',
-                  subtitle: _preferences.weekStartsOnMonday ? 'Monday to Sunday' : 'Sunday to Saturday',
+                  subtitle: _preferences.weekStartsOnMonday
+                      ? 'Monday to Sunday'
+                      : 'Sunday to Saturday',
                   toggleValue: _preferences.weekStartsOnMonday,
-                  onToggleChanged: (val) => _update(_preferences.copyWith(weekStartsOnMonday: val)),
+                  onToggleChanged: (val) =>
+                      _update(_preferences.copyWith(weekStartsOnMonday: val)),
                 ),
               ],
             ),
@@ -71,7 +78,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   subtitle: _preferences.language,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('English is the active system language.')),
+                      const SnackBar(
+                          content:
+                              Text('English is the active system language.')),
                     );
                   },
                 ),
@@ -80,7 +89,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   title: 'Default Task View',
                   subtitle: _preferences.defaultTaskView,
                   onTap: () {
-                    final next = _preferences.defaultTaskView == 'List' ? 'Timeline' : 'List';
+                    final next = _preferences.defaultTaskView == 'List'
+                        ? 'Timeline'
+                        : 'List';
                     _update(_preferences.copyWith(defaultTaskView: next));
                   },
                 ),

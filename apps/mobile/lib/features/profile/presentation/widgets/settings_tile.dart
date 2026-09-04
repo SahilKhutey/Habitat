@@ -27,7 +27,8 @@ class SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleColor = isDestructive ? Colors.redAccent : Colors.white;
-    final iconColor = isDestructive ? Colors.redAccent : HabitatTheme.growthGreen;
+    final iconColor =
+        isDestructive ? Colors.redAccent : HabitatTheme.growthGreen;
 
     Widget? effectiveTrailing = trailing;
     if (toggleValue != null && onToggleChanged != null) {
@@ -37,7 +38,8 @@ class SettingsTile extends StatelessWidget {
         onChanged: onToggleChanged,
       );
     } else if (effectiveTrailing == null && onTap != null) {
-      effectiveTrailing = const Icon(Icons.chevron_right, color: HabitatTheme.textMuted, size: 20);
+      effectiveTrailing = const Icon(Icons.chevron_right,
+          color: HabitatTheme.textMuted, size: 20);
     }
 
     return Material(

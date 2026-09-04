@@ -16,7 +16,8 @@ void main() {
   }
 
   group('Standardized Component Suite Tests', () {
-    testWidgets('HabitatPrimaryButton handles tap and loading states', (tester) async {
+    testWidgets('HabitatPrimaryButton handles tap and loading states',
+        (tester) async {
       var pressed = false;
       await tester.pumpWidget(
         wrapWidget(
@@ -57,7 +58,8 @@ void main() {
       expect(find.text('Card Content'), findsOneWidget);
     });
 
-    testWidgets('HabitatTextField accepts and enters user input', (tester) async {
+    testWidgets('HabitatTextField accepts and enters user input',
+        (tester) async {
       final controller = TextEditingController();
 
       await tester.pumpWidget(
@@ -75,7 +77,8 @@ void main() {
       expect(controller.text, equals('Cold Shower Challenge'));
     });
 
-    testWidgets('HabitatEmptyState displays message and action', (tester) async {
+    testWidgets('HabitatEmptyState displays message and action',
+        (tester) async {
       var actionTriggered = false;
 
       await tester.pumpWidget(
@@ -93,7 +96,8 @@ void main() {
       );
 
       expect(find.text('No Active Tasks'), findsOneWidget);
-      expect(find.text('Create your first discipline habit to begin.'), findsOneWidget);
+      expect(find.text('Create your first discipline habit to begin.'),
+          findsOneWidget);
       expect(find.text('Create Habit'), findsOneWidget);
 
       await tester.tap(find.text('Create Habit'));

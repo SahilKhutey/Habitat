@@ -15,7 +15,8 @@ class CreateTaskController extends ChangeNotifier {
 
   // Step 0: Identity
   String title = 'Morning Sunlight Walk';
-  String description = 'Step outside and absorb morning sunlight for circadian alignment.';
+  String description =
+      'Step outside and absorb morning sunlight for circadian alignment.';
   TaskCategory category = TaskCategory.morning;
   TaskDifficulty difficulty = TaskDifficulty.medium;
 

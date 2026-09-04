@@ -32,9 +32,12 @@ class NotificationSettingsModel {
   }) =>
       NotificationSettingsModel(
         taskRemindersEnabled: taskRemindersEnabled ?? this.taskRemindersEnabled,
-        alarmNotificationsEnabled: alarmNotificationsEnabled ?? this.alarmNotificationsEnabled,
-        progressUpdatesEnabled: progressUpdatesEnabled ?? this.progressUpdatesEnabled,
-        achievementAlertsEnabled: achievementAlertsEnabled ?? this.achievementAlertsEnabled,
+        alarmNotificationsEnabled:
+            alarmNotificationsEnabled ?? this.alarmNotificationsEnabled,
+        progressUpdatesEnabled:
+            progressUpdatesEnabled ?? this.progressUpdatesEnabled,
+        achievementAlertsEnabled:
+            achievementAlertsEnabled ?? this.achievementAlertsEnabled,
         quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
         quietHoursStart: quietHoursStart ?? this.quietHoursStart,
         quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,
@@ -50,7 +53,8 @@ class NotificationSettingsModel {
         'quietHoursEnd': quietHoursEnd,
       };
 
-  factory NotificationSettingsModel.fromMap(Map<String, dynamic> map) => NotificationSettingsModel(
+  factory NotificationSettingsModel.fromMap(Map<String, dynamic> map) =>
+      NotificationSettingsModel(
         taskRemindersEnabled: map['taskReminders'] ?? true,
         alarmNotificationsEnabled: map['alarmNotifications'] ?? true,
         progressUpdatesEnabled: map['progressUpdates'] ?? true,

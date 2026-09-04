@@ -6,6 +6,8 @@ import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
@@ -13,17 +15,25 @@ void main() {
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
     db.resetAllData();
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
+    scheduler.reset();
   });
 
-  group('Phase AA: Reality Gap Repairs & Durable Persistence (AA1, AA2, AA3)', () {
-    test('AA2: JSON export uses strict jsonEncode without string concatenation corruption', () {
+  group('Phase AA: Reality Gap Repairs & Durable Persistence (AA1, AA2, AA3)',
+      () {
+    test(
+        'AA2: JSON export uses strict jsonEncode without string concatenation corruption',
+        () {
       final user = db.getOrCreateProfile(name: 'Explorer "Pro"');
-      db.updateProfile(displayName: 'Explorer "Pro"', bio: 'Line 1\nLine 2 with "quotes" and \\backslashes\\');
+      db.updateProfile(
+          displayName: 'Explorer "Pro"',
+          bio: 'Line 1\nLine 2 with "quotes" and \\backslashes\\');
 
       final exportedAll = db.exportAllDataAsJson();
       expect(() => jsonDecode(exportedAll), returnsNormally);
@@ -34,7 +44,9 @@ void main() {
       expect(decoded['user']['bio'], contains('Line 1\nLine 2 with "quotes"'));
     });
 
-    test('AA3: Cold load restores state and preserves customized tasks over defaults', () async {
+    test(
+        'AA3: Cold load restores state and preserves customized tasks over defaults',
+        () async {
       final task = LocalTask(
         id: 'task_custom_user',
         title: 'Customized Morning Routine',
@@ -49,16 +61,20 @@ void main() {
 
       final snapshot = db.exportCompleteStateJson();
       db.resetAllData();
-      expect(db.getAllTasks().length, greaterThan(1)); // template defaults loaded on reset
+      expect(db.getAllTasks().length,
+          greaterThan(1)); // template defaults loaded on reset
 
       // Simulate startup: load from disk before seeding defaults
       db.restoreFromStateJson(snapshot);
-      expect(db.getTask('task_custom_user')?.title, equals('Customized Morning Routine'));
+      expect(db.getTask('task_custom_user')?.title,
+          equals('Customized Morning Routine'));
     });
   });
 
   group('Phase AA: Authoritative Completion Coordinator (AA5, AA6, AA7)', () {
-    test('AA6 & AA7: MissionExecutionService is the single authority for atomic completion', () async {
+    test(
+        'AA6 & AA7: MissionExecutionService is the single authority for atomic completion',
+        () async {
       final task = LocalTask(
         id: 'task_aa_authority',
         title: 'Tactical Pushups',
@@ -84,7 +100,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/aa_pushup.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
       expect(proofRes.isPassed, isTrue);
@@ -98,8 +115,12 @@ void main() {
     });
   });
 
-  group('Phase AA: Task -> Alarm -> Mission OS Synchronization (AA8, AA9, AA10)', () {
-    test('AA8 & AA9: Synchronizes persisted alarm with OS scheduler and disarms upon completion', () async {
+  group(
+      'Phase AA: Task -> Alarm -> Mission OS Synchronization (AA8, AA9, AA10)',
+      () {
+    test(
+        'AA8 & AA9: Synchronizes persisted alarm with OS scheduler and disarms upon completion',
+        () async {
       final task = LocalTask(
         id: 'task_aa_sync',
         title: 'Morning Awakening',

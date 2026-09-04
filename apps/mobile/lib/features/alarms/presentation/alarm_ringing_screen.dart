@@ -36,9 +36,9 @@ class _AlarmRingingScreenState extends State<AlarmRingingScreen>
   /// Volume ramp: attempt 1 → 70 dB, 2 → 85 dB, 3+ → 100 dB
   int get _volumeDb {
     return switch (widget.attemptIndex) {
-      1    => 70,
-      2    => 85,
-      _    => 100,
+      1 => 70,
+      2 => 85,
+      _ => 100,
     };
   }
 
@@ -153,7 +153,8 @@ class _AlarmRingingScreenState extends State<AlarmRingingScreen>
                       decoration: BoxDecoration(
                         color: AppColors.crimsonAlert.withOpacity(0.2),
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.crimsonAlert, width: 3),
+                        border:
+                            Border.all(color: AppColors.crimsonAlert, width: 3),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.crimsonAlert.withOpacity(0.4),

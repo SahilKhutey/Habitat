@@ -29,7 +29,8 @@ void main() {
       final xpStandard = progressionEngine.calculateTaskXp(hardTask);
       expect(xpStandard, equals(50));
 
-      final xpBonus = progressionEngine.calculateTaskXp(hardTask, speedMultiplier: 1.5);
+      final xpBonus =
+          progressionEngine.calculateTaskXp(hardTask, speedMultiplier: 1.5);
       expect(xpBonus, equals(75));
     });
 
@@ -42,12 +43,14 @@ void main() {
   });
 
   group('StreakCalculator Unit Tests', () {
-    test('calculateCurrentStreak() counts consecutive daily discipline dates', () {
+    test('calculateCurrentStreak() counts consecutive daily discipline dates',
+        () {
       final today = DateTime.now();
       final yesterday = today.subtract(const Duration(days: 1));
       final twoDaysAgo = today.subtract(const Duration(days: 2));
 
-      final streak = streakCalculator.calculateCurrentStreak([today, yesterday, twoDaysAgo]);
+      final streak = streakCalculator
+          .calculateCurrentStreak([today, yesterday, twoDaysAgo]);
       expect(streak, equals(3));
     });
 
@@ -55,13 +58,16 @@ void main() {
       final fourDaysAgo = DateTime.now().subtract(const Duration(days: 4));
       final fiveDaysAgo = DateTime.now().subtract(const Duration(days: 5));
 
-      final streak = streakCalculator.calculateCurrentStreak([fourDaysAgo, fiveDaysAgo]);
+      final streak =
+          streakCalculator.calculateCurrentStreak([fourDaysAgo, fiveDaysAgo]);
       expect(streak, equals(0));
     });
   });
 
   group('AchievementEvaluator Unit Tests', () {
-    test('evaluateUnlockedAchievements() unlocks achievements upon milestone completion', () {
+    test(
+        'evaluateUnlockedAchievements() unlocks achievements upon milestone completion',
+        () {
       final unlocked = achievementEvaluator.evaluateUnlockedAchievements(
         totalCompletedTasks: 10,
         currentStreak: 7,

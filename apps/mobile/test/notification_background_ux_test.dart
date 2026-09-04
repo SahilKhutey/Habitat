@@ -17,7 +17,9 @@ void main() {
   });
 
   group('Track M: Notification & Background Intent Routing', () {
-    test('M6, M7 & M8: Intent route "/mission/{missionId}/active" maps to active mission', () async {
+    test(
+        'M6, M7 & M8: Intent route "/mission/{missionId}/active" maps to active mission',
+        () async {
       final now = DateTime.now();
       final task = LocalTask(
         id: 'task_notif_1',
@@ -30,7 +32,8 @@ void main() {
       );
       db.saveTask(task);
 
-      final attempt = await missionService.start('task_notif_1', alarmId: 'alm_notif_1');
+      final attempt =
+          await missionService.start('task_notif_1', alarmId: 'alm_notif_1');
       expect(attempt.status, equals('AWAITING_ACTION'));
 
       // Simulate notification click delivering route payload
@@ -39,7 +42,9 @@ void main() {
       expect(db.getAttempt(attempt.id)?.status, equals('AWAITING_ACTION'));
     });
 
-    test('M11: Double-tapping notification does not launch duplicate task attempts', () async {
+    test(
+        'M11: Double-tapping notification does not launch duplicate task attempts',
+        () async {
       final task = LocalTask(
         id: 'task_dedup_1',
         title: 'Drink Water',
@@ -51,7 +56,8 @@ void main() {
       db.saveTask(task);
 
       // First tap -> starts attempt
-      final attempt1 = await missionService.start('task_dedup_1', alarmId: 'alm_1');
+      final attempt1 =
+          await missionService.start('task_dedup_1', alarmId: 'alm_1');
       final attempts = db.getAttemptsForTask('task_dedup_1');
       expect(attempts.length, equals(1));
       expect(attempts.first.id, equals(attempt1.id));
@@ -60,7 +66,9 @@ void main() {
       expect(db.getAttempt(attempt1.id)?.status, equals('AWAITING_ACTION'));
     });
 
-    test('M18, M19 & M20: Stale callback for already COMPLETED or cancelled alarm is safely ignored', () async {
+    test(
+        'M18, M19 & M20: Stale callback for already COMPLETED or cancelled alarm is safely ignored',
+        () async {
       final task = LocalTask(
         id: 'task_stale_1',
         title: 'Read 10 Pages',
@@ -72,7 +80,8 @@ void main() {
       );
       db.saveTask(task);
 
-      final attempt = await missionService.start('task_stale_1', alarmId: 'alm_stale_1');
+      final attempt =
+          await missionService.start('task_stale_1', alarmId: 'alm_stale_1');
 
       // Submit and complete mission
       await missionService.submitProof(
@@ -80,7 +89,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/read.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
       await missionService.complete(attempt.id);
@@ -100,7 +110,9 @@ void main() {
       expect(db.getTotalXP(), equals(20));
     });
 
-    test('M12: Dismissing notification or cancelling alarm does not mark mission completed', () async {
+    test(
+        'M12: Dismissing notification or cancelling alarm does not mark mission completed',
+        () async {
       final task = LocalTask(
         id: 'task_dismiss_test',
         title: 'Pushups',
@@ -112,7 +124,8 @@ void main() {
       );
       db.saveTask(task);
 
-      final attempt = await missionService.start('task_dismiss_test', alarmId: 'alm_dismiss_1');
+      final attempt = await missionService.start('task_dismiss_test',
+          alarmId: 'alm_dismiss_1');
       expect(attempt.status, equals('AWAITING_ACTION'));
 
       // Dismissal / cancellation should NOT complete the task

@@ -16,10 +16,11 @@ class ActionResult {
     this.errorMessage,
   });
 
-  static const ActionResult success = ActionResult(isSuccess: true, confidenceScore: 1.0);
-  
-  static ActionResult failure(String message) =>
-      ActionResult(isSuccess: false, confidenceScore: 0.0, errorMessage: message);
+  static const ActionResult success =
+      ActionResult(isSuccess: true, confidenceScore: 1.0);
+
+  static ActionResult failure(String message) => ActionResult(
+      isSuccess: false, confidenceScore: 0.0, errorMessage: message);
 }
 
 abstract interface class MediaActionService {
@@ -40,7 +41,8 @@ class DefaultMediaActionService implements MediaActionService {
   @override
   Future<ActionResult> capturePhoto() async {
     try {
-      final res = await _cameraService.takePhoto(taskId: 'general', attemptId: 'default');
+      final res = await _cameraService.takePhoto(
+          taskId: 'general', attemptId: 'default');
       return ActionResult(
         isSuccess: true,
         mediaPath: res.filePath,
@@ -55,7 +57,8 @@ class DefaultMediaActionService implements MediaActionService {
   Future<ActionResult> captureVideo() async {
     try {
       await _cameraService.startVideoRecording();
-      final res = await _cameraService.stopVideoRecording(taskId: 'general', attemptId: 'default');
+      final res = await _cameraService.stopVideoRecording(
+          taskId: 'general', attemptId: 'default');
       return ActionResult(
         isSuccess: true,
         mediaPath: res.filePath,
@@ -66,4 +69,3 @@ class DefaultMediaActionService implements MediaActionService {
     }
   }
 }
-

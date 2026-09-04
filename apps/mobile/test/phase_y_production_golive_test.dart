@@ -5,6 +5,8 @@ import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
@@ -12,15 +14,20 @@ void main() {
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
-    db.resetAllData();
+    db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
     alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
   });
 
-  group('Phase Y: 1.0 Go-Live Heartbeat & Production Verification (Y10, Y27)', () {
-    test('Y10 & Y27: Executes 1.0 Heartbeat Path with complete referential & reward integrity', () async {
+  group('Phase Y: 1.0 Go-Live Heartbeat & Production Verification (Y10, Y27)',
+      () {
+    test(
+        'Y10 & Y27: Executes 1.0 Heartbeat Path with complete referential & reward integrity',
+        () async {
       // 1. Task & Alarm Creation
       final task = LocalTask(
         id: 'task_phase_y_golive',
@@ -50,17 +57,20 @@ void main() {
       );
       expect(occurrence.isDisarmed, isFalse);
 
-      final attempt = await missionService.start('task_phase_y_golive', alarmId: 'alm_phase_y_golive');
+      final attempt = await missionService.start('task_phase_y_golive',
+          alarmId: 'alm_phase_y_golive');
       expect(attempt.status, equals('AWAITING_ACTION'));
 
       // 3. Proof Capture & SHA-256 Validation
       const proofPayload = ProofSubmission(
         type: 'PHOTO',
         filePath: 'habitat_storage://proofs/golive_photo.jpg',
-        sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+        sha256Checksum:
+            '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
       );
 
-      final proofResult = await missionService.submitProof(attempt.id, proofPayload);
+      final proofResult =
+          await missionService.submitProof(attempt.id, proofPayload);
       expect(proofResult.isPassed, isTrue);
 
       // 4. Atomic Completion
@@ -77,7 +87,7 @@ void main() {
       await db.flush();
       final stateSnapshot = db.exportCompleteStateJson();
 
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       expect(db.getAllTasks().isEmpty, isTrue);
 
       db.restoreFromStateJson(stateSnapshot);
@@ -89,7 +99,9 @@ void main() {
   });
 
   group('Phase Y: Rollback & Hotfix Idempotency Invariants (Y20, Y24)', () {
-    test('Y20 & Y24: Hotfix recovery preserves existing reward ledger and prevents duplicate increments', () async {
+    test(
+        'Y20 & Y24: Hotfix recovery preserves existing reward ledger and prevents duplicate increments',
+        () async {
       final task = LocalTask(
         id: 'task_hotfix_audit',
         title: 'Daily Meditation',
@@ -107,7 +119,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/meditation.jpg',
-          sha256Checksum: 'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef',
+          sha256Checksum:
+              'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef1234',
         ),
       );
 

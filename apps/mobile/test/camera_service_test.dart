@@ -29,7 +29,8 @@ void main() {
       expect(cameraService.isFrontCamera, isFalse);
     });
 
-    test('takePhoto() produces valid CaptureResult with SHA-256 and metadata', () async {
+    test('takePhoto() produces valid CaptureResult with SHA-256 and metadata',
+        () async {
       await cameraService.initialize();
       final result = await cameraService.takePhoto(
         taskId: 'task_pushups',
@@ -44,7 +45,9 @@ void main() {
       expect(result.metadata['height'], equals(1080));
     });
 
-    test('startVideoRecording() and stopVideoRecording() tracks duration and byte checksum', () async {
+    test(
+        'startVideoRecording() and stopVideoRecording() tracks duration and byte checksum',
+        () async {
       await cameraService.initialize();
       await cameraService.startVideoRecording();
       expect(cameraService.isRecordingVideo, isTrue);

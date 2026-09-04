@@ -76,7 +76,8 @@ class _ProofCameraScreenState extends State<ProofCameraScreen> {
 
         if (capture.durationSeconds < 3) {
           setState(() {
-            _errorMessage = 'Recording too short. Video must be at least 3 seconds (was ${_recordingSeconds}s).';
+            _errorMessage =
+                'Recording too short. Video must be at least 3 seconds (was ${_recordingSeconds}s).';
           });
           return;
         }
@@ -127,19 +128,22 @@ class _ProofCameraScreenState extends State<ProofCameraScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                    icon:
+                        const Icon(Icons.close, color: Colors.white, size: 28),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   if (_isRecording)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: HabitatColors.crimsonAlert,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.fiber_manual_record, color: Colors.white, size: 14),
+                          const Icon(Icons.fiber_manual_record,
+                              color: Colors.white, size: 14),
                           const SizedBox(width: 6),
                           Text(
                             '${_recordingSeconds ~/ 60}:${(_recordingSeconds % 60).toString().padLeft(2, "0")}',
@@ -152,7 +156,8 @@ class _ProofCameraScreenState extends State<ProofCameraScreen> {
                       ),
                     ),
                   IconButton(
-                    icon: const Icon(Icons.flip_camera_ios, color: Colors.white, size: 28),
+                    icon: const Icon(Icons.flip_camera_ios,
+                        color: Colors.white, size: 28),
                     onPressed: () => _cameraService.switchCamera(),
                   ),
                 ],
@@ -204,8 +209,11 @@ class _ProofCameraScreenState extends State<ProofCameraScreen> {
                       child: Icon(
                         _isRecording
                             ? Icons.stop
-                            : (widget.isVideoRequired ? Icons.fiber_manual_record : Icons.camera),
-                        color: _isRecording ? Colors.white : HabitatColors.forest,
+                            : (widget.isVideoRequired
+                                ? Icons.fiber_manual_record
+                                : Icons.camera),
+                        color:
+                            _isRecording ? Colors.white : HabitatColors.forest,
                         size: 36,
                       ),
                     ),

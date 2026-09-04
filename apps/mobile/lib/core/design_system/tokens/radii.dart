@@ -9,6 +9,7 @@ abstract final class HabitatRadius {
   static const double xl = 24.0;
   static const double pill = 999.0;
 
-  static const BorderRadius radiusButton = BorderRadius.all(Radius.circular(md));
+  static const BorderRadius radiusButton =
+      BorderRadius.all(Radius.circular(md));
   static const BorderRadius radiusCard = BorderRadius.all(Radius.circular(lg));
 }

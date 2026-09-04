@@ -12,7 +12,8 @@ class OfflineSyncDashboardScreen extends StatelessWidget {
     final pending = SyncQueueService.pendingItems;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('OFFLINE SYNC & MESH'),
         actions: [
@@ -21,7 +22,8 @@ class OfflineSyncDashboardScreen extends StatelessWidget {
             tooltip: 'Sync Now',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Flushing offline queue to server...')),
+                const SnackBar(
+                    content: Text('Flushing offline queue to server...')),
               );
             },
           ),
@@ -48,14 +50,16 @@ class OfflineSyncDashboardScreen extends StatelessWidget {
                       color: AppColors.emeraldVictory.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.cloud_done, color: AppColors.emeraldVictory, size: 32),
+                    child: const Icon(Icons.cloud_done,
+                        color: AppColors.emeraldVictory, size: 32),
                   ),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Text('SYNC ENGINE ACTIVE', style: AppTypography.titleSmall),
+                        Text('SYNC ENGINE ACTIVE',
+                            style: AppTypography.titleSmall),
                         SizedBox(height: 2),
                         Text(
                           'Local queue persists offline proofs and flushes automatically when connectivity restores.',
@@ -69,7 +73,8 @@ class OfflineSyncDashboardScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xxl),
 
-            const Text('PENDING OFFLINE QUEUE', style: AppTypography.labelSmall),
+            const Text('PENDING OFFLINE QUEUE',
+                style: AppTypography.labelSmall),
             const SizedBox(height: AppSpacing.md),
 
             if (pending.isEmpty)
@@ -83,11 +88,15 @@ class OfflineSyncDashboardScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: const [
-                    Icon(Icons.check_circle_outline, color: AppColors.emeraldVictory, size: 40),
+                    Icon(Icons.check_circle_outline,
+                        color: AppColors.emeraldVictory, size: 40),
                     SizedBox(height: AppSpacing.sm),
-                    Text('All events synced with cloud', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                    Text('All events synced with cloud',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     SizedBox(height: 2),
-                    Text('0 items waiting in local SQLite queue', style: AppTypography.bodySmall),
+                    Text('0 items waiting in local SQLite queue',
+                        style: AppTypography.bodySmall),
                   ],
                 ),
               )
@@ -112,11 +121,16 @@ class OfflineSyncDashboardScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item.type, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                            Text(item.idempotencyKey, style: AppTypography.bodySmall),
+                            Text(item.type,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
+                            Text(item.idempotencyKey,
+                                style: AppTypography.bodySmall),
                           ],
                         ),
-                        const Icon(Icons.hourglass_top, color: AppColors.amberFocus, size: 20),
+                        const Icon(Icons.hourglass_top,
+                            color: AppColors.amberFocus, size: 20),
                       ],
                     ),
                   );

@@ -28,11 +28,13 @@ class PermissionsPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.3)),
+                border: Border.all(
+                    color: HabitatTheme.growthGreen.withOpacity(0.3)),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.health_and_safety_outlined, color: HabitatTheme.growthGreen, size: 24),
+                  Icon(Icons.health_and_safety_outlined,
+                      color: HabitatTheme.growthGreen, size: 24),
                   SizedBox(width: 14),
                   Expanded(
                     child: Text(

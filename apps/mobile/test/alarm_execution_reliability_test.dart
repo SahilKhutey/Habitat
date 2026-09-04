@@ -12,7 +12,9 @@ void main() {
       scheduler = NativeAlarmScheduler.instance;
     });
 
-    test('J3 & J12: Schedules exact alarm idempotently with deterministic occurrenceId', () {
+    test(
+        'J3 & J12: Schedules exact alarm idempotently with deterministic occurrenceId',
+        () {
       final scheduledAt = DateTime(2026, 9, 2, 7, 0);
       final occ1 = scheduler.scheduleExactAlarm(
         alarmId: 'alm_001',
@@ -20,7 +22,8 @@ void main() {
         scheduledAt: scheduledAt,
       );
 
-      expect(occ1.occurrenceId, equals('occ_alm_001_${scheduledAt.millisecondsSinceEpoch}'));
+      expect(occ1.occurrenceId,
+          equals('occ_alm_001_${scheduledAt.millisecondsSinceEpoch}'));
       expect(occ1.alarmId, equals('alm_001'));
       expect(occ1.isCancelled, isFalse);
 
@@ -48,7 +51,9 @@ void main() {
       expect(occ.isCancelled, isTrue);
     });
 
-    test('J5 & J15: Mission completion disarms alarm and cancels pending retry escalation', () {
+    test(
+        'J5 & J15: Mission completion disarms alarm and cancels pending retry escalation',
+        () {
       final scheduledAt = DateTime(2026, 9, 2, 6, 0);
       final occ = scheduler.scheduleExactAlarm(
         alarmId: 'alm_retry_test',
@@ -57,14 +62,16 @@ void main() {
       );
 
       // Trigger alarm -> starts 5-min escalation retry timer
-      scheduler.onAlarmTriggered(occurrenceId: occ.occurrenceId, retryIntervalMinutes: 5);
+      scheduler.onAlarmTriggered(
+          occurrenceId: occ.occurrenceId, retryIntervalMinutes: 5);
 
       // Complete mission -> disarms and removes retry timer
       scheduler.onMissionCompleted(occurrenceId: occ.occurrenceId);
       expect(occ.isCancelled, isTrue);
     });
 
-    test('J7: BootReceiver restoration re-registers unexpired pending alarms', () {
+    test('J7: BootReceiver restoration re-registers unexpired pending alarms',
+        () {
       final now = DateTime.now();
       final pendingAlarms = [
         {
@@ -75,12 +82,14 @@ void main() {
         {
           'alarmId': 'alm_boot_expired',
           'missionId': 'msn_boot_exp',
-          'scheduledAt': now.subtract(const Duration(hours: 5)).toIso8601String(),
+          'scheduledAt':
+              now.subtract(const Duration(hours: 5)).toIso8601String(),
         },
       ];
 
       final restoredCount = scheduler.restorePendingAlarmsOnBoot(pendingAlarms);
-      expect(restoredCount, equals(1)); // Only future / unexpired alarm restored
+      expect(
+          restoredCount, equals(1)); // Only future / unexpired alarm restored
     });
   });
 
@@ -94,7 +103,9 @@ void main() {
       alarmService = AlarmService(db);
     });
 
-    test('Full lifecycle: SCHEDULED -> RINGING -> AWAITING_ACTION -> COMPLETED with proof', () {
+    test(
+        'Full lifecycle: SCHEDULED -> RINGING -> AWAITING_ACTION -> COMPLETED with proof',
+        () {
       final now = DateTime.now();
       final task = LocalTask(
         id: 'task_pushup_cycle',
@@ -134,7 +145,8 @@ void main() {
       expect(db.getAttempt('att_cycle_1')!.status, equals('RINGING'));
 
       // 3. User Acknowledges: Transition to AWAITING_ACTION (Camera HUD opens)
-      db.updateAttemptStatus(attemptId: 'att_cycle_1', status: 'AWAITING_ACTION');
+      db.updateAttemptStatus(
+          attemptId: 'att_cycle_1', status: 'AWAITING_ACTION');
       expect(db.getAttempt('att_cycle_1')!.status, equals('AWAITING_ACTION'));
 
       // 4. Record Real Camera Proof
@@ -152,7 +164,10 @@ void main() {
       expect(db.getProofsForTask(task.id), hasLength(1));
 
       // 5. Complete Mission: Transition to COMPLETED
-      db.updateAttemptStatus(attemptId: 'att_cycle_1', status: 'COMPLETED', completedAt: DateTime.now());
+      db.updateAttemptStatus(
+          attemptId: 'att_cycle_1',
+          status: 'COMPLETED',
+          completedAt: DateTime.now());
       db.completeTask(task.id);
       db.awardXP(taskId: task.id, attemptId: attempt.id, amount: 50);
       db.updateStreak();
@@ -163,7 +178,8 @@ void main() {
       expect(db.getStreak().currentStreak, greaterThanOrEqualTo(1));
     });
 
-    test('Alarm toggle enables and disables alarms in LocalDatabase cleanly', () async {
+    test('Alarm toggle enables and disables alarms in LocalDatabase cleanly',
+        () async {
       final task = LocalTask(
         id: 'task_toggle_test',
         title: 'Bed Making',

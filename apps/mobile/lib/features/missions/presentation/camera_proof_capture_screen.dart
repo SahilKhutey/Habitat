@@ -14,7 +14,8 @@ class CameraProofCaptureScreen extends StatefulWidget {
   });
 
   @override
-  State<CameraProofCaptureScreen> createState() => _CameraProofCaptureScreenState();
+  State<CameraProofCaptureScreen> createState() =>
+      _CameraProofCaptureScreenState();
 }
 
 class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
@@ -24,13 +25,16 @@ class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
     setState(() => _isRecording = true);
     final pipeline = NativeCameraProofPipeline();
     final taskId = widget.taskId ?? 'task-default';
-    final attemptId = widget.attemptId ?? 'attempt-${DateTime.now().millisecondsSinceEpoch}';
+    final attemptId =
+        widget.attemptId ?? 'attempt-${DateTime.now().millisecondsSinceEpoch}';
 
-    pipeline.captureVideoProof(
+    pipeline
+        .captureVideoProof(
       taskId: taskId,
       attemptId: attemptId,
       durationSeconds: 5,
-    ).then((proof) {
+    )
+        .then((proof) {
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(
           '/missions/verifying',
@@ -58,7 +62,8 @@ class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
             child: Container(
               margin: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.amberFocus.withOpacity(0.4), width: 2),
+                border: Border.all(
+                    color: AppColors.amberFocus.withOpacity(0.4), width: 2),
                 borderRadius: AppRadii.radiusLarge,
               ),
               alignment: Alignment.center,
@@ -67,7 +72,9 @@ class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
                 children: [
                   Icon(Icons.crop_free, color: Colors.white24, size: 120),
                   SizedBox(height: AppSpacing.md),
-                  Text('ALIGN TARGET IN FRAME', style: TextStyle(color: Colors.white54, letterSpacing: 2)),
+                  Text('ALIGN TARGET IN FRAME',
+                      style:
+                          TextStyle(color: Colors.white54, letterSpacing: 2)),
                 ],
               ),
             ),
@@ -81,30 +88,38 @@ class _CameraProofCaptureScreenState extends State<CameraProofCaptureScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: AppRadii.radiusSmall,
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.wb_sunny, color: AppColors.amberFocus, size: 16),
+                        Icon(Icons.wb_sunny,
+                            color: AppColors.amberFocus, size: 16),
                         SizedBox(width: 4),
-                        Text('85 LUX (GOOD)', style: TextStyle(color: Colors.white, fontSize: 12)),
+                        Text('85 LUX (GOOD)',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 12)),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: AppRadii.radiusSmall,
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.sensors, color: AppColors.emeraldVictory, size: 16),
+                        Icon(Icons.sensors,
+                            color: AppColors.emeraldVictory, size: 16),
                         SizedBox(width: 4),
-                        Text('MOTION SENSORS READY', style: TextStyle(color: Colors.white, fontSize: 12)),
+                        Text('MOTION SENSORS READY',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 12)),
                       ],
                     ),
                   ),

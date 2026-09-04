@@ -25,7 +25,8 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
     if (_step < 3) {
       setState(() => _step++);
     } else {
-      AppFeedback.showToast(context, message: 'Discipline Task Created & Ready for Alarm Scheduling!');
+      AppFeedback.showToast(context,
+          message: 'Discipline Task Created & Ready for Alarm Scheduling!');
       Navigator.of(context).pop();
     }
   }
@@ -35,7 +36,8 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         title: Text('CREATE TASK (STEP ${_step + 1}/4)'),
       ),
@@ -72,9 +74,11 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('STEP 1: TASK IDENTITY', style: AppTypography.labelLarge),
+            const Text('STEP 1: TASK IDENTITY',
+                style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
-            const Text('What will you accomplish?', style: AppTypography.displayMedium),
+            const Text('What will you accomplish?',
+                style: AppTypography.displayMedium),
             const SizedBox(height: AppSpacing.xl),
             AppTextField(
               label: 'Task Name',
@@ -86,24 +90,31 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('STEP 2: PROOF REQUIREMENT', style: AppTypography.labelLarge),
+            const Text('STEP 2: PROOF REQUIREMENT',
+                style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
-            const Text('How will you verify completion?', style: AppTypography.displayMedium),
+            const Text('How will you verify completion?',
+                style: AppTypography.displayMedium),
             const SizedBox(height: AppSpacing.xl),
-            _buildProofOption('VIDEO', 'Video Recording (AI Pose Counter)', Icons.videocam),
+            _buildProofOption(
+                'VIDEO', 'Video Recording (AI Pose Counter)', Icons.videocam),
             const SizedBox(height: AppSpacing.md),
-            _buildProofOption('PHOTO', 'Photo Check-in (AI Smart Object Detection)', Icons.camera_alt),
+            _buildProofOption('PHOTO',
+                'Photo Check-in (AI Smart Object Detection)', Icons.camera_alt),
             const SizedBox(height: AppSpacing.md),
-            _buildProofOption('MANUAL', 'Manual Shutter Verification', Icons.touch_app),
+            _buildProofOption(
+                'MANUAL', 'Manual Shutter Verification', Icons.touch_app),
           ],
         );
       case 2:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('STEP 3: DIFFICULTY SCALE', style: AppTypography.labelLarge),
+            const Text('STEP 3: DIFFICULTY SCALE',
+                style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
-            const Text('Set Resistance Level', style: AppTypography.displayMedium),
+            const Text('Set Resistance Level',
+                style: AppTypography.displayMedium),
             const SizedBox(height: AppSpacing.xl),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,7 +126,9 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.amberFocus : AppColors.surfaceElevated,
+                      color: isSelected
+                          ? AppColors.amberFocus
+                          : AppColors.surfaceElevated,
                       shape: BoxShape.circle,
                     ),
                     alignment: Alignment.center,
@@ -141,8 +154,13 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('SERVER XP REWARD:', style: AppTypography.labelMedium),
-                  Text('+$_calculatedXp XP', style: const TextStyle(color: AppColors.emeraldVictory, fontSize: 18, fontWeight: FontWeight.w900)),
+                  const Text('SERVER XP REWARD:',
+                      style: AppTypography.labelMedium),
+                  Text('+$_calculatedXp XP',
+                      style: const TextStyle(
+                          color: AppColors.emeraldVictory,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900)),
                 ],
               ),
             ),
@@ -153,7 +171,8 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('STEP 4: REVIEW COMMITMENT', style: AppTypography.labelLarge),
+            const Text('STEP 4: REVIEW COMMITMENT',
+                style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
             const Text('Ready to Schedule', style: AppTypography.displayMedium),
             const SizedBox(height: AppSpacing.xl),
@@ -161,11 +180,16 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_nameController.text, style: AppTypography.displayMedium),
+                  Text(_nameController.text,
+                      style: AppTypography.displayMedium),
                   const SizedBox(height: AppSpacing.md),
-                  Text('Proof: $_proofType • Difficulty Level: $_difficulty', style: AppTypography.bodySmall),
+                  Text('Proof: $_proofType • Difficulty Level: $_difficulty',
+                      style: AppTypography.bodySmall),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('Expected Reward: +$_calculatedXp XP', style: const TextStyle(color: AppColors.emeraldVictory, fontWeight: FontWeight.w900)),
+                  Text('Expected Reward: +$_calculatedXp XP',
+                      style: const TextStyle(
+                          color: AppColors.emeraldVictory,
+                          fontWeight: FontWeight.w900)),
                 ],
               ),
             ),
@@ -184,7 +208,8 @@ class _CreateTaskWizardScreenState extends State<CreateTaskWizardScreen> {
           Icon(icon, color: isSelected ? AppColors.amberFocus : Colors.white70),
           const SizedBox(width: AppSpacing.md),
           Expanded(child: Text(title, style: AppTypography.titleMedium)),
-          if (isSelected) const Icon(Icons.check_circle, color: AppColors.amberFocus),
+          if (isSelected)
+            const Icon(Icons.check_circle, color: AppColors.amberFocus),
         ],
       ),
     );

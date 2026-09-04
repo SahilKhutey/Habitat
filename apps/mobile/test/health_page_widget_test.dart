@@ -15,6 +15,8 @@ import 'package:habitat_mobile/features/health/presentation/widgets/meal_card.da
 import 'package:habitat_mobile/features/health/presentation/widgets/nap_card.dart';
 import 'package:habitat_mobile/features/health/presentation/widgets/water_card.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   late LocalDatabase db;
   late HealthRepository repo;
@@ -25,6 +27,7 @@ void main() {
   late HealthController controller;
 
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
     db.resetAllData();
     repo = HealthRepository(db);
@@ -36,7 +39,12 @@ void main() {
       mealService: mealService,
       napService: napService,
     );
-    controller = HealthController(healthService: healthService, database: db);
+    controller = HealthController(
+      waterService: waterService,
+      mealService: mealService,
+      napService: napService,
+      database: db,
+    );
   });
 
   tearDown(() {
@@ -51,7 +59,8 @@ void main() {
   }
 
   group('HealthPage Widget Tests', () {
-    testWidgets('renders all health cards and quick add buttons', (tester) async {
+    testWidgets('renders all health cards and quick add buttons',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -66,7 +75,9 @@ void main() {
       expect(find.text('START NAP'), findsOneWidget);
     });
 
-    testWidgets('tapping +250 ml water quick-add updates water total immediately', (tester) async {
+    testWidgets(
+        'tapping +250 ml water quick-add updates water total immediately',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -80,13 +91,17 @@ void main() {
       expect(controller.summary.water.consumedMilliliters, equals(250));
     });
 
-    testWidgets('tapping START NAP starts active nap session and changes label to END NAP', (tester) async {
+    testWidgets(
+        'tapping START NAP starts active nap session and changes label to END NAP',
+        (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
       final startNapBtn = find.text('START NAP');
       expect(startNapBtn, findsOneWidget);
 
+      await tester.ensureVisible(startNapBtn);
+      await tester.pumpAndSettle();
       await tester.tap(startNapBtn);
       await tester.pumpAndSettle();
 

@@ -15,7 +15,8 @@ Future<bool?> showHabitatConfirmDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: HabitatColors.surfacePrimary,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.lg)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(HabitatRadius.lg)),
       title: Text(
         title,
         style: const TextStyle(
@@ -37,7 +38,8 @@ Future<bool?> showHabitatConfirmDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
-          child: Text(cancelLabel, style: const TextStyle(color: HabitatColors.textSecondary)),
+          child: Text(cancelLabel,
+              style: const TextStyle(color: HabitatColors.textSecondary)),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(ctx).pop(true),
@@ -45,7 +47,8 @@ Future<bool?> showHabitatConfirmDialog(
             backgroundColor: HabitatColors.growthGreen,
             foregroundColor: HabitatColors.forest,
           ),
-          child: Text(confirmLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(confirmLabel,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     ),
@@ -63,7 +66,8 @@ Future<bool?> showHabitatDestructiveDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: HabitatColors.surfacePrimary,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(HabitatRadius.lg)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(HabitatRadius.lg)),
       title: Text(
         title,
         style: const TextStyle(
@@ -85,7 +89,8 @@ Future<bool?> showHabitatDestructiveDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
-          child: Text(cancelLabel, style: const TextStyle(color: HabitatColors.textSecondary)),
+          child: Text(cancelLabel,
+              style: const TextStyle(color: HabitatColors.textSecondary)),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(ctx).pop(true),
@@ -93,7 +98,8 @@ Future<bool?> showHabitatDestructiveDialog(
             backgroundColor: HabitatColors.danger,
             foregroundColor: Colors.white,
           ),
-          child: Text(confirmLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(confirmLabel,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     ),

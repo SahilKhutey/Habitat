@@ -16,20 +16,25 @@ void main() {
   });
 
   group('Phase W: Dynamic Text Scaling & Text Layout Resilience (W5, W6)', () {
-    testWidgets('W5 & W6: Renders mission and task UI with 2.0x text scale factor without crashing', (WidgetTester tester) async {
+    testWidgets(
+        'W5 & W6: Renders mission and task UI with 2.0x text scale factor without crashing',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(2.0)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2.0)),
             child: child!,
           ),
           home: Scaffold(
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  const Text('TACTICAL DAILY MISSION: 15 PUSH-UPS FOR DISCIPLINE'),
+                  const Text(
+                      'TACTICAL DAILY MISSION: 15 PUSH-UPS FOR DISCIPLINE'),
                   const SizedBox(height: 10),
-                  const Text('Instructions: Place phone securely on floor, complete 15 pushups with full depth.'),
+                  const Text(
+                      'Instructions: Place phone securely on floor, complete 15 pushups with full depth.'),
                   ElevatedButton(
                     onPressed: () {},
                     child: const Text('START CAMERA PROOF CAPTURE'),
@@ -42,13 +47,16 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      expect(find.text('TACTICAL DAILY MISSION: 15 PUSH-UPS FOR DISCIPLINE'), findsOneWidget);
+      expect(find.text('TACTICAL DAILY MISSION: 15 PUSH-UPS FOR DISCIPLINE'),
+          findsOneWidget);
       expect(find.text('START CAMERA PROOF CAPTURE'), findsOneWidget);
     });
   });
 
   group('Phase W: Semantics & Screen Reader Controls (W2, W3, W4)', () {
-    testWidgets('W2 & W3: Action buttons have explicit Semantics and Tooltip descriptors', (WidgetTester tester) async {
+    testWidgets(
+        'W2 & W3: Action buttons have explicit Semantics and Tooltip descriptors',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -79,13 +87,16 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      expect(find.bySemanticsLabel('Start morning push-up mission'), findsOneWidget);
+      expect(find.bySemanticsLabel('Start morning push-up mission'),
+          findsOneWidget);
       expect(find.bySemanticsLabel('Disarm alarm'), findsOneWidget);
     });
   });
 
   group('Phase W: Multi-Signal Color & Contrast Indicators (W8)', () {
-    test('W8: Error and success state messages provide explicit textual and semantic signals', () async {
+    test(
+        'W8: Error and success state messages provide explicit textual and semantic signals',
+        () async {
       final task = LocalTask(
         id: 'task_w_signals',
         title: 'Morning Sun Salutation',
@@ -110,7 +121,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/w_sun.jpg',
-          sha256Checksum: '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
+          sha256Checksum:
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 
@@ -121,7 +133,9 @@ void main() {
   });
 
   group('Phase W: Rapid Interaction & Double-Tap Idempotency (W13, W14)', () {
-    test('W14: Rapid double completion requests produce exactly 1 completion and 1 XP reward', () async {
+    test(
+        'W14: Rapid double completion requests produce exactly 1 completion and 1 XP reward',
+        () async {
       final task = LocalTask(
         id: 'task_w_rapid',
         title: 'Cold Water Splash',
@@ -139,7 +153,8 @@ void main() {
         const ProofSubmission(
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/rapid.jpg',
-          sha256Checksum: 'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef',
+          sha256Checksum:
+              'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef',
         ),
       );
 

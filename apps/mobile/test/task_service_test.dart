@@ -27,7 +27,8 @@ void main() {
       expect(tasks.first.schedule.timeOfDay, isNotEmpty);
     });
 
-    test('getTasksByFilter() filters by ACTIVE, SCHEDULED, PAUSED, ARCHIVED', () {
+    test('getTasksByFilter() filters by ACTIVE, SCHEDULED, PAUSED, ARCHIVED',
+        () {
       final all = taskService.getAllTasks();
       expect(all, isNotEmpty);
 

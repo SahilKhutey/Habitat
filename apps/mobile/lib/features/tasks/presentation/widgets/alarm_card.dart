@@ -21,7 +21,8 @@ class AlarmCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       container: true,
-      label: 'Alarm at ${alarm.timeOfDay} for $taskTitle. ${alarm.isEnabled ? "Armed" : "Disabled"}.',
+      label:
+          'Alarm at ${alarm.timeOfDay} for $taskTitle. ${alarm.isEnabled ? "Armed" : "Disabled"}.',
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
@@ -53,7 +54,9 @@ class AlarmCard extends StatelessWidget {
                           fontFamily: HabitatTheme.fontHeading,
                           fontSize: 26,
                           fontWeight: FontWeight.w900,
-                          color: alarm.isEnabled ? Colors.white : HabitatTheme.textMuted,
+                          color: alarm.isEnabled
+                              ? Colors.white
+                              : HabitatTheme.textMuted,
                         ),
                       ),
                       const SizedBox(height: 4),

@@ -50,14 +50,16 @@ class _PrivacyPageState extends State<PrivacyPage> {
               decoration: BoxDecoration(
                 color: HabitatTheme.surfacePrimary,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.3)),
+                border: Border.all(
+                    color: HabitatTheme.growthGreen.withOpacity(0.3)),
               ),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.lock_clock_outlined, color: HabitatTheme.growthGreen, size: 20),
+                      Icon(Icons.lock_clock_outlined,
+                          color: HabitatTheme.growthGreen, size: 20),
                       SizedBox(width: 8),
                       Text(
                         'LOCAL-FIRST GUARANTEE',
@@ -92,16 +94,20 @@ class _PrivacyPageState extends State<PrivacyPage> {
                 SettingsTile(
                   icon: Icons.analytics_outlined,
                   title: 'Anonymous Usage Analytics',
-                  subtitle: 'Helps improve algorithm reliability without tracking personal info',
+                  subtitle:
+                      'Helps improve algorithm reliability without tracking personal info',
                   toggleValue: _privacy.analyticsEnabled,
-                  onToggleChanged: (val) => _update(_privacy.copyWith(analyticsEnabled: val)),
+                  onToggleChanged: (val) =>
+                      _update(_privacy.copyWith(analyticsEnabled: val)),
                 ),
                 SettingsTile(
                   icon: Icons.share_outlined,
                   title: 'Cross-Device Data Syncing',
-                  subtitle: 'Sync discipline state with optional trusted peer nodes',
+                  subtitle:
+                      'Sync discipline state with optional trusted peer nodes',
                   toggleValue: _privacy.dataSharingEnabled,
-                  onToggleChanged: (val) => _update(_privacy.copyWith(dataSharingEnabled: val)),
+                  onToggleChanged: (val) =>
+                      _update(_privacy.copyWith(dataSharingEnabled: val)),
                 ),
               ],
             ),
@@ -115,7 +121,8 @@ class _PrivacyPageState extends State<PrivacyPage> {
                   subtitle: 'Export or inspect local SQLite files',
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const DataStoragePage()),
+                      MaterialPageRoute(
+                          builder: (_) => const DataStoragePage()),
                     );
                   },
                 ),

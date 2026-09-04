@@ -53,7 +53,9 @@ void main() {
       expect(state.currentAction!.ctaLabel, equals('Continue Action'));
     });
 
-    test('CurrentAction resolves to retryRequired when verification fails with RETRY', () {
+    test(
+        'CurrentAction resolves to retryRequired when verification fails with RETRY',
+        () {
       final tasks = db.getAllTasks();
       final taskId = tasks.first.id;
 
@@ -69,12 +71,15 @@ void main() {
       final state = service.load(now: DateTime(2026, 8, 29, 7, 10));
 
       expect(state.currentAction, isNotNull);
-      expect(state.currentAction!.status, equals(CurrentActionStatus.retryRequired));
+      expect(state.currentAction!.status,
+          equals(CurrentActionStatus.retryRequired));
       expect(state.currentAction!.isActionable, isTrue);
       expect(state.currentAction!.ctaLabel, equals('Retry Verification'));
     });
 
-    test('CurrentAction resolves to completed when all tasks for today are done', () {
+    test(
+        'CurrentAction resolves to completed when all tasks for today are done',
+        () {
       final tasks = db.getAllTasks();
       final now = DateTime(2026, 8, 29, 12, 0);
 
@@ -93,7 +98,8 @@ void main() {
       final state = service.load(now: now);
 
       expect(state.currentAction, isNotNull);
-      expect(state.currentAction!.status, equals(CurrentActionStatus.completed));
+      expect(
+          state.currentAction!.status, equals(CurrentActionStatus.completed));
       expect(state.dailyProgress.completedTasks, equals(tasks.length));
       expect(state.dailyProgress.completionPercentage, equals(1.0));
       expect(state.dailyProgress.remainingTasks, equals(0));

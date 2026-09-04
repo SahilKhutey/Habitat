@@ -29,7 +29,8 @@ class HealthProgressSummary {
 class HealthProgressService {
   final LocalDatabase _database;
 
-  HealthProgressService({LocalDatabase? database}) : _database = database ?? LocalDatabase.instance;
+  HealthProgressService({LocalDatabase? database})
+      : _database = database ?? LocalDatabase.instance;
 
   void addWaterMl(int ml) {
     _database.recordHealthLog(LocalHealthLog(

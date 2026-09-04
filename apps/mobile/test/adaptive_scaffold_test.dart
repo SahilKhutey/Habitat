@@ -6,7 +6,9 @@ import 'package:habitat_mobile/core/theme/habitat_theme.dart';
 
 void main() {
   group('HabitatAdaptiveScaffold Widget Tests', () {
-    testWidgets('renders Bottom NavigationBar on mobile screens (< 700px width)', (tester) async {
+    testWidgets(
+        'renders Bottom NavigationBar on mobile screens (< 700px width)',
+        (tester) async {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -34,7 +36,9 @@ void main() {
       expect(find.text('Profile'), findsOneWidget);
     });
 
-    testWidgets('renders NavigationRail on tablet/desktop screens (>= 700px width)', (tester) async {
+    testWidgets(
+        'renders NavigationRail on tablet/desktop screens (>= 700px width)',
+        (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());

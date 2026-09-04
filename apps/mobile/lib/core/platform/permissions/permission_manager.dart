@@ -28,21 +28,27 @@ class PermissionManager implements IPermissionManager {
 
   PermissionManager({
     Map<HabitatPermissionType, HabitatPermissionStatus>? initialStatuses,
-  }) : _permissionStatuses = initialStatuses ?? {
-          HabitatPermissionType.notifications: HabitatPermissionStatus.granted,
-          HabitatPermissionType.exactAlarms: HabitatPermissionStatus.granted,
-          HabitatPermissionType.camera: HabitatPermissionStatus.granted,
-          HabitatPermissionType.microphone: HabitatPermissionStatus.denied,
-          HabitatPermissionType.batteryOptimization: HabitatPermissionStatus.granted,
-        };
+  }) : _permissionStatuses = initialStatuses ??
+            {
+              HabitatPermissionType.notifications:
+                  HabitatPermissionStatus.granted,
+              HabitatPermissionType.exactAlarms:
+                  HabitatPermissionStatus.granted,
+              HabitatPermissionType.camera: HabitatPermissionStatus.granted,
+              HabitatPermissionType.microphone: HabitatPermissionStatus.denied,
+              HabitatPermissionType.batteryOptimization:
+                  HabitatPermissionStatus.granted,
+            };
 
   @override
-  Future<HabitatPermissionStatus> checkStatus(HabitatPermissionType type) async {
+  Future<HabitatPermissionStatus> checkStatus(
+      HabitatPermissionType type) async {
     return _permissionStatuses[type] ?? HabitatPermissionStatus.denied;
   }
 
   @override
-  Future<HabitatPermissionStatus> requestPermission(HabitatPermissionType type) async {
+  Future<HabitatPermissionStatus> requestPermission(
+      HabitatPermissionType type) async {
     // In production runtime, stores granted status
     _permissionStatuses[type] = HabitatPermissionStatus.granted;
     return HabitatPermissionStatus.granted;

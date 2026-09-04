@@ -20,7 +20,14 @@ class _AchievementsPageState extends State<AchievementsPage> {
   late final AchievementController _controller;
   bool _internalController = false;
 
-  final List<String> _filters = ['ALL', 'UNLOCKED', 'LOCKED', 'TASKS', 'STREAKS', 'HEALTH'];
+  final List<String> _filters = [
+    'ALL',
+    'UNLOCKED',
+    'LOCKED',
+    'TASKS',
+    'STREAKS',
+    'HEALTH'
+  ];
 
   @override
   void initState() {
@@ -71,7 +78,8 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   decoration: BoxDecoration(
                     color: HabitatTheme.surfacePrimary,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: HabitatTheme.growthGreen.withOpacity(0.4)),
+                    border: Border.all(
+                        color: HabitatTheme.growthGreen.withOpacity(0.4)),
                   ),
                   child: Row(
                     children: [
@@ -81,7 +89,8 @@ class _AchievementsPageState extends State<AchievementsPage> {
                           color: HabitatTheme.habitatGreen,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Icon(Icons.emoji_events, color: HabitatTheme.growthGreen, size: 28),
+                        child: const Icon(Icons.emoji_events,
+                            color: HabitatTheme.growthGreen, size: 28),
                       ),
                       const SizedBox(width: 16),
                       Column(
@@ -129,7 +138,8 @@ class _AchievementsPageState extends State<AchievementsPage> {
                             fontFamily: HabitatTheme.fontHeading,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: isSelected ? HabitatTheme.forest : Colors.white,
+                            color:
+                                isSelected ? HabitatTheme.forest : Colors.white,
                           ),
                           onSelected: (_) => _controller.setFilter(filter),
                         ),
@@ -145,14 +155,17 @@ class _AchievementsPageState extends State<AchievementsPage> {
                       ? Center(
                           child: Text(
                             'No ${_controller.activeFilter} achievements.',
-                            style: const TextStyle(color: HabitatTheme.textSecondary),
+                            style: const TextStyle(
+                                color: HabitatTheme.textSecondary),
                           ),
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 6),
                           itemCount: achievements.length,
                           itemBuilder: (context, index) {
-                            return AchievementCard(achievement: achievements[index]);
+                            return AchievementCard(
+                                achievement: achievements[index]);
                           },
                         ),
                 ),

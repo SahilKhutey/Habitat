@@ -18,7 +18,8 @@ class SecurityService {
   void setPin(String newPin) {
     if (newPin.length < 4) throw ArgumentError('PIN must be at least 4 digits');
     final current = getSecuritySettings();
-    updateSecuritySettings(current.copyWith(pinCode: newPin, appLockEnabled: true));
+    updateSecuritySettings(
+        current.copyWith(pinCode: newPin, appLockEnabled: true));
   }
 
   bool verifyPin(String enteredPin) {

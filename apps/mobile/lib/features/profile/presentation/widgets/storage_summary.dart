@@ -45,14 +45,17 @@ class StorageSummary extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
-          _buildRow('Tasks & Actions Database', info.formattedTasks, HabitatTheme.growthGreen),
+          _buildRow('Tasks & Actions Database', info.formattedTasks,
+              HabitatTheme.growthGreen),
           const SizedBox(height: 10),
-          _buildRow('Health & Hydration Logs', info.formattedHealth, const Color(0xFF4CC9F0)),
+          _buildRow('Health & Hydration Logs', info.formattedHealth,
+              const Color(0xFF4CC9F0)),
           const SizedBox(height: 10),
-          _buildRow('Progress & XP History', info.formattedProgress, Colors.orangeAccent),
+          _buildRow('Progress & XP History', info.formattedProgress,
+              Colors.orangeAccent),
           const SizedBox(height: 10),
-          _buildRow('User Profile & Preferences', info.formattedProfile, HabitatTheme.youngLeaf),
+          _buildRow('User Profile & Preferences', info.formattedProfile,
+              HabitatTheme.youngLeaf),
         ],
       ),
     );
@@ -64,12 +67,25 @@ class StorageSummary extends StatelessWidget {
       children: [
         Row(
           children: [
-            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            Container(
+                width: 8,
+                height: 8,
+                decoration:
+                    BoxDecoration(color: color, shape: BoxShape.circle)),
             const SizedBox(width: 10),
-            Text(label, style: const TextStyle(fontFamily: HabitatTheme.fontBody, fontSize: 12, color: HabitatTheme.textSecondary)),
+            Text(label,
+                style: const TextStyle(
+                    fontFamily: HabitatTheme.fontBody,
+                    fontSize: 12,
+                    color: HabitatTheme.textSecondary)),
           ],
         ),
-        Text(value, style: const TextStyle(fontFamily: HabitatTheme.fontHeading, fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white)),
+        Text(value,
+            style: const TextStyle(
+                fontFamily: HabitatTheme.fontHeading,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Colors.white)),
       ],
     );
   }

@@ -50,8 +50,10 @@ class ProfileController extends ChangeNotifier {
     security = _securityService.getSecuritySettings();
   }
 
-  void updateProfile({required String displayName, required String bio, String? avatarUrl}) {
-    _profileService.updateProfile(displayName: displayName, bio: bio, avatarUrl: avatarUrl);
+  void updateProfile(
+      {required String displayName, required String bio, String? avatarUrl}) {
+    _profileService.updateProfile(
+        displayName: displayName, bio: bio, avatarUrl: avatarUrl);
   }
 
   void updatePreferences(ProfilePreferencesModel newPrefs) {

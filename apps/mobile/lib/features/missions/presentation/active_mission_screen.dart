@@ -53,10 +53,14 @@ class _ActiveMissionScreenState extends State<ActiveMissionScreen> {
   Widget build(BuildContext context) {
     final isSpeedBonus = _secondsElapsed <= 120;
     final taskName = widget.taskTitle ??
-        (widget.mission != null ? widget.mission!['taskTitle'] as String? : null) ??
+        (widget.mission != null
+            ? widget.mission!['taskTitle'] as String?
+            : null) ??
         '10 Morning Push-Ups';
     final proofType = widget.verificationType ??
-        (widget.mission != null ? widget.mission!['taskProofType'] as String? : null) ??
+        (widget.mission != null
+            ? widget.mission!['taskProofType'] as String?
+            : null) ??
         'VIDEO';
 
     return Scaffold(
@@ -78,20 +82,28 @@ class _ActiveMissionScreenState extends State<ActiveMissionScreen> {
                       const MissionStatusBadge(status: 'ACTIVE'),
                       if (isSpeedBonus)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.growthGreen.withOpacity(0.2),
                             borderRadius: AppRadii.radiusSmall,
                             border: Border.all(color: AppColors.growthGreen),
                           ),
-                          child: const Text('⚡ +50% SPEED BONUS ACTIVE', style: TextStyle(color: AppColors.growthGreen, fontSize: 11, fontWeight: FontWeight.bold)),
+                          child: const Text('⚡ +50% SPEED BONUS ACTIVE',
+                              style: TextStyle(
+                                  color: AppColors.growthGreen,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold)),
                         ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text(taskName, style: AppTypography.displayLarge.copyWith(color: Colors.white)),
+                  Text(taskName,
+                      style: AppTypography.displayLarge
+                          .copyWith(color: Colors.white)),
                   const SizedBox(height: AppSpacing.xs),
-                  Text('Proof Required: $proofType Evidence', style: const TextStyle(color: Colors.white70)),
+                  Text('Proof Required: $proofType Evidence',
+                      style: const TextStyle(color: Colors.white70)),
                 ],
               ),
 
@@ -99,7 +111,8 @@ class _ActiveMissionScreenState extends State<ActiveMissionScreen> {
               Center(
                 child: Column(
                   children: [
-                    const Text('RESISTANCE TIME (ΔtR)', style: AppTypography.labelMedium),
+                    const Text('RESISTANCE TIME (ΔtR)',
+                        style: AppTypography.labelMedium),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       _formattedTime,
@@ -112,8 +125,11 @@ class _ActiveMissionScreenState extends State<ActiveMissionScreen> {
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      isSpeedBonus ? 'Finish in under 02:00 for Instant Action Bonus' : 'Standard XP Award Active',
-                      style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12),
+                      isSpeedBonus
+                          ? 'Finish in under 02:00 for Instant Action Bonus'
+                          : 'Standard XP Award Active',
+                      style: TextStyle(
+                          color: Colors.white.withOpacity(0.6), fontSize: 12),
                     ),
                   ],
                 ),
@@ -124,13 +140,18 @@ class _ActiveMissionScreenState extends State<ActiveMissionScreen> {
                 children: [
                   AppButton.primary(
                     label: 'CAPTURE PROOF ($proofType)',
-                    icon: proofType == 'VIDEO' ? Icons.videocam : Icons.camera_alt,
+                    icon: proofType == 'VIDEO'
+                        ? Icons.videocam
+                        : Icons.camera_alt,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/missions/capture-proof', arguments: widget.mission ?? {
-                        'taskTitle': taskName,
-                        'taskProofType': proofType,
-                        'missionId': widget.missionId ?? 'active-mission',
-                      });
+                      Navigator.of(context).pushNamed('/missions/capture-proof',
+                          arguments: widget.mission ??
+                              {
+                                'taskTitle': taskName,
+                                'taskProofType': proofType,
+                                'missionId':
+                                    widget.missionId ?? 'active-mission',
+                              });
                     },
                   ),
                 ],

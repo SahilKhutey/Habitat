@@ -21,7 +21,8 @@ void main() {
 
     test('copyWith() returns new instance with updated properties', () {
       const original = HabitatThemeExtension.dark;
-      final updated = original.copyWith(cardRadius: 24.0, warning: Colors.amber);
+      final updated =
+          original.copyWith(cardRadius: 24.0, warning: Colors.amber);
 
       expect(updated.cardRadius, equals(24.0));
       expect(updated.warning, equals(Colors.amber));

@@ -35,7 +35,8 @@ class _PhotoCaptureScreenState extends State<PhotoCaptureScreen> {
 
   Future<void> _takePhoto() async {
     setState(() => _isCapturing = true);
-    final result = await _cameraService.takePhoto(taskId: widget.missionId, attemptId: widget.missionId);
+    final result = await _cameraService.takePhoto(
+        taskId: widget.missionId, attemptId: widget.missionId);
     final path = result.filePath;
     setState(() => _isCapturing = false);
 
@@ -73,16 +74,20 @@ class _PhotoCaptureScreenState extends State<PhotoCaptureScreen> {
             child: Container(
               margin: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.amberFocus.withOpacity(0.5), width: 2),
+                border: Border.all(
+                    color: AppColors.amberFocus.withOpacity(0.5), width: 2),
                 borderRadius: AppRadii.radiusLarge,
               ),
               alignment: Alignment.center,
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.camera_alt_outlined, color: Colors.white24, size: 80),
+                  Icon(Icons.camera_alt_outlined,
+                      color: Colors.white24, size: 80),
                   SizedBox(height: AppSpacing.md),
-                  Text('FRAME PROOF CLEARLY', style: TextStyle(color: Colors.white54, letterSpacing: 2)),
+                  Text('FRAME PROOF CLEARLY',
+                      style:
+                          TextStyle(color: Colors.white54, letterSpacing: 2)),
                 ],
               ),
             ),

@@ -20,11 +20,13 @@ class SecurityController extends ChangeNotifier {
   }
 
   void toggleAppLock(bool enabled) {
-    _securityService.updateSecuritySettings(security.copyWith(appLockEnabled: enabled));
+    _securityService
+        .updateSecuritySettings(security.copyWith(appLockEnabled: enabled));
   }
 
   void toggleBiometrics(bool enabled) {
-    _securityService.updateSecuritySettings(security.copyWith(biometricEnabled: enabled));
+    _securityService
+        .updateSecuritySettings(security.copyWith(biometricEnabled: enabled));
   }
 
   void setPin(String pin) {
