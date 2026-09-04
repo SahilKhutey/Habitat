@@ -22,6 +22,11 @@ Phase*/
 *.zip
 *.tar.gz
 
+# Allow distributable release deliverables
+!release/
+!release/**
+!release/**/*.apk
+
 # Signing Keys & Certificates (NEVER COMMIT TO GIT)
 *.jks
 *.keystore
