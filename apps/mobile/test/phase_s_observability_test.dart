@@ -2,7 +2,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/core/observability/telemetry_service.dart';
 import 'package:habitat_mobile/database/local_database.dart';
-import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,7 +10,6 @@ void main() {
   late LocalDatabase db;
   late TelemetryService telemetry;
   late MissionExecutionService missionService;
-  late AlarmService alarmService;
 
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +20,6 @@ void main() {
     telemetry.clearBreadcrumbs();
     telemetry.initialize();
     missionService = MissionExecutionService(database: db);
-    alarmService = AlarmService(db);
   });
 
   group('Phase S: Diagnostic Identity & PII Sanitization', () {

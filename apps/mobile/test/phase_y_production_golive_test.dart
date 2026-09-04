@@ -1,7 +1,6 @@
 // Automated Test Suite for Phase Y: Controlled 1.0 Release, Go-Live & Production Rollout
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/database/local_database.dart';
-import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 import 'package:habitat_mobile/services/native_alarm_scheduler.dart';
 
@@ -10,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
-  late AlarmService alarmService;
   late NativeAlarmScheduler scheduler;
 
   setUp(() {
@@ -19,7 +17,6 @@ void main() {
     db = LocalDatabase.instance;
     db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
-    alarmService = AlarmService(db);
     scheduler = NativeAlarmScheduler.instance;
   });
 

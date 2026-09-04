@@ -2,7 +2,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/features/tasks/application/task_controller.dart';
-import 'package:habitat_mobile/features/tasks/domain/repositories/task_repository.dart';
 import 'package:habitat_mobile/features/tasks/domain/services/task_service.dart';
 import 'package:habitat_mobile/features/progress/presentation/state/progression_controller.dart';
 import 'package:habitat_mobile/features/journal/application/journal_controller.dart';
@@ -12,7 +11,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late LocalDatabase db;
-  late TaskRepository taskRepo;
   late TaskService taskService;
   late TaskController taskController;
   late ProgressionController progressionController;
@@ -21,7 +19,6 @@ void main() {
   setUp(() {
     db = LocalDatabase.instance;
     db.resetAllData();
-    taskRepo = TaskRepository(db);
     taskService = TaskService(db);
     taskController = TaskController(taskService: taskService, database: db);
     progressionController = ProgressionController(database: db);

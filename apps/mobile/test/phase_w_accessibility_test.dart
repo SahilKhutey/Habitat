@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/database/local_database.dart';
-import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
 void main() {

@@ -30,7 +30,7 @@ void main() {
     test(
         'AA2: JSON export uses strict jsonEncode without string concatenation corruption',
         () {
-      final user = db.getOrCreateProfile(name: 'Explorer "Pro"');
+      db.getOrCreateProfile(name: 'Explorer "Pro"');
       db.updateProfile(
           displayName: 'Explorer "Pro"',
           bio: 'Line 1\nLine 2 with "quotes" and \\backslashes\\');

@@ -2,8 +2,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/features/profile/domain/models/appearance_settings.dart';
-import 'package:habitat_mobile/features/profile/domain/models/notification_settings.dart';
-import 'package:habitat_mobile/features/profile/domain/models/profile_preferences.dart';
 import 'package:habitat_mobile/features/profile/domain/repositories/profile_repository.dart';
 import 'package:habitat_mobile/features/profile/domain/services/settings_service.dart';
 

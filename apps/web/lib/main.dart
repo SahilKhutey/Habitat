@@ -80,10 +80,15 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
 
     try {
       // 1. Fetch User / Health / Tasks in parallel
-      final userResp = await _dio.get('/users/profile').catchError((_) => Response(requestOptions: RequestOptions(), statusCode: 404));
-      final tasksResp = await _dio.get('/tasks').catchError((_) => Response(requestOptions: RequestOptions(), data: {'data': []}));
-      final missionsResp = await _dio.get('/missions/active').catchError((_) => Response(requestOptions: RequestOptions(), data: {'data': []}));
-      final gamificationResp = await _dio.get('/gamification/xp/ledger').catchError((_) => Response(requestOptions: RequestOptions(), data: {'data': {'balance': 0, 'transactions': []}}));
+      final userResp = await _dio.get('/users/profile').catchError(
+          (_) => Response(requestOptions: RequestOptions(), statusCode: 404));
+      final missionsResp = await _dio.get('/missions/active').catchError((_) =>
+          Response(requestOptions: RequestOptions(), data: {'data': []}));
+      final gamificationResp = await _dio
+          .get('/gamification/xp/ledger')
+          .catchError((_) => Response(requestOptions: RequestOptions(), data: {
+                'data': {'balance': 0, 'transactions': []}
+              }));
 
       if (mounted) {
         setState(() {
@@ -95,25 +100,40 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
           }
 
           if (gamificationResp.data != null) {
-            final gData = gamificationResp.data['data'] ?? gamificationResp.data;
+            final gData =
+                gamificationResp.data['data'] ?? gamificationResp.data;
             _totalXp = gData['balance'] ?? 0;
             _level = gData['level'] ?? 1;
 
             final txs = (gData['transactions'] as List<dynamic>?) ?? [];
-            _ledgerEntries = txs.take(6).map((t) => {
-              'reason': t['reason'] ?? t['description'] ?? 'Mission Verification',
-              'amount': '+${t['amount'] ?? t['xp']} XP',
-              'time': t['createdAt'] != null ? t['createdAt'].toString().substring(0, 10) : 'Recent',
-            }).toList();
+            _ledgerEntries = txs
+                .take(6)
+                .map((t) => {
+                      'reason': t['reason'] ??
+                          t['description'] ??
+                          'Mission Verification',
+                      'amount': '+${t['amount'] ?? t['xp']} XP',
+                      'time': t['createdAt'] != null
+                          ? t['createdAt'].toString().substring(0, 10)
+                          : 'Recent',
+                    })
+                .toList();
           }
 
           final mList = (missionsResp.data?['data'] as List<dynamic>?) ?? [];
-          _missions = mList.take(6).map((m) => {
-            'time': m['startedAt'] != null ? m['startedAt'].toString().substring(11, 16) : 'Scheduled',
-            'title': m['task']?['title'] ?? m['title'] ?? 'Discipline Protocol',
-            'status': m['status'] ?? 'ACTIVE',
-            'isDone': m['status'] == 'COMPLETED',
-          }).toList();
+          _missions = mList
+              .take(6)
+              .map((m) => {
+                    'time': m['startedAt'] != null
+                        ? m['startedAt'].toString().substring(11, 16)
+                        : 'Scheduled',
+                    'title': m['task']?['title'] ??
+                        m['title'] ??
+                        'Discipline Protocol',
+                    'status': m['status'] ?? 'ACTIVE',
+                    'isDone': m['status'] == 'COMPLETED',
+                  })
+              .toList();
 
           // Standardize Weekly Resistance Trends
           _resistanceTrends = [
@@ -158,7 +178,10 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
                         SizedBox(height: 16),
                         Text(
                           'CONNECTING TO LIVE TELEMETRY SERVICE...',
-                          style: TextStyle(letterSpacing: 1.5, fontSize: 12, color: Color(0xFF8E8E93)),
+                          style: TextStyle(
+                              letterSpacing: 1.5,
+                              fontSize: 12,
+                              color: Color(0xFF8E8E93)),
                         ),
                       ],
                     ),
@@ -168,16 +191,21 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.cloud_off, size: 64, color: Color(0xFFFF3B30)),
+                            const Icon(Icons.cloud_off,
+                                size: 64, color: Color(0xFFFF3B30)),
                             const SizedBox(height: 16),
                             const Text(
                               'HABITAT BACKEND OFFLINE',
-                              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, letterSpacing: 1.5),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 20,
+                                  letterSpacing: 1.5),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               _errorMessage ?? 'Connection refused',
-                              style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 13),
+                              style: const TextStyle(
+                                  color: Color(0xFF8E8E93), fontSize: 13),
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
@@ -187,14 +215,16 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFFF9500),
                                 foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 14),
                               ),
                             ),
                           ],
                         ),
                       )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 32),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -231,7 +261,10 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
               SizedBox(width: 10),
               Text(
                 'HABITAT',
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, letterSpacing: 1.5),
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 20,
+                    letterSpacing: 1.5),
               ),
             ],
           ),
@@ -258,14 +291,20 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: isActive ? const Color(0xFFFF9500) : const Color(0xFF8E8E93)),
+          Icon(icon,
+              size: 20,
+              color:
+                  isActive ? const Color(0xFFFF9500) : const Color(0xFF8E8E93)),
           const SizedBox(width: 12),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.white : const Color(0xFF8E8E93),
-              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-              fontSize: 13,
+          Expanded(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: isActive ? Colors.white : const Color(0xFF8E8E93),
+                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                fontSize: 13,
+              ),
             ),
           ),
         ],
@@ -282,18 +321,29 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
           children: [
             const Text(
               'COMMAND OVERVIEW',
-              style: TextStyle(color: Color(0xFF8E8E93), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+              style: TextStyle(
+                  color: Color(0xFF8E8E93),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5),
             ),
             const SizedBox(height: 4),
             Text(
               'Active Recruit: $_displayName',
-              style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900),
             ),
           ],
         ),
         const Chip(
           backgroundColor: Color(0xFF1C1C24),
-          label: Text('⚡ LIVE SYNC ACTIVE', style: TextStyle(color: Color(0xFF34C759), fontWeight: FontWeight.bold, fontSize: 11)),
+          label: Text('⚡ LIVE SYNC ACTIVE',
+              style: TextStyle(
+                  color: Color(0xFF34C759),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11)),
         ),
       ],
     );
@@ -355,8 +405,10 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('WEEKLY RESISTANCE TRENDS (ΔtR)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-              Text('Target: < 2.0m', style: TextStyle(color: Color(0xFF8E8E93), fontSize: 12)),
+              Text('WEEKLY RESISTANCE TRENDS (ΔtR)',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+              Text('Target: < 2.0m',
+                  style: TextStyle(color: Color(0xFF8E8E93), fontSize: 12)),
             ],
           ),
           const SizedBox(height: 24),
@@ -392,7 +444,9 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("TODAY'S MISSION PROTOCOLS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text("TODAY'S MISSION PROTOCOLS",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 16),
                 if (_missions.isEmpty)
                   const Padding(
@@ -401,7 +455,10 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
                       child: Text(
                         'No mission protocols recorded today.\nSchedule a task to activate tracking.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Color(0xFF8E8E93), fontSize: 12, height: 1.5),
+                        style: TextStyle(
+                            color: Color(0xFF8E8E93),
+                            fontSize: 12,
+                            height: 1.5),
                       ),
                     ),
                   )
@@ -431,7 +488,9 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("XP TRANSACTION AUDIT LEDGER", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text("XP TRANSACTION AUDIT LEDGER",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 16),
                 if (_ledgerEntries.isEmpty)
                   const Padding(
@@ -440,7 +499,10 @@ class _WebDashboardScreenState extends State<WebDashboardScreen> {
                       child: Text(
                         'No ledger entries found.\nCompleted verified missions deposit XP here.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Color(0xFF8E8E93), fontSize: 12, height: 1.5),
+                        style: TextStyle(
+                            color: Color(0xFF8E8E93),
+                            fontSize: 12,
+                            height: 1.5),
                       ),
                     ),
                   )
@@ -465,7 +527,11 @@ class _MetricCard extends StatelessWidget {
   final String subtitle;
   final Color accentColor;
 
-  const _MetricCard({required this.title, required this.value, required this.subtitle, required this.accentColor});
+  const _MetricCard(
+      {required this.title,
+      required this.value,
+      required this.subtitle,
+      required this.accentColor});
 
   @override
   Widget build(BuildContext context) {
@@ -479,11 +545,21 @@ class _MetricCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          Text(title,
+              style: const TextStyle(
+                  color: Color(0xFF8E8E93),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1)),
           const SizedBox(height: 8),
-          Text(value, style: TextStyle(color: accentColor, fontSize: 22, fontWeight: FontWeight.w900)),
+          Text(value,
+              style: TextStyle(
+                  color: accentColor,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900)),
           const SizedBox(height: 4),
-          Text(subtitle, style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 12)),
+          Text(subtitle,
+              style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 12)),
         ],
       ),
     );
@@ -495,26 +571,37 @@ class _HeatmapDayBar extends StatelessWidget {
   final double minutes;
   final bool isGoal;
 
-  const _HeatmapDayBar({required this.day, required this.minutes, required this.isGoal});
+  const _HeatmapDayBar(
+      {required this.day, required this.minutes, required this.isGoal});
 
   @override
   Widget build(BuildContext context) {
     final height = (minutes * 20).clamp(20.0, 120.0);
     return Column(
       children: [
-        Text('${minutes.toStringAsFixed(1)}m', style: TextStyle(color: isGoal ? const Color(0xFF34C759) : const Color(0xFFFF9500), fontSize: 11, fontWeight: FontWeight.bold)),
+        Text('${minutes.toStringAsFixed(1)}m',
+            style: TextStyle(
+                color:
+                    isGoal ? const Color(0xFF34C759) : const Color(0xFFFF9500),
+                fontSize: 11,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Container(
           width: 32,
           height: height,
           decoration: BoxDecoration(
-            color: isGoal ? const Color(0xFF34C759).withOpacity(0.3) : const Color(0xFFFF9500).withOpacity(0.3),
+            color: isGoal
+                ? const Color(0xFF34C759).withOpacity(0.3)
+                : const Color(0xFFFF9500).withOpacity(0.3),
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: isGoal ? const Color(0xFF34C759) : const Color(0xFFFF9500)),
+            border: Border.all(
+                color:
+                    isGoal ? const Color(0xFF34C759) : const Color(0xFFFF9500)),
           ),
         ),
         const SizedBox(height: 8),
-        Text(day, style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 12)),
+        Text(day,
+            style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 12)),
       ],
     );
   }
@@ -526,7 +613,11 @@ class _MissionRow extends StatelessWidget {
   final String status;
   final bool isDone;
 
-  const _MissionRow({required this.time, required this.title, required this.status, required this.isDone});
+  const _MissionRow(
+      {required this.time,
+      required this.title,
+      required this.status,
+      required this.isDone});
 
   @override
   Widget build(BuildContext context) {
@@ -537,12 +628,24 @@ class _MissionRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(isDone ? Icons.check_circle : Icons.schedule, size: 16, color: isDone ? const Color(0xFF34C759) : const Color(0xFF8E8E93)),
+              Icon(isDone ? Icons.check_circle : Icons.schedule,
+                  size: 16,
+                  color: isDone
+                      ? const Color(0xFF34C759)
+                      : const Color(0xFF8E8E93)),
               const SizedBox(width: 8),
-              Text('$time — $title', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              Text('$time — $title',
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w600)),
             ],
           ),
-          Text(status, style: TextStyle(color: isDone ? const Color(0xFF34C759) : const Color(0xFFFF9500), fontSize: 11, fontWeight: FontWeight.bold)),
+          Text(status,
+              style: TextStyle(
+                  color: isDone
+                      ? const Color(0xFF34C759)
+                      : const Color(0xFFFF9500),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -554,7 +657,8 @@ class _LedgerRow extends StatelessWidget {
   final String amount;
   final String time;
 
-  const _LedgerRow({required this.reason, required this.amount, required this.time});
+  const _LedgerRow(
+      {required this.reason, required this.amount, required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -566,11 +670,19 @@ class _LedgerRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(reason, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              Text(time, style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 11)),
+              Text(reason,
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w600)),
+              Text(time,
+                  style:
+                      const TextStyle(color: Color(0xFF8E8E93), fontSize: 11)),
             ],
           ),
-          Text(amount, style: const TextStyle(color: Color(0xFFFF9500), fontWeight: FontWeight.bold, fontSize: 13)),
+          Text(amount,
+              style: const TextStyle(
+                  color: Color(0xFFFF9500),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13)),
         ],
       ),
     );

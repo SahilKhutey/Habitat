@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitat_mobile/database/local_database.dart';
-import 'package:habitat_mobile/features/tasks/domain/services/alarm_service.dart';
 import 'package:habitat_mobile/services/mission_execution_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   late LocalDatabase db;
   late MissionExecutionService missionService;
-  late AlarmService alarmService;
 
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +16,6 @@ void main() {
     db = LocalDatabase.instance;
     db.resetAllData(populateDefaultTemplates: false);
     missionService = MissionExecutionService(database: db);
-    alarmService = AlarmService(db);
   });
 
   group('Phase U: Versioned Schema Migrations (U2, U3, U4, U21, U23)', () {

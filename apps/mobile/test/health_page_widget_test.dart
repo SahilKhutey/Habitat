@@ -5,7 +5,6 @@ import 'package:habitat_mobile/core/theme/habitat_theme.dart';
 import 'package:habitat_mobile/database/local_database.dart';
 import 'package:habitat_mobile/features/health/application/health_controller.dart';
 import 'package:habitat_mobile/features/health/domain/repositories/health_repository.dart';
-import 'package:habitat_mobile/features/health/domain/services/health_service.dart';
 import 'package:habitat_mobile/features/health/domain/services/meal_service.dart';
 import 'package:habitat_mobile/features/health/domain/services/nap_service.dart';
 import 'package:habitat_mobile/features/health/domain/services/water_service.dart';
@@ -23,7 +22,6 @@ void main() {
   late WaterService waterService;
   late MealService mealService;
   late NapService napService;
-  late HealthService healthService;
   late HealthController controller;
 
   setUp(() {
@@ -34,11 +32,6 @@ void main() {
     waterService = WaterService(repo);
     mealService = MealService(repo);
     napService = NapService(repo);
-    healthService = HealthService(
-      waterService: waterService,
-      mealService: mealService,
-      napService: napService,
-    );
     controller = HealthController(
       waterService: waterService,
       mealService: mealService,
