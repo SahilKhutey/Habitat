@@ -1262,6 +1262,7 @@ class LocalDatabase {
       'version': '1.0.5',
       'exportedAt': DateTime.now().toIso8601String(),
       'user': {'displayName': user.displayName, 'bio': user.bio},
+      'tasks': _tasks.values.map((t) => t.toMap()).toList(),
       'tasksCount': _tasks.length,
       'attemptsCount': _attempts.length,
       'waterEntriesCount': _waterEntries.length,
@@ -1506,6 +1507,9 @@ class LocalDatabase {
 
       _revision = (migrated['revision'] as num?)?.toInt() ?? _revision;
       changes.value++;
+      if (_tasks.isEmpty) {
+        initializeDefaultTemplates();
+      }
     } catch (_) {
       if (_tasks.isEmpty) {
         initializeDefaultTemplates();

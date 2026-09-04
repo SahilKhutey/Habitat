@@ -16,6 +16,7 @@ class AppRadii {
   static const BorderRadius radiusModal = BorderRadius.all(Radius.circular(modal));
   static const BorderRadius radiusHeroCard = BorderRadius.all(Radius.circular(heroCard));
   static const BorderRadius radiusCircular = BorderRadius.all(Radius.circular(circular));
+  static const BorderRadius radiusPill = radiusCircular;
 
   // Legacy backwards compatibility aliases
   static const double small = 8.0;

@@ -153,7 +153,7 @@ void main() {
           type: 'PHOTO',
           filePath: 'habitat_storage://proofs/rapid.jpg',
           sha256Checksum:
-              'abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef',
+              '1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
         ),
       );
 

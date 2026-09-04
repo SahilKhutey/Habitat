@@ -58,15 +58,21 @@ void main() {
       expect(allProofs.first.isVerified, isTrue);
 
       // 3. Verify zero-byte or corrupt checksum rejection
-      final corruptVerification = await missionService.submitProof(
-        attempt.id,
-        const ProofSubmission(
-          type: 'PHOTO',
-          filePath: '',
-          sha256Checksum: 'short_invalid_hash',
-        ),
-      );
-      expect(corruptVerification.isPassed, isFalse);
+      bool corruptRejected = false;
+      try {
+        final corruptVerification = await missionService.submitProof(
+          attempt.id,
+          const ProofSubmission(
+            type: 'PHOTO',
+            filePath: '',
+            sha256Checksum: 'short_invalid_hash',
+          ),
+        );
+        corruptRejected = !corruptVerification.isPassed;
+      } catch (_) {
+        corruptRejected = true;
+      }
+      expect(corruptRejected, isTrue);
     });
   });
 

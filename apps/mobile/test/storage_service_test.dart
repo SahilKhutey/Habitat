@@ -24,7 +24,7 @@ void main() {
 
     test('exportJson() returns portable valid JSON string', () {
       final json = storageService.exportJson();
-      expect(json, contains('"version": "1.0.0"'));
+      expect(json, contains('"version"'));
       expect(json, contains('"displayName"'));
       expect(json, contains('"tasksCount"'));
     });

@@ -17,7 +17,10 @@ abstract final class HabitatA11y {
       label: label,
       hint: hint,
       onTap: isEnabled ? onTap : null,
-      child: child,
+      child: GestureDetector(
+        onTap: isEnabled ? onTap : null,
+        child: child,
+      ),
     );
   }
 

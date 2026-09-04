@@ -78,28 +78,30 @@ class StreakCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 14),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${summary.currentStreak} Day Streak',
-                      style: const TextStyle(
-                        fontFamily: HabitatTheme.fontHeading,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${summary.currentStreak} Day Streak',
+                        style: const TextStyle(
+                          fontFamily: HabitatTheme.fontHeading,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _streakMessage(summary.currentStreak),
-                      style: const TextStyle(
-                        fontFamily: HabitatTheme.fontBody,
-                        fontSize: 12,
-                        color: HabitatTheme.youngLeaf,
+                      const SizedBox(height: 2),
+                      Text(
+                        _streakMessage(summary.currentStreak),
+                        style: const TextStyle(
+                          fontFamily: HabitatTheme.fontBody,
+                          fontSize: 12,
+                          color: HabitatTheme.youngLeaf,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

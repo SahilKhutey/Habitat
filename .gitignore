@@ -6,6 +6,7 @@ node_modules/
 .packages
 .pub-cache/
 .pub/
+packages/**/pubspec.lock
 
 # Production & Generated Build Artifacts (NEVER COMMIT TO GIT)
 build/

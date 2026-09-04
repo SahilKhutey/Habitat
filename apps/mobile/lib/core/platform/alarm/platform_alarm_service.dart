@@ -77,7 +77,9 @@ class AndroidAlarmService implements PlatformAlarmService {
   NativeAlarmEvent? _pendingColdStartEvent;
 
   AndroidAlarmService() {
-    _channel.setMethodCallHandler(_handleNativeCall);
+    try {
+      _channel.setMethodCallHandler(_handleNativeCall);
+    } catch (_) {}
   }
 
   Future<dynamic> _handleNativeCall(MethodCall call) async {

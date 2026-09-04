@@ -92,7 +92,7 @@ class MissionExecutionService {
 
     // Proof checksum validation (must be 64-character SHA-256)
     if (submission.sha256Checksum.trim().length != 64) {
-      return VerificationResult.failed('Invalid proof SHA-256 checksum format');
+      throw ArgumentError('Invalid proof SHA-256 checksum format');
     }
 
     if (submission.filePath.trim().isEmpty) {

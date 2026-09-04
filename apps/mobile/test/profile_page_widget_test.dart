@@ -53,6 +53,11 @@ void main() {
   group('ProfilePage Widget Tests', () {
     testWidgets('renders profile hub with header and all settings sections',
         (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 

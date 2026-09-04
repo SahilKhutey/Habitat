@@ -10,6 +10,11 @@ class HabitatSpacing {
   static const double xl = 24.0;
   static const double xxl = 32.0;
   static const double huge = 48.0;
+
+  // Compatibility aliases
+  static const double sm = s;
+  static const double md = m;
+  static const double lg = l;
 }
 
 class HabitatRadii {

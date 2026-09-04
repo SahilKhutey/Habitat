@@ -128,10 +128,8 @@ void main() {
       expect(attempt.status, equals('AWAITING_ACTION'));
 
       // Attempt cannot complete directly without proof verification
-      expect(
-        () => executionService.complete(attempt.id),
-        throwsA(isA<StateError>()),
-      );
+      final res = await executionService.complete(attempt.id);
+      expect(res.isSuccess, isFalse);
 
       final attemptInDb = db.getAttempt(attempt.id);
       expect(attemptInDb?.status, isNot('COMPLETED'));

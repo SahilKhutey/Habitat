@@ -105,7 +105,10 @@ class HomeController extends ChangeNotifier {
     );
   }
 
-  HomeLoadStatus get status => HomeLoadStatus.ready;
+  HomeLoadStatus get status =>
+      _database.getAllTasks().where((t) => t.active).isEmpty
+          ? HomeLoadStatus.empty
+          : HomeLoadStatus.ready;
   HomeStateModel? get model => HomeService(_database).load();
   String? get errorMessage => null;
   void refresh() => load();

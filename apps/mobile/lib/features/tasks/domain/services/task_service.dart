@@ -8,6 +8,7 @@ import '../models/task_model.dart';
 
 class TaskService {
   final LocalDatabase _database;
+  final Set<String> _pausedTaskIds = {};
 
   TaskService(this._database);
 
@@ -50,8 +51,7 @@ class TaskService {
               t.status == TaskStatus.missed || t.status == TaskStatus.failed)
           .toList(),
       'PAUSED' => all.where((t) => t.status == TaskStatus.paused).toList(),
-      'ARCHIVED' =>
-        all.where((t) => t.status == TaskStatus.archived || !t.active).toList(),
+      'ARCHIVED' => all.where((t) => t.status == TaskStatus.archived).toList(),
       _ => all.where((t) => t.status != TaskStatus.archived).toList(),
     };
   }
@@ -86,18 +86,21 @@ class TaskService {
   }
 
   void pauseTask(String taskId) {
+    _pausedTaskIds.add(taskId);
     final task = getTaskById(taskId);
     if (task == null) return;
     saveTask(task.copyWith(status: TaskStatus.paused, active: false));
   }
 
   void resumeTask(String taskId) {
+    _pausedTaskIds.remove(taskId);
     final task = getTaskById(taskId);
     if (task == null) return;
     saveTask(task.copyWith(status: TaskStatus.ready, active: true));
   }
 
   void archiveTask(String taskId) {
+    _pausedTaskIds.remove(taskId);
     final task = getTaskById(taskId);
     if (task == null) return;
     saveTask(task.copyWith(status: TaskStatus.archived, active: false));
@@ -119,7 +122,9 @@ class TaskService {
     final taskAttempts = attempts.where((a) => a.taskId == lt.id).toList();
     TaskStatus status = TaskStatus.ready;
 
-    if (!lt.active) {
+    if (_pausedTaskIds.contains(lt.id)) {
+      status = TaskStatus.paused;
+    } else if (!lt.active) {
       status = TaskStatus.archived;
     } else if (taskAttempts.isNotEmpty) {
       final latest = taskAttempts.last;

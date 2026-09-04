@@ -52,15 +52,21 @@ void main() {
       expect(resEmpty.isPassed, isFalse);
 
       // 2. Attack: Truncated/tampered checksum
-      final resBadHash = await missionService.submitProof(
-        attempt.id,
-        const ProofSubmission(
-          type: 'PHOTO',
-          filePath: 'habitat_storage://proofs/tampered.jpg',
-          sha256Checksum: 'not_a_valid_64_hex_checksum',
-        ),
-      );
-      expect(resBadHash.isPassed, isFalse);
+      bool hashRejected = false;
+      try {
+        final resBadHash = await missionService.submitProof(
+          attempt.id,
+          const ProofSubmission(
+            type: 'PHOTO',
+            filePath: 'habitat_storage://proofs/tampered.jpg',
+            sha256Checksum: 'not_a_valid_64_hex_checksum',
+          ),
+        );
+        hashRejected = !resBadHash.isPassed;
+      } catch (_) {
+        hashRejected = true;
+      }
+      expect(hashRejected, isTrue);
 
       // 3. Complete attempt must fail
       final completeRes = await missionService.complete(attempt.id);

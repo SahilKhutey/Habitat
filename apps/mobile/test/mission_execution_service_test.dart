@@ -224,7 +224,7 @@ void main() {
     });
 
     test(
-        'Test 8 — Unverified Completion Guard: complete() throws if proof is missing',
+        'Test 8 — Unverified Completion Guard: complete() returns failure if proof is missing',
         () async {
       final task = LocalTask(
         id: 'task_unverified_guard',
@@ -238,14 +238,9 @@ void main() {
       db.saveTask(task);
 
       final attempt = await missionService.start('task_unverified_guard');
-      expect(
-        () => missionService.complete(attempt.id),
-        throwsA(isA<StateError>().having(
-          (e) => e.message,
-          'message',
-          contains('Cannot complete mission: valid verified proof is required'),
-        )),
-      );
+      final res = await missionService.complete(attempt.id);
+      expect(res.isSuccess, isFalse);
+      expect(res.errorMessage, contains('Unverified proof'));
     });
   });
 }

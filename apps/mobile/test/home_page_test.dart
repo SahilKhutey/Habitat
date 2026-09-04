@@ -12,6 +12,7 @@ import 'package:habitat_mobile/features/home/presentation/widgets/home_header.da
 import 'package:habitat_mobile/features/home/presentation/widgets/progress_summary.dart';
 import 'package:habitat_mobile/features/home/presentation/widgets/quick_actions.dart';
 import 'package:habitat_mobile/features/home/presentation/widgets/streak_summary.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:habitat_mobile/features/home/presentation/widgets/today_summary.dart';
 import 'package:habitat_mobile/features/home/presentation/widgets/upcoming_tasks.dart';
 
@@ -21,6 +22,8 @@ void main() {
   late HomeController controller;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     db = LocalDatabase.instance;
     db.resetAllData();
     service = HomeService(db);
@@ -57,6 +60,11 @@ void main() {
     });
 
     testWidgets('QuickActionBar taps log water reactively', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -71,6 +79,11 @@ void main() {
     });
 
     testWidgets('QuickActionBar taps log meal reactively', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -87,20 +100,7 @@ void main() {
     testWidgets('shows empty onboarding state when no tasks exist',
         (tester) async {
       // Clear tasks completely
-      db.resetAllData();
-      // Remove default templates for this test
-      final allTasks = db.getAllTasks();
-      for (final t in allTasks) {
-        db.saveTask(LocalTask(
-          id: t.id,
-          title: t.title,
-          category: t.category,
-          taskType: t.taskType,
-          active: false,
-          createdAt: t.createdAt,
-          updatedAt: t.updatedAt,
-        ));
-      }
+      db.resetAllData(populateDefaultTemplates: false);
 
       final emptyController = HomeController(service: service, database: db);
       await tester.pumpWidget(buildTestWidget(testController: emptyController));

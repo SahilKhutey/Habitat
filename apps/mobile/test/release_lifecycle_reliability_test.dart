@@ -46,7 +46,7 @@ void main() {
       final exportedState = db.exportCompleteStateJson();
 
       // Step B: Simulate cold restart with startup sequence
-      db.resetAllData();
+      db.resetAllData(populateDefaultTemplates: false);
       expect(db.getAllTasks().isEmpty, isTrue);
 
       // Startup Step 1: load persisted state

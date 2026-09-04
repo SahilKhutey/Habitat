@@ -19,8 +19,11 @@ class HabitatColors {
   // Semantic & Brand Accents
   static const Color primaryAction = growthGreen;
   static const Color amberFocus = sageGreen;
+  static const Color amberFocusSubtle = Color(0x1FA8D08D);
   static const Color emeraldVictory = growthGreen;
+  static const Color emeraldVictorySubtle = Color(0x1F4CAF50);
   static const Color crimsonAlert = Color(0xFFFF5252);
+  static const Color crimsonAlertSubtle = Color(0x1FFF5252);
   static const Color cyanTelemetry = Color(0xFF81C784);
   static const Color purpleGraceVault = Color(0xFF7CB342);
 

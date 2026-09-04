@@ -76,7 +76,12 @@ void main() {
       await tester.tap(find.text('Start'));
       expect(tapped, isTrue);
 
-      final semantics = tester.getSemantics(find.byType(Semantics).first);
+      final semantics = tester.getSemantics(find
+          .descendant(
+            of: find.byType(Scaffold),
+            matching: find.byType(Semantics),
+          )
+          .first);
       expect(semantics.label, contains('Start Mission'));
     });
 
@@ -95,7 +100,12 @@ void main() {
       );
 
       expect(find.text("Today's Discipline"), findsOneWidget);
-      final semantics = tester.getSemantics(find.byType(Semantics).first);
+      final semantics = tester.getSemantics(find
+          .descendant(
+            of: find.byType(Scaffold),
+            matching: find.byType(Semantics),
+          )
+          .first);
       expect(semantics.label, contains("Today's Discipline"));
     });
 
@@ -114,7 +124,12 @@ void main() {
         ),
       );
 
-      final semantics = tester.getSemantics(find.byType(Semantics).first);
+      final semantics = tester.getSemantics(find
+          .descendant(
+            of: find.byType(Scaffold),
+            matching: find.byType(Semantics),
+          )
+          .first);
       expect(semantics.label, contains('Seven day task completion chart'));
     });
   });

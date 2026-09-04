@@ -5,10 +5,10 @@ import 'package:design_system/design_system.dart';
 
 void main() {
   test('AppColors contains valid semantic colors for light and dark themes', () {
-    expect(AppColors.darkBackground, const Color(0xFF0A0A0C));
-    expect(AppColors.crimsonAlert, const Color(0xFFFF3B30));
-    expect(AppColors.amberFocus, const Color(0xFFFF9500));
-    expect(AppColors.emeraldVictory, const Color(0xFF34C759));
+    expect(AppColors.darkBackground, const Color(0xFF081C13));
+    expect(AppColors.crimsonAlert, const Color(0xFFFF5252));
+    expect(AppColors.amberFocus, AppColors.youngLeaf);
+    expect(AppColors.emeraldVictory, AppColors.growthGreen);
   });
 
   test('AppSpacing follows strict 4pt grid', () {

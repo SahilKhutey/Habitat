@@ -1,8 +1,6 @@
 // Progress, Skeletons, and Live Resistance Counter
 import 'package:flutter/material.dart';
 import '../../tokens/colors.dart';
-import '../../tokens/typography.dart';
-import '../../tokens/spacing.dart';
 import '../../tokens/radii.dart';
 
 class AppProgressBar extends StatelessWidget {

@@ -1,7 +1,7 @@
 // Habitat Responsive Layout Primitives (Phase 17)
 import 'package:flutter/material.dart';
 import '../../tokens/breakpoints.dart';
-import '../../tokens/spacing.dart';
+import '../../src/spacing.dart';
 
 /// Standard page wrapper providing Safe Area, responsive margins,
 /// maximum desktop content constraint (1200px), and optional scrolling.
