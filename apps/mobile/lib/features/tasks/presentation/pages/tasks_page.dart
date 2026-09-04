@@ -62,8 +62,6 @@ class _TasksPageState extends State<TasksPage> {
       animation: _controller,
       builder: (context, _) {
         final tasks = _controller.tasks;
-        final totalTasks = tasks.length;
-        final completedTasks = tasks.where((t) => t.status == TaskStatus.completed).length;
 
         return Scaffold(
           backgroundColor: HabitatTheme.background,

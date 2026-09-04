@@ -26,6 +26,7 @@ Phase*/
 !release/
 !release/**
 !release/**/*.apk
+!release/**/*.aab
 
 # Signing Keys & Certificates (NEVER COMMIT TO GIT)
 *.jks
@@ -34,6 +35,9 @@ Phase*/
 *.mobileprovision
 *.pem
 *.key
+key.properties
+*/key.properties
+android/key.properties
 
 # Environment Secrets
 .env

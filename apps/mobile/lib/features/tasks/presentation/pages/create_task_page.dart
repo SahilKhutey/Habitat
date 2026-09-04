@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/habitat_theme.dart';
 import '../../../../database/local_database.dart';
 import '../../application/create_task_controller.dart';
-import '../../domain/models/action_model.dart';
 import '../../domain/models/alarm_model.dart';
 import '../../domain/models/task_model.dart';
 import '../../domain/services/task_service.dart';

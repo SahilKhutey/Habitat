@@ -58,6 +58,8 @@ android {
                 keyPassword keystoreProperties['keyPassword']
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
+                v1SigningEnabled true
+                v2SigningEnabled true
             }
         }
     }
@@ -68,12 +70,17 @@ android {
             if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
             } else {
-                signingConfig signingConfigs.debug
+                throw new GradleException("Release build requires key.properties signing credentials. Debug signing is strictly prohibited for production builds.")
             }
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 

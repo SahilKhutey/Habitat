@@ -1,7 +1,7 @@
 // Habitat Central HTTP & API Client with Auth Interceptor
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'auth_interceptor.dart';
+import '../config/app_config.dart';
 
 class ProofChallengeResponse {
   final String sessionId;
@@ -94,10 +94,10 @@ class HabitatApiClient {
   HabitatApiClient({
     String? baseUrl,
     Dio? dio,
-  })  : baseUrl = baseUrl ?? 'http://10.0.2.2:4000/api/v1',
+  })  : baseUrl = baseUrl ?? AppConfig.apiBaseUrl,
         _dio = dio ??
             Dio(BaseOptions(
-              baseUrl: baseUrl ?? 'http://10.0.2.2:4000/api/v1',
+              baseUrl: baseUrl ?? AppConfig.apiBaseUrl,
               connectTimeout: const Duration(seconds: 10),
               receiveTimeout: const Duration(seconds: 20),
             )) {
